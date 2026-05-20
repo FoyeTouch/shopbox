@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Shopbox — Return Request</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    :root {
+      --gold:#F5A623; --gold-bright:#FFB930; --gold-dark:#C47F0A;
+      --gold-muted:rgba(245,166,35,0.12); --gold-glow:rgba(245,166,35,0.28);
+      --bg-base:#0D0D0D; --bg-card:#161616; --bg-card-2:#1C1C1C;
+      --bg-input:#1A1A1A; --border:rgba(255,255,255,0.07);
+      --border-gold:rgba(245,166,35,0.32);
+      --text-primary:#FFFFFF; --text-secondary:#A0A0A0; --text-muted:#555;
+      --success:#22C55E; --danger:#EF4444;
+      --font-display:'Syne',sans-serif; --font-body:'DM Sans',sans-serif;
+      --px:16px; --radius-sm:8px; --radius-md:12px;
+      --radius-lg:16px; --radius-pill:999px; --bar-h:86px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{-webkit-tap-highlight-color:transparent;}
+    body{
+      font-family:var(--font-body); background:var(--bg-base);
+      color:var(--text-primary); min-height:100dvh;
+      -webkit-font-smoothing:antialiased;
+      padding-bottom:calc(var(--bar-h) + 16px);
+    }
+    button{cursor:pointer;border:none;background:none;font-family:inherit;color:inherit;}
+    input,select,textarea{font-family:inherit;outline:none;border:none;background:none;}
+    .page{max-width:480px;margin:0 auto;}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .fu{animation:fadeUp .35s ease both;}
+    .d1{animation-delay:.04s;}.d2{animation-delay:.08s;}.d3{animation-delay:.12s;}
+    .d4{animation-delay:.16s;}.d5{animation-delay:.20s;}
+
+    /* ══ HEADER ══ */
+    .header{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px var(--px);
+      background:rgba(13,13,13,0.97);
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--border);
+      position:sticky;top:0;z-index:50;
+    }
+    .back-btn{
+      width:40px;height:40px;border-radius:50%;
+      background:var(--bg-card);border:1px solid var(--border);
+      display:flex;align-items:center;justify-content:center;
+      font-size:16px;transition:border-color .2s;
+    }
+    .back-btn:active{border-color:var(--border-gold);}
+    .header-title{font-family:var(--font-display);font-size:17px;font-weight:800;}
+    .header-badge{
+      font-size:10px;font-weight:700;font-family:var(--font-display);
+      background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);
+      color:var(--danger);padding:4px 10px;border-radius:var(--radius-pill);
+    }
+
+    /* ══ DEADLINE BANNER ══ */
+    .deadline-banner{
+      margin:14px var(--px);
+      background:rgba(239,68,68,0.07);
+      border:1px solid rgba(239,68,68,0.2);
+      border-radius:var(--radius-lg);
+      padding:14px 16px;
+      display:flex;gap:12px;align-items:flex-start;
+    }
+    .deadline-icon{
+      width:40px;height:40px;border-radius:50%;
+      background:rgba(239,68,68,0.1);
+      display:flex;align-items:center;justify-content:center;
+      color:var(--danger);font-size:18px;flex-shrink:0;
+    }
+    .deadline-text{}
+    .deadline-title{
+      font-family:var(--font-display);font-size:13px;font-weight:800;
+      color:var(--danger);margin-bottom:3px;
+    }
+    .deadline-sub{font-size:12px;color:rgba(255,255,255,0.6);line-height:1.5;}
+    .deadline-timer{
+      font-family:var(--font-display);font-size:16px;font-weight:800;
+      color:var(--danger);margin-top:5px;
+    }
+
+    /* ══ ORDER SUMMARY ══ */
+    .order-card{
+      margin:0 var(--px) 14px;
+      background:var(--bg-card);border:1px solid var(--border);
+      border-radius:var(--radius-lg);overflow:hidden;
+    }
+    .order-card-head{
+      padding:12px 14px;border-bottom:1px solid var(--border);
+      background:var(--bg-card-2);
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .order-id{font-family:var(--font-display);font-size:13px;font-weight:800;color:var(--gold);}
+    .order-date{font-size:11px;color:var(--text-muted);}
+    .order-item{
+      display:flex;gap:12px;padding:14px;align-items:center;
+    }
+    .order-img{
+      width:64px;height:64px;border-radius:var(--radius-md);
+      background:var(--bg-card-2);flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;
+      font-size:24px;color:var(--text-muted);opacity:.4;overflow:hidden;
+    }
+    .order-img img{width:100%;height:100%;object-fit:cover;opacity:1;}
+    .order-info{flex:1;min-width:0;}
+    .order-name{font-size:14px;font-weight:600;margin-bottom:3px;}
+    .order-variant{font-size:11px;color:var(--text-muted);margin-bottom:5px;}
+    .order-price{font-family:var(--font-display);font-size:15px;font-weight:800;color:var(--gold);}
+    .order-status{
+      font-size:10px;font-weight:700;padding:3px 9px;
+      border-radius:var(--radius-pill);font-family:var(--font-display);
+      background:rgba(34,197,94,0.1);color:var(--success);
+      border:1px solid rgba(34,197,94,0.2);
+    }
+
+    /* ══ FORM SECTION ══ */
+    .form-section{
+      margin:0 var(--px) 14px;
+      background:var(--bg-card);border:1px solid var(--border);
+      border-radius:var(--radius-lg);overflow:hidden;
+    }
+    .section-head{
+      display:flex;align-items:center;gap:10px;
+      padding:14px 16px;border-bottom:1px solid var(--border);
+      background:var(--bg-card-2);
+    }
+    .section-num{
+      width:26px;height:26px;border-radius:50%;
+      background:var(--danger);color:#fff;
+      font-family:var(--font-display);font-size:12px;font-weight:800;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    }
+    .section-title-text{font-family:var(--font-display);font-size:14px;font-weight:700;}
+    .section-body{padding:16px;}
+
+    /* ══ REASON CARDS ══ */
+    .reason-options{display:flex;flex-direction:column;gap:8px;}
+    .reason-opt{
+      display:flex;align-items:center;gap:12px;
+      padding:13px 14px;
+      background:var(--bg-card-2);border:1.5px solid var(--border);
+      border-radius:var(--radius-md);cursor:pointer;transition:all .2s;
+    }
+    .reason-opt.selected{
+      border-color:var(--danger);
+      background:rgba(239,68,68,0.06);
+    }
+    .reason-opt.disabled{opacity:.35;cursor:not-allowed;}
+    .reason-radio{
+      width:20px;height:20px;border-radius:50%;
+      border:2px solid var(--border);flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;
+      transition:border-color .2s;
+    }
+    .reason-opt.selected .reason-radio{border-color:var(--danger);}
+    .reason-inner{
+      width:10px;height:10px;border-radius:50%;
+      background:var(--danger);display:none;
+    }
+    .reason-opt.selected .reason-inner{display:block;}
+    .reason-icon{
+      width:36px;height:36px;border-radius:var(--radius-sm);
+      display:flex;align-items:center;justify-content:center;
+      font-size:16px;flex-shrink:0;
+    }
+    .reason-info{flex:1;}
+    .reason-name{font-size:13px;font-weight:600;margin-bottom:2px;}
+    .reason-sub{font-size:11px;color:var(--text-muted);}
+    .reason-tag{
+      font-size:10px;font-weight:700;font-family:var(--font-display);
+      padding:2px 8px;border-radius:var(--radius-pill);flex-shrink:0;
+    }
+    .tag-accepted{background:rgba(34,197,94,0.1);color:var(--success);border:1px solid rgba(34,197,94,0.2);}
+    .tag-rejected{background:rgba(239,68,68,0.1);color:var(--danger);border:1px solid rgba(239,68,68,0.2);}
+
+    /* ══ FIELDS ══ */
+    .field-group{margin-bottom:14px;}
+    .field-group:last-child{margin-bottom:0;}
+    .field-label{
+      display:block;font-size:11px;font-weight:700;
+      color:var(--text-muted);margin-bottom:7px;
+      text-transform:uppercase;letter-spacing:.04em;
+    }
+    .field-req{color:var(--danger);margin-left:2px;}
+    .field-box{
+      display:flex;align-items:center;
+      background:var(--bg-input);border:1.5px solid var(--border);
+      border-radius:var(--radius-md);padding:0 14px;height:50px;gap:10px;
+      transition:border-color .2s,box-shadow .2s;
+    }
+    .field-box:focus-within{
+      border-color:rgba(239,68,68,0.4);
+      box-shadow:0 0 0 3px rgba(239,68,68,0.08);
+    }
+    .field-box i{color:var(--text-muted);font-size:15px;flex-shrink:0;}
+    .field-box input,.field-box select{
+      flex:1;font-size:14px;color:var(--text-primary);min-width:0;
+    }
+    .field-box input::placeholder{color:var(--text-muted);}
+    .field-box select{-webkit-appearance:none;}
+    .field-box select option{background:var(--bg-card-2);}
+    textarea.field-area{
+      width:100%;background:var(--bg-input);
+      border:1.5px solid var(--border);border-radius:var(--radius-md);
+      padding:12px 14px;font-size:14px;color:var(--text-primary);
+      min-height:110px;resize:none;line-height:1.6;
+      transition:border-color .2s;
+    }
+    textarea.field-area:focus{
+      border-color:rgba(239,68,68,0.4);outline:none;
+      box-shadow:0 0 0 3px rgba(239,68,68,0.08);
+    }
+    textarea.field-area::placeholder{color:var(--text-muted);}
+    .char-count{text-align:right;font-size:10px;color:var(--text-muted);margin-top:4px;}
+    .field-hint{font-size:11px;color:var(--text-muted);margin-top:5px;line-height:1.4;}
+
+    /* ══ PHOTO UPLOAD ══ */
+    .photo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+    .photo-slot{
+      aspect-ratio:1;border-radius:var(--radius-sm);
+      background:var(--bg-input);
+      border:1.5px dashed rgba(239,68,68,0.3);
+      display:flex;flex-direction:column;
+      align-items:center;justify-content:center;
+      gap:4px;cursor:pointer;transition:all .2s;
+      position:relative;overflow:hidden;
+    }
+    .photo-slot:active{border-color:var(--danger);background:rgba(239,68,68,0.06);}
+    .photo-slot.filled{border-style:solid;border-color:rgba(239,68,68,0.4);}
+    .photo-slot i{font-size:20px;color:rgba(239,68,68,0.5);}
+    .photo-slot span{font-size:8px;color:var(--text-muted);font-weight:600;}
+    .photo-slot.filled i{color:var(--danger);font-size:26px;}
+    .photo-remove{
+      position:absolute;top:2px;right:2px;
+      width:16px;height:16px;border-radius:50%;
+      background:var(--danger);color:#fff;
+      font-size:8px;display:flex;align-items:center;justify-content:center;
+    }
+    .photo-requirement{
+      display:flex;align-items:flex-start;gap:8px;
+      background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);
+      border-radius:var(--radius-sm);padding:10px 12px;margin-top:10px;
+    }
+    .photo-requirement i{color:var(--danger);font-size:13px;flex-shrink:0;margin-top:1px;}
+    .photo-requirement p{font-size:11px;color:rgba(255,255,255,0.6);line-height:1.5;}
+
+    /* ══ POLICY REMINDER ══ */
+    .policy-reminder{
+      margin:0 var(--px) 14px;
+      background:var(--bg-card);border:1px solid var(--border);
+      border-radius:var(--radius-lg);padding:16px;
+    }
+    .policy-title{
+      font-family:var(--font-display);font-size:13px;font-weight:800;
+      margin-bottom:10px;display:flex;align-items:center;gap:7px;
+      color:var(--gold);
+    }
+    .policy-item{
+      display:flex;align-items:flex-start;gap:8px;
+      font-size:12px;color:var(--text-secondary);
+      margin-bottom:7px;line-height:1.4;
+    }
+    .policy-item:last-child{margin-bottom:0;}
+    .policy-item i{font-size:10px;flex-shrink:0;margin-top:2px;}
+    .policy-item.ok i{color:var(--success);}
+    .policy-item.bad i{color:var(--danger);}
+
+    /* ══ DECLARATION ══ */
+    .declaration{
+      margin:0 var(--px) 14px;
+      background:rgba(239,68,68,0.05);
+      border:1.5px solid rgba(239,68,68,0.2);
+      border-radius:var(--radius-lg);padding:14px 16px;
+    }
+    .decl-row{
+      display:flex;align-items:flex-start;gap:10px;cursor:pointer;
+    }
+    .decl-box{
+      width:22px;height:22px;border-radius:5px;
+      border:2px solid rgba(239,68,68,0.4);
+      background:rgba(239,68,68,0.06);
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;margin-top:1px;transition:all .2s;
+    }
+    .decl-box.checked{background:var(--danger);border-color:var(--danger);}
+    .decl-box i{color:#fff;font-size:11px;display:none;}
+    .decl-box.checked i{display:block;}
+    .decl-text{font-size:13px;color:var(--text-secondary);line-height:1.5;}
+    .decl-text strong{color:var(--text-primary);}
+
+    /* ══ BOTTOM BAR ══ */
+    .bottom-bar{
+      position:fixed;bottom:0;left:0;right:0;
+      max-width:480px;margin:0 auto;
+      background:rgba(13,13,13,0.97);
+      border-top:1px solid var(--border);
+      backdrop-filter:blur(16px);
+      padding:12px var(--px);
+      padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));
+      z-index:100;display:flex;gap:10px;
+    }
+    .btn-cancel{
+      height:52px;flex:1;
+      background:var(--bg-card);border:1.5px solid var(--border);
+      color:var(--text-secondary);font-family:var(--font-display);
+      font-size:14px;font-weight:700;border-radius:var(--radius-pill);
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      transition:border-color .2s;
+    }
+    .btn-cancel:active{border-color:var(--border-gold);}
+    .btn-submit{
+      height:52px;flex:2;
+      background:var(--danger);color:#fff;
+      font-family:var(--font-display);font-size:15px;font-weight:800;
+      border-radius:var(--radius-pill);
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      box-shadow:0 4px 16px rgba(239,68,68,0.3);
+      transition:background .2s,transform .15s;
+    }
+    .btn-submit:active{transform:scale(0.97);background:#b91c1c;}
+    .btn-submit:disabled{opacity:.4;pointer-events:none;}
+
+    /* ══ SUCCESS ══ */
+    .success-overlay{
+      display:none;position:fixed;inset:0;
+      background:rgba(13,13,13,0.98);z-index:300;
+      flex-direction:column;align-items:center;
+      justify-content:center;text-align:center;padding:32px;
+      max-width:480px;margin:0 auto;
+    }
+    .success-overlay.show{display:flex;}
+    .success-icon{
+      width:100px;height:100px;border-radius:50%;
+      background:rgba(34,197,94,0.1);border:2px solid rgba(34,197,94,0.3);
+      display:flex;align-items:center;justify-content:center;
+      font-size:44px;color:var(--success);margin-bottom:24px;
+      animation:popIn .5s cubic-bezier(.34,1.56,.64,1) both;
+      box-shadow:0 0 40px rgba(34,197,94,0.2);
+    }
+    @keyframes popIn{from{transform:scale(0);}to{transform:scale(1);}}
+    .success-title{font-family:var(--font-display);font-size:24px;font-weight:800;margin-bottom:8px;}
+    .success-sub{font-size:14px;color:var(--text-secondary);line-height:1.6;margin-bottom:24px;max-width:300px;}
+    .success-info{
+      width:100%;background:var(--bg-card);border:1px solid var(--border);
+      border-radius:var(--radius-lg);padding:16px;text-align:left;margin-bottom:20px;
+    }
+    .sinfo-row{
+      display:flex;align-items:center;justify-content:space-between;
+      font-size:13px;padding:8px 0;border-bottom:1px solid var(--border);
+    }
+    .sinfo-row:last-child{border-bottom:none;}
+    .sinfo-label{color:var(--text-muted);}
+    .sinfo-value{font-weight:600;}
+    .done-btn{
+      width:100%;height:52px;
+      background:var(--gold);color:#000;
+      font-family:var(--font-display);font-size:15px;font-weight:800;
+      border-radius:var(--radius-pill);
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      box-shadow:0 4px 16px var(--gold-glow);
+    }
+    .done-btn:active{background:var(--gold-dark);}
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══ HEADER ══ -->
+  <div class="header">
+    <button class="back-btn" onclick="history.back()">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <span class="header-title">Return Request</span>
+    <span class="header-badge">⚠️ 3 Days Left</span>
+  </div>
+
+  <!-- ══ DEADLINE BANNER ══ -->
+  <div class="deadline-banner fu d1">
+    <div class="deadline-icon"><i class="fa-solid fa-clock"></i></div>
+    <div class="deadline-text">
+      <div class="deadline-title">Return Window Closing Soon!</div>
+      <div class="deadline-sub">You have 5 days from delivery to request a return. After this window closes, no returns will be accepted.</div>
+      <div class="deadline-timer" id="returnTimer">⏰ 2 days, 14 hrs, 32 mins remaining</div>
+    </div>
+  </div>
+
+  <!-- ══ ORDER SUMMARY ══ -->
+  <div class="order-card fu d2">
+    <div class="order-card-head">
+      <span class="order-id">#SBX-784512</span>
+      <span class="order-date">Delivered: May 20, 2024</span>
+    </div>
+    <div class="order-item">
+      <div class="order-img">
+        <!-- 🖼️ IMAGE SLOT -->
+        <i class="fa-solid fa-shirt"></i>
+      </div>
+      <div class="order-info">
+        <div class="order-name">Royal Heritage Men's Jacket</div>
+        <div class="order-variant">Color: Black / Gold &nbsp;·&nbsp; Size: L &nbsp;·&nbsp; Qty: 1</div>
+        <div class="order-price">₦28,500</div>
+      </div>
+      <span class="order-status">Delivered</span>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 1: RETURN REASON ══ -->
+  <div class="form-section fu d2">
+    <div class="section-head">
+      <div class="section-num">1</div>
+      <div class="section-title-text">Select Return Reason</div>
+    </div>
+    <div class="section-body">
+
+      <div class="reason-options">
+
+        <!-- Accepted reasons -->
+        <div class="reason-opt" onclick="selectReason(this,'wrong')">
+          <div class="reason-radio"><div class="reason-inner"></div></div>
+          <div class="reason-icon" style="background:rgba(239,68,68,0.1);">
+            <i class="fa-solid fa-box-open" style="color:var(--danger);"></i>
+          </div>
+          <div class="reason-info">
+            <div class="reason-name">Wrong Item Received</div>
+            <div class="reason-sub">Item received is different from what I ordered</div>
+          </div>
+          <span class="reason-tag tag-accepted">✓ Accepted</span>
+        </div>
+
+        <div class="reason-opt" onclick="selectReason(this,'damaged')">
+          <div class="reason-radio"><div class="reason-inner"></div></div>
+          <div class="reason-icon" style="background:rgba(239,68,68,0.1);">
+            <i class="fa-solid fa-triangle-exclamation" style="color:var(--danger);"></i>
+          </div>
+          <div class="reason-info">
+            <div class="reason-name">Item Arrived Damaged</div>
+            <div class="reason-sub">Item was damaged or broken on arrival</div>
+          </div>
+          <span class="reason-tag tag-accepted">✓ Accepted</span>
+        </div>
+
+        <div class="reason-opt" onclick="selectReason(this,'described')">
+          <div class="reason-radio"><div class="reason-inner"></div></div>
+          <div class="reason-icon" style="background:rgba(239,68,68,0.1);">
+            <i class="fa-solid fa-image" style="color:var(--danger);"></i>
+          </div>
+          <div class="reason-info">
+            <div class="reason-name">Not As Described</div>
+            <div class="reason-sub">Item is significantly different from the listing</div>
+          </div>
+          <span class="reason-tag tag-accepted">✓ Accepted</span>
+        </div>
+
+        <div class="reason-opt" onclick="selectReason(this,'doa')">
+          <div class="reason-radio"><div class="reason-inner"></div></div>
+          <div class="reason-icon" style="background:rgba(239,68,68,0.1);">
+            <i class="fa-solid fa-plug-circle-xmark" style="color:var(--danger);"></i>
+          </div>
+          <div class="reason-info">
+            <div class="reason-name">Dead on Arrival (Electronics)</div>
+            <div class="reason-sub">Electronic item doesn't work at all (report within 48hrs)</div>
+          </div>
+          <span class="reason-tag tag-accepted">✓ Accepted</span>
+        </div>
+
+        <!-- NOT accepted reasons (disabled) -->
+        <div class="reason-opt disabled" onclick="showToast('❌ This reason is not eligible for return')">
+          <div class="reason-radio"></div>
+          <div class="reason-icon" style="background:rgba(85,85,85,0.15);">
+            <i class="fa-solid fa-heart-crack" style="color:var(--text-muted);"></i>
+          </div>
+          <div class="reason-info">
+            <div class="reason-name" style="color:var(--text-muted);">Changed My Mind</div>
+            <div class="reason-sub">Not eligible for return under our policy</div>
+          </div>
+          <span class="reason-tag tag-rejected">✗ Not Eligible</span>
+        </div>
+
+        <div class="reason-opt disabled" onclick="showToast('❌ Size issues are not eligible — check size chart before ordering')">
+          <div class="reason-radio"></div>
+          <div class="reason-icon" style="background:rgba(85,85,85,0.15);">
+            <i class="fa-solid fa-ruler" style="color:var(--text-muted);"></i>
+          </div>
+          <div class="reason-info">
+            <div class="reason-name" style="color:var(--text-muted);">Wrong Size (My Mistake)</div>
+            <div class="reason-sub">Not eligible — size chart was shown before purchase</div>
+          </div>
+          <span class="reason-tag tag-rejected">✗ Not Eligible</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 2: DESCRIPTION ══ -->
+  <div class="form-section fu d3">
+    <div class="section-head">
+      <div class="section-num">2</div>
+      <div class="section-title-text">Describe the Issue</div>
+    </div>
+    <div class="section-body">
+
+      <div class="field-group">
+        <label class="field-label">Detailed Description <span class="field-req">*</span></label>
+        <textarea class="field-area" id="returnDesc" placeholder="Describe exactly what is wrong with the item. Be as specific as possible. e.g. 'I ordered a black jacket size L but received a blue jacket size M. The stitching on the left sleeve is also torn.'" maxlength="500" oninput="updateChar()"></textarea>
+        <div class="char-count"><span id="charCount">0</span>/500</div>
+        <div class="field-hint">⚠️ The more detail you provide, the faster your case is resolved. Vague descriptions may slow down the process.</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">When Did You Notice the Issue? <span class="field-req">*</span></label>
+        <div class="field-box">
+          <i class="fa-regular fa-calendar"></i>
+          <select>
+            <option value="">Select when issue was noticed</option>
+            <option>Immediately upon opening package</option>
+            <option>Within 1 hour of delivery</option>
+            <option>Same day as delivery</option>
+            <option>Next day after delivery</option>
+            <option>2–3 days after delivery</option>
+            <option>4–5 days after delivery</option>
+          </select>
+          <i class="fa-solid fa-chevron-down" style="font-size:11px;color:var(--text-muted);"></i>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Preferred Resolution <span class="field-req">*</span></label>
+        <div class="field-box">
+          <i class="fa-solid fa-hand-holding-dollar"></i>
+          <select>
+            <option value="">What do you prefer?</option>
+            <option>Full refund to original payment method</option>
+            <option>Replacement with correct item</option>
+            <option>Partial refund (keep the item)</option>
+            <option>Store credit</option>
+          </select>
+          <i class="fa-solid fa-chevron-down" style="font-size:11px;color:var(--text-muted);"></i>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ SECTION 3: PHOTO EVIDENCE ══ -->
+  <div class="form-section fu d3">
+    <div class="section-head">
+      <div class="section-num">3</div>
+      <div class="section-title-text">Photo Evidence (Required)</div>
+    </div>
+    <div class="section-body">
+
+      <div class="photo-grid">
+        <!-- Slot 1: filled (example) -->
+        <div class="photo-slot filled" onclick="showToast('📸 Change photo 1')">
+          <i class="fa-solid fa-image"></i>
+          <div class="photo-remove" onclick="event.stopPropagation();showToast('🗑️ Photo removed')">
+            <i class="fa-solid fa-xmark"></i>
+          </div>
+        </div>
+        <!-- Slot 2 -->
+        <div class="photo-slot" onclick="showToast('📷 Add photo 2')">
+          <i class="fa-solid fa-plus"></i>
+          <span>Add Photo</span>
+        </div>
+        <!-- Slot 3 -->
+        <div class="photo-slot" onclick="showToast('📷 Add photo 3')">
+          <i class="fa-solid fa-plus"></i>
+          <span>Add Photo</span>
+        </div>
+        <!-- Slot 4 -->
+        <div class="photo-slot" onclick="showToast('📷 Add photo 4')">
+          <i class="fa-solid fa-plus"></i>
+          <span>Add Photo</span>
+        </div>
+      </div>
+
+      <div class="photo-requirement">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <p>
+          <strong style="color:var(--danger);">Photo evidence is MANDATORY.</strong>
+          Without clear photos, your return request will be automatically rejected.
+          Photos must clearly show: the item received, the defect/damage, and the packaging.
+          Min 1 photo, max 4 photos.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ SECTION 4: ITEM CONDITION ══ -->
+  <div class="form-section fu d4">
+    <div class="section-head">
+      <div class="section-num">4</div>
+      <div class="section-title-text">Item Return Condition</div>
+    </div>
+    <div class="section-body">
+
+      <div class="field-group">
+        <label class="field-label">Current Item Condition <span class="field-req">*</span></label>
+        <div class="field-box">
+          <i class="fa-solid fa-box"></i>
+          <select id="itemCondition">
+            <option value="">Select item condition</option>
+            <option>Unopened — still in original packaging</option>
+            <option>Opened but unused — all tags intact</option>
+            <option>Used once — tags removed</option>
+            <option>Damaged by seller — arrived this way</option>
+          </select>
+          <i class="fa-solid fa-chevron-down" style="font-size:11px;color:var(--text-muted);"></i>
+        </div>
+        <div class="field-hint">⚠️ Items with tags removed or showing signs of use will NOT be accepted for return.</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Is Original Packaging Available? <span class="field-req">*</span></label>
+        <div class="field-box">
+          <i class="fa-solid fa-box-open"></i>
+          <select>
+            <option value="">Select packaging status</option>
+            <option>Yes — original box and packaging intact</option>
+            <option>Partially — some packaging available</option>
+            <option>No — packaging discarded</option>
+          </select>
+          <i class="fa-solid fa-chevron-down" style="font-size:11px;color:var(--text-muted);"></i>
+        </div>
+      </div>
+
+      <div class="field-group" style="margin-bottom:0;">
+        <label class="field-label">Additional Notes (optional)</label>
+        <textarea class="field-area" placeholder="Any other information that may help resolve your case faster…" style="min-height:70px;"></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ POLICY REMINDER ══ -->
+  <div class="policy-reminder fu d4">
+    <div class="policy-title"><i class="fa-solid fa-circle-info"></i> Return Policy Reminder</div>
+    <div class="policy-item ok"><i class="fa-solid fa-circle-check"></i> Returns accepted: wrong item, damaged, not as described, DOA electronics</div>
+    <div class="policy-item ok"><i class="fa-solid fa-circle-check"></i> Item must be in original condition with tags intact</div>
+    <div class="policy-item ok"><i class="fa-solid fa-circle-check"></i> Photo evidence is mandatory for all returns</div>
+    <div class="policy-item bad"><i class="fa-solid fa-circle-xmark"></i> Used, worn, or washed items will be rejected</div>
+    <div class="policy-item bad"><i class="fa-solid fa-circle-xmark"></i> Returns after 5 days of delivery are not accepted</div>
+    <div class="policy-item bad"><i class="fa-solid fa-circle-xmark"></i> False return claims = account ban + legal action</div>
+  </div>
+
+  <!-- ══ DECLARATION ══ -->
+  <div class="declaration fu d5">
+    <div class="decl-row" onclick="toggleDecl()">
+      <div class="decl-box" id="declBox"><i class="fa-solid fa-check"></i></div>
+      <p class="decl-text">
+        I declare that all information provided in this return request is <strong>truthful and accurate</strong>. I understand that submitting a <strong>false return claim is fraud</strong> and will result in permanent account ban and potential legal action under Nigerian law.
+      </p>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<!-- ══ BOTTOM BAR ══ -->
+<div class="bottom-bar">
+  <button class="btn-cancel" onclick="showToast('↩️ Return cancelled')">
+    <i class="fa-solid fa-xmark"></i> Cancel
+  </button>
+  <button class="btn-submit" id="submitBtn" onclick="submitReturn()">
+    <i class="fa-solid fa-paper-plane"></i> Submit Return Request
+  </button>
+</div>
+
+<!-- ══ SUCCESS OVERLAY ══ -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-icon">
+    <i class="fa-solid fa-rotate-left"></i>
+  </div>
+  <h2 class="success-title">Return Submitted! ✅</h2>
+  <p class="success-sub">
+    Your return request has been received. Both you and the seller have been notified. Shopbox will review and respond within <strong style="color:var(--gold);">5 business days</strong>.
+  </p>
+
+  <div class="success-info">
+    <div class="sinfo-row">
+      <span class="sinfo-label">Return ID</span>
+      <span class="sinfo-value" style="color:var(--gold);">#RTN-20240520-001</span>
+    </div>
+    <div class="sinfo-row">
+      <span class="sinfo-label">Order</span>
+      <span class="sinfo-value">#SBX-784512</span>
+    </div>
+    <div class="sinfo-row">
+      <span class="sinfo-label">Status</span>
+      <span class="sinfo-value" style="color:var(--warning,#F59E0B);">⏳ Under Review</span>
+    </div>
+    <div class="sinfo-row">
+      <span class="sinfo-label">Payment Hold</span>
+      <span class="sinfo-value" style="color:var(--danger);">₦28,500 frozen</span>
+    </div>
+    <div class="sinfo-row">
+      <span class="sinfo-label">Decision By</span>
+      <span class="sinfo-value">May 25, 2024</span>
+    </div>
+    <div class="sinfo-row">
+      <span class="sinfo-label">Notification</span>
+      <span class="sinfo-value">SMS + App</span>
+    </div>
+  </div>
+
+  <button class="done-btn" onclick="showToast('🏠 Going home…')">
+    <i class="fa-solid fa-house"></i> Back to My Orders
+  </button>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+  /* ── Reason selection ── */
+  let selectedReason = null;
+  function selectReason(el, reason) {
+    document.querySelectorAll('.reason-opt:not(.disabled)').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedReason = reason;
+  }
+
+  /* ── Char counter ── */
+  function updateChar() {
+    const len = document.getElementById('returnDesc').value.length;
+    document.getElementById('charCount').textContent = len;
+  }
+
+  /* ── Declaration toggle ── */
+  function toggleDecl() {
+    document.getElementById('declBox').classList.toggle('checked');
+  }
+
+  /* ── Countdown timer ── */
+  let seconds = (2 * 24 * 3600) + (14 * 3600) + (32 * 60);
+  function updateTimer() {
+    if (seconds <= 0) return;
+    seconds--;
+    const d = Math.floor(seconds / 86400);
+    const h = Math.floor((seconds % 86400) / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    document.getElementById('returnTimer').textContent =
+      `⏰ ${d} day${d!==1?'s':''}, ${h} hr${h!==1?'s':''}, ${m} min${m!==1?'s':''} remaining`;
+  }
+  setInterval(updateTimer, 1000);
+
+  /* ── Submit return ── */
+  function submitReturn() {
+    if (!selectedReason) {
+      showToast('⚠️ Please select a return reason!');
+      return;
+    }
+    const desc = document.getElementById('returnDesc').value.trim();
+    if (!desc) {
+      showToast('⚠️ Please describe the issue in detail!');
+      return;
+    }
+    if (!document.getElementById('declBox').classList.contains('checked')) {
+      showToast('⚠️ Please check the declaration box!');
+      return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting…';
+    btn.style.opacity = '.8';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      document.getElementById('successOverlay').classList.add('show');
+    }, 2000);
+  }
+
+  /* ── Toast ── */
+  function showToast(msg, dur = 2600) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), dur);
+  }
+</script>
+
+<style>
+  #toast {
+    position:fixed;bottom:calc(86px + 12px);
+    left:50%;transform:translateX(-50%) translateY(20px);
+    background:#1C1C1C;border:1px solid rgba(245,166,35,0.4);
+    color:#fff;font-size:13px;font-weight:500;
+    font-family:'DM Sans',sans-serif;
+    padding:10px 22px;border-radius:999px;
+    opacity:0;transition:all .3s ease;
+    z-index:9999;white-space:nowrap;pointer-events:none;
+  }
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+
+</body>
+</html>

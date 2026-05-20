@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Shopbox — Buyer Terms & Conditions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    :root {
+      --gold:#F5A623; --gold-bright:#FFB930; --gold-dark:#C47F0A;
+      --gold-muted:rgba(245,166,35,0.12); --gold-glow:rgba(245,166,35,0.28);
+      --bg-base:#0D0D0D; --bg-card:#161616; --bg-card-2:#1C1C1C;
+      --bg-input:#1A1A1A; --border:rgba(255,255,255,0.07);
+      --border-gold:rgba(245,166,35,0.32);
+      --text-primary:#FFFFFF; --text-secondary:#A0A0A0; --text-muted:#555;
+      --success:#22C55E; --danger:#EF4444;
+      --font-display:'Syne',sans-serif; --font-body:'DM Sans',sans-serif;
+      --px:16px; --radius-sm:8px; --radius-md:12px;
+      --radius-lg:16px; --radius-pill:999px; --bar-h:86px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{-webkit-tap-highlight-color:transparent;}
+    body{
+      font-family:var(--font-body); background:var(--bg-base);
+      color:var(--text-primary); min-height:100dvh;
+      -webkit-font-smoothing:antialiased;
+      padding-bottom:calc(var(--bar-h) + 16px);
+    }
+    button{cursor:pointer;border:none;background:none;font-family:inherit;color:inherit;}
+    input,textarea{font-family:inherit;outline:none;border:none;background:none;}
+    .page{max-width:480px;margin:0 auto;}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .fu{animation:fadeUp .35s ease both;}
+    .d1{animation-delay:.04s;}.d2{animation-delay:.08s;}.d3{animation-delay:.12s;}
+
+    /* ══ HEADER ══ */
+    .header{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px var(--px);
+      background:rgba(13,13,13,0.97);
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--border);
+      position:sticky;top:0;z-index:50;
+    }
+    .back-btn{
+      width:40px;height:40px;border-radius:50%;
+      background:var(--bg-card);border:1px solid var(--border);
+      display:flex;align-items:center;justify-content:center;
+      font-size:16px;transition:border-color .2s;
+    }
+    .back-btn:active{border-color:var(--border-gold);}
+    .header-logo{display:flex;align-items:center;gap:7px;}
+    .header-logo-icon{
+      width:28px;height:28px;border:1.5px solid var(--gold);
+      border-radius:7px;display:flex;align-items:center;justify-content:center;
+    }
+    .header-logo-text{font-family:var(--font-display);font-size:18px;font-weight:800;}
+    .header-logo-text .shop{color:#fff;}
+    .header-logo-text .box{color:var(--gold);}
+    .header-badge{
+      font-size:10px;font-weight:700;font-family:var(--font-display);
+      background:var(--gold-muted);border:1px solid var(--border-gold);
+      color:var(--gold);padding:4px 10px;border-radius:var(--radius-pill);
+    }
+
+    /* ══ HERO ══ */
+    .hero{
+      padding:28px var(--px) 20px;
+      position:relative;overflow:hidden;
+    }
+    .hero::before{
+      content:'';position:absolute;top:-40px;right:-40px;
+      width:200px;height:200px;
+      background:radial-gradient(circle,rgba(245,166,35,0.07) 0%,transparent 70%);
+      border-radius:50%;pointer-events:none;
+    }
+    .hero-tag{
+      display:inline-flex;align-items:center;gap:6px;
+      background:var(--gold-muted);border:1px solid var(--border-gold);
+      color:var(--gold);font-family:var(--font-display);
+      font-size:11px;font-weight:700;padding:5px 12px;
+      border-radius:var(--radius-pill);margin-bottom:12px;
+    }
+    .hero-title{
+      font-family:var(--font-display);font-size:24px;font-weight:800;
+      line-height:1.2;margin-bottom:8px;
+    }
+    .hero-title span{color:var(--gold);}
+    .hero-sub{
+      font-size:13px;color:var(--text-secondary);
+      line-height:1.6;margin-bottom:12px;
+    }
+    .hero-date{
+      font-size:11px;color:var(--text-muted);
+      display:flex;align-items:center;gap:6px;
+    }
+    .hero-date i{color:var(--gold);}
+
+    /* ══ READ PROGRESS ══ */
+    .read-wrap{
+      padding:12px var(--px);
+      background:var(--bg-card);
+      border-bottom:1px solid var(--border);
+      position:sticky;top:65px;z-index:40;
+      backdrop-filter:blur(12px);
+    }
+    .read-row{
+      display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:7px;
+    }
+    .read-label{font-size:11px;color:var(--text-muted);font-weight:600;}
+    .read-pct{font-size:11px;color:var(--gold);font-weight:800;font-family:var(--font-display);}
+    .read-track{height:4px;background:var(--border);border-radius:99px;overflow:hidden;}
+    .read-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold-dark),var(--gold-bright));border-radius:99px;transition:width .3s;}
+
+    /* ══ TABLE OF CONTENTS ══ */
+    .toc{
+      margin:16px var(--px);
+      background:var(--bg-card);border:1px solid var(--border);
+      border-radius:var(--radius-lg);overflow:hidden;
+    }
+    .toc-head{
+      padding:12px 16px;border-bottom:1px solid var(--border);
+      font-family:var(--font-display);font-size:13px;font-weight:700;
+      display:flex;align-items:center;gap:7px;
+    }
+    .toc-head i{color:var(--gold);}
+    .toc-item{
+      display:flex;align-items:center;gap:10px;
+      padding:10px 16px;border-bottom:1px solid var(--border);
+      cursor:pointer;transition:background .2s;font-size:13px;
+    }
+    .toc-item:last-child{border-bottom:none;}
+    .toc-item:active{background:var(--gold-muted);}
+    .toc-num{
+      width:22px;height:22px;border-radius:50%;
+      background:var(--gold-muted);border:1px solid var(--border-gold);
+      display:flex;align-items:center;justify-content:center;
+      font-family:var(--font-display);font-size:10px;font-weight:800;
+      color:var(--gold);flex-shrink:0;
+    }
+    .toc-text{flex:1;color:var(--text-secondary);}
+    .toc-arrow{color:var(--text-muted);font-size:11px;}
+
+    /* ══ TERMS CONTENT ══ */
+    .terms-wrap{
+      padding:0 var(--px);
+    }
+    .terms-section{
+      margin-bottom:20px;
+      background:var(--bg-card);border:1px solid var(--border);
+      border-radius:var(--radius-lg);overflow:hidden;
+    }
+    .terms-section-head{
+      padding:14px 16px;
+      border-bottom:1px solid var(--border);
+      background:var(--bg-card-2);
+      display:flex;align-items:center;gap:10px;
+    }
+    .terms-num{
+      width:28px;height:28px;border-radius:50%;
+      background:var(--gold);color:#000;
+      font-family:var(--font-display);font-size:12px;font-weight:800;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    }
+    .terms-heading{font-family:var(--font-display);font-size:14px;font-weight:800;}
+    .terms-body{padding:14px 16px;}
+    .terms-text{
+      font-size:13px;color:var(--text-secondary);
+      line-height:1.75;margin-bottom:10px;
+    }
+    .terms-text:last-child{margin-bottom:0;}
+    .terms-text strong{color:var(--text-primary);font-weight:600;}
+    .terms-text a{color:var(--gold);}
+
+    /* Rule list */
+    .rule-list{margin-bottom:10px;}
+    .rule-item{
+      display:flex;align-items:flex-start;gap:8px;
+      font-size:13px;color:var(--text-secondary);
+      margin-bottom:8px;line-height:1.5;
+    }
+    .rule-item:last-child{margin-bottom:0;}
+    .rule-item i{font-size:10px;flex-shrink:0;margin-top:3px;}
+    .rule-item.ok i{color:var(--success);}
+    .rule-item.bad i{color:var(--danger);}
+    .rule-item.warn i{color:var(--gold);}
+    .rule-item.info i{color:#818CF8;}
+
+    /* Highlight box */
+    .highlight-box{
+      border-radius:var(--radius-md);padding:12px 14px;margin-bottom:10px;
+    }
+    .highlight-box.gold{
+      background:var(--gold-muted);border:1px solid var(--border-gold);
+    }
+    .highlight-box.danger{
+      background:rgba(239,68,68,0.07);border:1px solid rgba(239,68,68,0.2);
+    }
+    .highlight-box.success{
+      background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.2);
+    }
+    .highlight-box.info{
+      background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.2);
+    }
+    .highlight-title{
+      font-family:var(--font-display);font-size:12px;font-weight:800;
+      margin-bottom:6px;display:flex;align-items:center;gap:6px;
+    }
+    .highlight-box.gold .highlight-title{color:var(--gold);}
+    .highlight-box.danger .highlight-title{color:var(--danger);}
+    .highlight-box.success .highlight-title{color:var(--success);}
+    .highlight-box.info .highlight-title{color:#818CF8;}
+    .highlight-text{font-size:12px;color:var(--text-secondary);line-height:1.6;}
+
+    /* Return policy table */
+    .policy-table{
+      background:var(--bg-card-2);border-radius:var(--radius-md);
+      overflow:hidden;margin-bottom:10px;border:1px solid var(--border);
+    }
+    .pt-head{
+      display:grid;grid-template-columns:1fr 1fr;
+      background:var(--bg-card);padding:10px 12px;
+      border-bottom:1px solid var(--border);
+    }
+    .pt-head span{font-family:var(--font-display);font-size:11px;font-weight:800;color:var(--text-muted);}
+    .pt-row{
+      display:grid;grid-template-columns:1fr 1fr;
+      padding:10px 12px;border-bottom:1px solid var(--border);
+    }
+    .pt-row:last-child{border-bottom:none;}
+    .pt-reason{font-size:12px;color:var(--text-secondary);}
+    .pt-accepted{font-size:12px;font-weight:700;}
+    .pt-accepted.yes{color:var(--success);}
+    .pt-accepted.no{color:var(--danger);}
+
+    /* ══ AGREE SECTION ══ */
+    .agree-section{
+      margin:0 var(--px) 16px;
+      background:var(--bg-card);border:1.5px solid var(--border-gold);
+      border-radius:var(--radius-lg);padding:16px;
+    }
+    .agree-title{
+      font-family:var(--font-display);font-size:15px;font-weight:800;
+      margin-bottom:14px;display:flex;align-items:center;gap:8px;
+    }
+    .agree-title i{color:var(--gold);}
+    .agree-row{
+      display:flex;align-items:flex-start;gap:10px;
+      margin-bottom:12px;cursor:pointer;
+    }
+    .agree-box{
+      width:22px;height:22px;border-radius:5px;
+      border:2px solid var(--border-gold);background:var(--gold-muted);
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;margin-top:1px;transition:all .2s;
+    }
+    .agree-box.checked{background:var(--gold);border-color:var(--gold);}
+    .agree-box i{color:#000;font-size:11px;display:none;}
+    .agree-box.checked i{display:block;}
+    .agree-text{font-size:13px;color:var(--text-secondary);line-height:1.5;}
+    .agree-text strong{color:var(--text-primary);}
+    .agree-text a{color:var(--gold);}
+
+    /* Age declaration */
+    .age-row{
+      display:flex;align-items:center;gap:10px;
+      padding:12px 14px;
+      background:var(--bg-card-2);border:1px solid var(--border);
+      border-radius:var(--radius-md);margin-bottom:14px;
+    }
+    .age-icon{font-size:20px;color:var(--gold);}
+    .age-text{flex:1;font-size:13px;color:var(--text-secondary);}
+    .age-text strong{color:var(--text-primary);}
+
+    /* ══ BOTTOM BAR ══ */
+    .bottom-bar{
+      position:fixed;bottom:0;left:0;right:0;
+      max-width:480px;margin:0 auto;
+      background:rgba(13,13,13,0.97);
+      border-top:1px solid var(--border);
+      backdrop-filter:blur(16px);
+      padding:12px var(--px);
+      padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));
+      z-index:100;display:flex;gap:10px;
+    }
+    .btn-decline-terms{
+      height:52px;flex:1;
+      background:var(--bg-card);border:1.5px solid var(--border);
+      color:var(--text-secondary);font-family:var(--font-display);
+      font-size:14px;font-weight:700;border-radius:var(--radius-pill);
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      transition:border-color .2s;
+    }
+    .btn-decline-terms:active{border-color:rgba(239,68,68,0.4);color:var(--danger);}
+    .btn-accept-terms{
+      height:52px;flex:2;
+      background:var(--gold);color:#000;
+      font-family:var(--font-display);font-size:15px;font-weight:800;
+      border-radius:var(--radius-pill);
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      box-shadow:0 4px 16px var(--gold-glow);
+      transition:background .2s,transform .15s;
+    }
+    .btn-accept-terms:active{transform:scale(0.97);background:var(--gold-dark);}
+    .btn-accept-terms:disabled{opacity:.4;pointer-events:none;}
+
+    /* ══ SUCCESS ══ */
+    .success-overlay{
+      display:none;position:fixed;inset:0;
+      background:rgba(13,13,13,0.98);z-index:300;
+      flex-direction:column;align-items:center;
+      justify-content:center;text-align:center;padding:32px;
+      max-width:480px;margin:0 auto;
+    }
+    .success-overlay.show{display:flex;}
+    .success-icon{
+      width:100px;height:100px;border-radius:50%;
+      background:var(--gold-muted);border:2px solid var(--border-gold);
+      display:flex;align-items:center;justify-content:center;
+      font-size:44px;color:var(--gold);margin-bottom:24px;
+      animation:popIn .5s cubic-bezier(.34,1.56,.64,1) both;
+      box-shadow:0 0 40px var(--gold-glow);
+    }
+    @keyframes popIn{from{transform:scale(0);}to{transform:scale(1);}}
+    .success-title{font-family:var(--font-display);font-size:24px;font-weight:800;margin-bottom:8px;}
+    .success-sub{font-size:14px;color:var(--text-secondary);line-height:1.6;margin-bottom:28px;max-width:300px;}
+    .continue-btn{
+      width:100%;height:54px;background:var(--gold);color:#000;
+      font-family:var(--font-display);font-size:16px;font-weight:800;
+      border-radius:var(--radius-pill);
+      display:flex;align-items:center;justify-content:center;gap:10px;
+      box-shadow:0 6px 24px var(--gold-glow);
+    }
+    .continue-btn:active{background:var(--gold-dark);}
+  </style>
+</head>
+<body>
+<div class="page" id="mainPage">
+
+  <!-- ══ HEADER ══ -->
+  <div class="header">
+    <button class="back-btn" onclick="history.back()">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <div class="header-logo">
+      <div class="header-logo-icon">
+        <svg viewBox="0 0 20 20" fill="none" width="16" height="16">
+          <path d="M7 7C7 5.343 8.343 4 10 4C11.657 4 13 5.343 13 7" stroke="#F5A623" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M5 7h10l-1.2 8H6.2L5 7z" stroke="#F5A623" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+          <path d="M8.5 11l1.2 1.2 2-2" stroke="#F5A623" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="header-logo-text"><span class="shop">shop</span><span class="box">box</span></div>
+    </div>
+    <span class="header-badge">Buyer Terms</span>
+  </div>
+
+  <!-- ══ READ PROGRESS ══ -->
+  <div class="read-wrap">
+    <div class="read-row">
+      <span class="read-label">Reading progress</span>
+      <span class="read-pct" id="readPct">0% read</span>
+    </div>
+    <div class="read-track">
+      <div class="read-fill" id="readFill"></div>
+    </div>
+  </div>
+
+  <!-- ══ HERO ══ -->
+  <div class="hero fu d1">
+    <div class="hero-tag"><i class="fa-solid fa-file-contract"></i> Legal Agreement</div>
+    <h1 class="hero-title">Buyer Terms &<br><span>Conditions</span></h1>
+    <p class="hero-sub">Please read these terms carefully before creating a Shopbox account or making any purchase. By signing up, you agree to be bound by these terms.</p>
+    <div class="hero-date">
+      <i class="fa-regular fa-calendar"></i>
+      Last updated: May 15, 2026 &nbsp;·&nbsp; Effective immediately
+    </div>
+  </div>
+
+  <!-- ══ TABLE OF CONTENTS ══ -->
+  <div class="toc fu d2">
+    <div class="toc-head"><i class="fa-solid fa-list"></i> Table of Contents</div>
+    <div class="toc-item" onclick="scrollTo('s1')"><div class="toc-num">1</div><span class="toc-text">Eligibility & Account</span><i class="fa-solid fa-arrow-right toc-arrow"></i></div>
+    <div class="toc-item" onclick="scrollTo('s2')"><div class="toc-num">2</div><span class="toc-text">Ordering & Payment</span><i class="fa-solid fa-arrow-right toc-arrow"></i></div>
+    <div class="toc-item" onclick="scrollTo('s3')"><div class="toc-num">3</div><span class="toc-text">Delivery & Receipt</span><i class="fa-solid fa-arrow-right toc-arrow"></i></div>
+    <div class="toc-item" onclick="scrollTo('s4')"><div class="toc-num">4</div><span class="toc-text">Returns & Refunds Policy</span><i class="fa-solid fa-arrow-right toc-arrow"></i></div>
+    <div class="toc-item" onclick="scrollTo('s5')"><div class="toc-num">5</div><span class="toc-text">Anti-Fraud & Anti-Abuse</span><i class="fa-solid fa-arrow-right toc-arrow"></i></div>
+    <div class="toc-item" onclick="scrollTo('s6')"><div class="toc-num">6</div><span class="toc-text">Reviews & Conduct</span><i class="fa-solid fa-arrow-right toc-arrow"></i></div>
+    <div class="toc-item" onclick="scrollTo('s7')"><div class="toc-num">7</div><span class="toc-text">Shopbox Liability</span><i class="fa-solid fa-arrow-right toc-arrow"></i></div>
+    <div class="toc-item" onclick="scrollTo('s8')"><div class="toc-num">8</div><span class="toc-text">Data & Privacy</span><i class="fa-solid fa-arrow-right toc-arrow"></i></div>
+    <div class="toc-item" onclick="scrollTo('s9')"><div class="toc-num">9</div><span class="toc-text">Dispute Resolution</span><i class="fa-solid fa-arrow-right toc-arrow"></i></div>
+    <div class="toc-item" onclick="scrollTo('s10')"><div class="toc-num">10</div><span class="toc-text">Governing Law</span><i class="fa-solid fa-arrow-right toc-arrow"></i></div>
+  </div>
+
+  <!-- ══ TERMS CONTENT ══ -->
+  <div class="terms-wrap">
+
+    <!-- Section 1 -->
+    <div class="terms-section fu d2" id="s1">
+      <div class="terms-section-head">
+        <div class="terms-num">1</div>
+        <div class="terms-heading">Eligibility & Account Requirements</div>
+      </div>
+      <div class="terms-body">
+        <div class="highlight-box gold">
+          <div class="highlight-title"><i class="fa-solid fa-user-check"></i> Who Can Use Shopbox</div>
+          <div class="highlight-text">Shopbox is available to individuals aged 18 and above. By creating an account, you confirm you meet this requirement.</div>
+        </div>
+        <div class="rule-list">
+          <div class="rule-item ok"><i class="fa-solid fa-circle-check"></i> You must be at least <strong>18 years old</strong></div>
+          <div class="rule-item ok"><i class="fa-solid fa-circle-check"></i> You must provide your <strong>real name and valid phone number</strong></div>
+          <div class="rule-item ok"><i class="fa-solid fa-circle-check"></i> <strong>One account per person</strong> — multiple accounts are not permitted</div>
+          <div class="rule-item ok"><i class="fa-solid fa-circle-check"></i> Your account is <strong>personal and non-transferable</strong></div>
+          <div class="rule-item bad"><i class="fa-solid fa-circle-xmark"></i> Do NOT share your account with others</div>
+          <div class="rule-item bad"><i class="fa-solid fa-circle-xmark"></i> Do NOT create accounts using false information</div>
+          <div class="rule-item bad"><i class="fa-solid fa-circle-xmark"></i> Do NOT create duplicate accounts — all will be banned</div>
+        </div>
+        <div class="terms-text">Shopbox reserves the right to verify your identity at any time. Failure to verify or providing false information will result in immediate account termination and forfeiture of any pending orders or refunds.</div>
+      </div>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="terms-section fu d2" id="s2">
+      <div class="terms-section-head">
+        <div class="terms-num">2</div>
+        <div class="terms-heading">Ordering & Payment</div>
+      </div>
+      <div class="terms-body">
+        <div class="terms-text">All prices on Shopbox are displayed in <strong>Nigerian Naira (₦)</strong> unless otherwise stated. Prices include applicable taxes but do not include delivery fees unless stated as free delivery.</div>
+        <div class="rule-list">
+          <div class="rule-item ok"><i class="fa-solid fa-circle-check"></i> All payments are processed securely through <strong>Paystack</strong></div>
+          <div class="rule-item ok"><i class="fa-solid fa-circle-check"></i> Accepted: Card, Bank Transfer, Opay, PalmPay, USSD</div>
+          <div class="rule-item ok"><i class="fa-solid fa-circle-check"></i> Your payment is held safely until delivery is confirmed</div>
+          <div class="rule-item warn"><i class="fa-solid fa-triangle-exclamation"></i> Orders cannot be modified after payment is confirmed</div>
+          <div class="rule-item warn"><i class="fa-solid fa-triangle-exclamation"></i> Delivery address must be <strong>accurate</strong> — wrong address is buyer's responsibility</div>
+          <div class="rule-item bad"><i class="fa-solid fa-circle-xmark"></i> Do NOT attempt chargebacks without contacting Shopbox first</div>
+          <div class="rule-item bad"><i class="fa-solid fa-circle-xmark"></i> Fraudulent chargebacks result in permanent account ban</div>
+        </div>
+        <div class="highlight-box success">
+          <div class="highlight-title"><i class="fa-solid fa-shield-halved"></i> Payment Protection</div>
+          <div class="highlight-text">Your money is never released to the seller until delivery is confirmed and the 7-day return window has passed. Your funds are always protected.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="terms-section fu d3" id="s3">
+      <div class="terms-section-head">
+        <div class="terms-num">3</div>
+        <div class="terms-heading">Delivery & Receipt</div>
+      </div>
+      <div class="terms-body">
+        <div class="rule-list">
+          <div class="rule-item ok"><i class="fa-solid fa-circle-check"></i> Delivery timeframes are estimates — not guaranteed dates</div>
+          <div class="rule-item ok"><i class="fa-solid fa-circle-check"></i> You will receive SMS and app notifications on delivery status</div>
+          <div class="rule-item ok"><i class="fa-solid fa-circle-check"></i> <strong>Inspect your item immediately</strong> upon receipt</div>
+          <div class="rule-item warn"><i class="fa-solid fa-triangle-exclamation"></i> You must confirm delivery in the app or it auto-confirms after 48 hours</div>
+          <div class="rule-item warn"><i class="fa-solid fa-triangle-exclamation"></i> Ensure someone is available at delivery address to receive the item</div>
+          <div class="rule-item bad"><i class="fa-solid fa-circle-xmark"></i> Failed delivery due to wrong address or unavailability = buyer's cost to redeliver</div>
+        </div>
+        <div class="terms-text">For international orders via our dropship partners, delivery may take <strong>7–21 business days</strong>. Customs duties (if applicable) are the buyer's responsibility.</div>
+      </div>
+    </div>
+
+    <!-- Section 4 — Returns (most important) -->
+    <div class="terms-section fu d3" id="s4">
+      <div class="terms-section-head">
+        <div class="terms-num">4</div>
+        <div class="terms-heading">Returns & Refunds Policy</div>
+      </div>
+      <div class="terms-body">
+        <div class="highlight-box danger">
+          <div class="highlight-title"><i class="fa-solid fa-triangle-exclamation"></i> STRICT RETURN POLICY — READ CAREFULLY</div>
+          <div class="highlight-text">Returns are only accepted under specific circumstances. Attempting to abuse our return policy will result in account suspension and blacklisting.</div>
+        </div>
+
+        <div class="terms-text" style="margin-bottom:12px;"><strong>Return Window: 5 days from delivery confirmation only.</strong> No exceptions after this period.</div>
+
+        <!-- Policy table -->
+        <div class="policy-table">
+          <div class="pt-head">
+            <span>Return Reason</span>
+            <span>Accepted?</span>
+          </div>
+          <div class="pt-row">
+            <span class="pt-reason">Wrong item received</span>
+            <span class="pt-accepted yes">✓ Yes</span>
+          </div>
+          <div class="pt-row">
+            <span class="pt-reason">Item arrived damaged</span>
+            <span class="pt-accepted yes">✓ Yes</span>
+          </div>
+          <div class="pt-row">
+            <span class="pt-reason">Not as described</span>
+            <span class="pt-accepted yes">✓ Yes</span>
+          </div>
+          <div class="pt-row">
+            <span class="pt-reason">Electronics dead on arrival (48hrs)</span>
+            <span class="pt-accepted yes">✓ Yes</span>
+          </div>
+          <div class="pt-row">
+            <span class="pt-reason">Changed my mind</span>
+            <span class="pt-accepted no">✗ No</span>
+          </div>
+          <div class="pt-row">
+            <span class="pt-reason">Wrong size ordered</span>
+            <span class="pt-accepted no">✗ No</span>
+          </div>
+          <div class="pt-row">
+            <span class="pt-reason">Item used / worn</span>
+            <span class="pt-accepted no">✗ No</span>
+          </div>
+          <div class="pt-row">
+            <span class="pt-reason">Tags removed / packaging opened</span>
+            <span class="pt-accepted no">✗ No</span>
+          </div>
+          <div class="pt-row">
+            <span class="pt-reason">After 5 days of delivery</span>
+            <span class="pt-accepted no">✗ No</span>
+          </div>
+        </div>
+
+        <div class="rule-list">
+          <div class="rule-item warn"><i class="fa-solid fa-triangle-exclamation"></i> <strong>Photo evidence is MANDATORY</strong> for all return requests</div>
+          <div class="rule-item warn"><i class="fa-solid fa-triangle-exclamation"></i> Items must be in original condition, packaging, with tags intact</div>
+          <div class="rule-item bad"><i class="fa-solid fa-circle-xmark"></i> Items showing ANY signs of use will be automatically rejected</div>
+          <div class="rule-item bad"><i class="fa-solid fa-circle-xmark"></i> Wearing shoes to a party and returning them is <strong>fraud</strong> — account banned</div>
+          <div class="rule-item bad"><i class="fa-solid fa-circle-xmark"></i> Using an appliance/electronics and returning = rejected + flagged account</div>
+          <div class="rule-item ok"><i class="fa-solid fa-circle-check"></i> Approved refunds processed within 3–5 business days</div>
+          <div class="rule-item ok"><i class="fa-solid fa-circle-check"></i> Refund returned to your original payment method</div>
+        </div>
+
+        <div class="terms-text">Shopbox's decision on all return disputes is <strong>final and binding</strong>. We reserve the right to reject any return request that shows signs of misuse or abuse.</div>
+      </div>
+    </div>
+
+    <!-- Section 5 -->
+    <div class="terms-section fu d3" id="s5">
+      <div class="terms-section-head">
+        <div class="terms-num">5</div>
+        <div class="terms-heading">Anti-Fraud & Anti-Abuse Rules</div>
+      </div>
+      <div class="terms-body">
+        <div class="highlight-box danger">
+          <div class="highlight-title"><i class="fa-solid fa-ban"></i> Zero Tolerance Policy</div>
+          <div class="highlight-text">Any attempt to defraud Shopbox, sellers, or other buyers will result in immediate permanent account ban, withholding of refunds, and potential legal action.</div>
+        </div>
+        <div class="rule-list">
+          <div class="rule-item bad"><i class="fa-solid fa-circle-xmark"></i> Filing false return claims</div>
+          <div class="rule-item bad"><i class="fa-solid fa-circle-xmark"></i> Unauthorized chargebacks / bank disputes</div>
+          <div class="rule-item bad"><i class="fa-solid fa-circle-xmark"></i> Creating multiple accounts to abuse promotions</div>
+          <div class="rule-item bad"><i class="fa-solid fa-circle-xmark"></i> Claiming non-delivery when item was received</div>
+          <div class="rule-item bad"><i class="fa-solid fa-circle-xmark"></i> Keeping item AND getting refund — this is theft</div>
+          <div class="rule-item bad"><i class="fa-solid fa-circle-xmark"></i> Threatening or harassing sellers</div>
+          <div class="rule-item bad"><i class="fa-solid fa-circle-xmark"></i> Returning a different/damaged item than what was received</div>
+        </div>
+        <div class="terms-text"><strong>Return history is tracked.</strong> Buyers with 3+ return requests in 90 days will be flagged for review. Suspicious patterns lead to account investigation and potential suspension.</div>
+      </div>
+    </div>
+
+    <!-- Section 6 -->
+    <div class="terms-section fu d3" id="s6">
+      <div class="terms-section-head">
+        <div class="terms-num">6</div>
+        <div class="terms-heading">Reviews & Conduct</div>
+      </div>
+      <div class="terms-body">
+        <div class="rule-list">
+          <div class="rule-item ok"><i class="fa-solid fa-circle-check"></i> You have <strong>5 days</strong> after delivery to leave a review</div>
+          <div class="rule-item ok"><i class="fa-solid fa-circle-check"></i> Reviews must be honest and based on actual experience</div>
+          <div class="rule-item bad"><i class="fa-solid fa-circle-xmark"></i> No fake, paid, or incentivized reviews</div>
+          <div class="rule-item bad"><i class="fa-solid fa-circle-xmark"></i> No abusive, hateful or discriminatory language</div>
+          <div class="rule-item bad"><i class="fa-solid fa-circle-xmark"></i> No personal information of sellers in reviews</div>
+          <div class="rule-item bad"><i class="fa-solid fa-circle-xmark"></i> Threatening sellers for refunds outside the policy = ban</div>
+        </div>
+        <div class="terms-text">Shopbox may remove reviews that violate these guidelines without notice.</div>
+      </div>
+    </div>
+
+    <!-- Section 7 -->
+    <div class="terms-section fu d3" id="s7">
+      <div class="terms-section-head">
+        <div class="terms-num">7</div>
+        <div class="terms-heading">Shopbox Liability</div>
+      </div>
+      <div class="terms-body">
+        <div class="highlight-box info">
+          <div class="highlight-title"><i class="fa-solid fa-circle-info"></i> Marketplace Platform</div>
+          <div class="highlight-text">Shopbox is a marketplace platform connecting buyers with sellers. We do not manufacture, own, or inspect local seller products directly.</div>
+        </div>
+        <div class="terms-text">Shopbox is <strong>not liable</strong> for: product quality beyond our review process, seller behaviour outside our platform, delivery delays caused by third-party couriers, or force majeure events.</div>
+        <div class="terms-text">Shopbox <strong>is responsible</strong> for: secure payment processing, dispute mediation, enforcing seller standards, and our buyer protection policy.</div>
+      </div>
+    </div>
+
+    <!-- Section 8 -->
+    <div class="terms-section fu d3" id="s8">
+      <div class="terms-section-head">
+        <div class="terms-num">8</div>
+        <div class="terms-heading">Data & Privacy</div>
+      </div>
+      <div class="terms-body">
+        <div class="rule-list">
+          <div class="rule-item ok"><i class="fa-solid fa-circle-check"></i> Your data is encrypted and stored securely</div>
+          <div class="rule-item ok"><i class="fa-solid fa-circle-check"></i> We never sell your personal data to third parties</div>
+          <div class="rule-item ok"><i class="fa-solid fa-circle-check"></i> Your payment details are never stored on our servers</div>
+          <div class="rule-item ok"><i class="fa-solid fa-circle-check"></i> You can request data deletion at any time</div>
+          <div class="rule-item warn"><i class="fa-solid fa-triangle-exclamation"></i> We may share anonymized data for analytics purposes</div>
+          <div class="rule-item warn"><i class="fa-solid fa-triangle-exclamation"></i> Order information is shared with sellers to fulfill orders</div>
+        </div>
+        <div class="terms-text">By using Shopbox, you consent to our <a href="#">Privacy Policy</a> and <a href="#">Cookie Policy</a>. You may update your data preferences in Account Settings at any time.</div>
+      </div>
+    </div>
+
+    <!-- Section 9 -->
+    <div class="terms-section fu d3" id="s9">
+      <div class="terms-section-head">
+        <div class="terms-num">9</div>
+        <div class="terms-heading">Dispute Resolution</div>
+      </div>
+      <div class="terms-body">
+        <div class="terms-text">If you have a dispute with a seller, follow this process:</div>
+        <div class="rule-list">
+          <div class="rule-item info"><i class="fa-solid fa-circle-dot"></i> <strong>Step 1:</strong> Contact seller directly through Shopbox chat</div>
+          <div class="rule-item info"><i class="fa-solid fa-circle-dot"></i> <strong>Step 2:</strong> If unresolved, open a formal dispute through Shopbox support</div>
+          <div class="rule-item info"><i class="fa-solid fa-circle-dot"></i> <strong>Step 3:</strong> Shopbox mediates — both parties provide evidence</div>
+          <div class="rule-item info"><i class="fa-solid fa-circle-dot"></i> <strong>Step 4:</strong> Shopbox issues a final decision within 5 business days</div>
+        </div>
+        <div class="highlight-box gold">
+          <div class="highlight-title"><i class="fa-solid fa-gavel"></i> Final Decision</div>
+          <div class="highlight-text">Shopbox's decision on all disputes is final and binding. By using our platform, you agree to accept our mediation process as the primary resolution mechanism.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 10 -->
+    <div class="terms-section fu d3" id="s10">
+      <div class="terms-section-head">
+        <div class="terms-num">10</div>
+        <div class="terms-heading">Governing Law</div>
+      </div>
+      <div class="terms-body">
+        <div class="terms-text">These terms are governed by the laws of the <strong>Federal Republic of Nigeria</strong>. Any unresolved disputes shall be referred to the appropriate courts in Nigeria.</div>
+        <div class="terms-text">Shopbox reserves the right to update these Terms at any time. Continued use of the platform after updates constitutes acceptance of the new terms. Major changes will be communicated via app notification and email.</div>
+        <div class="terms-text" style="color:var(--text-muted);font-size:11px;">Questions? Contact us: support@shopbox.ng · Mon–Fri 8AM–8PM · 24/7 live chat in-app</div>
+      </div>
+    </div>
+
+  </div><!-- /terms-wrap -->
+
+  <!-- ══ AGREE SECTION ══ -->
+  <div class="agree-section fu d3">
+    <div class="agree-title"><i class="fa-solid fa-file-signature"></i> I Agree & Accept</div>
+
+    <div class="age-row">
+      <div class="age-icon"><i class="fa-solid fa-birthday-cake"></i></div>
+      <div class="age-text">I confirm I am <strong>18 years of age or older</strong> and legally capable of entering into this agreement.</div>
+    </div>
+
+    <div class="agree-row" onclick="toggleAgree('a1')">
+      <div class="agree-box" id="a1"><i class="fa-solid fa-check"></i></div>
+      <p class="agree-text">I have read and understood the <strong>Returns & Refunds Policy</strong> and accept that returns are only accepted under the stated conditions.</p>
+    </div>
+
+    <div class="agree-row" onclick="toggleAgree('a2')">
+      <div class="agree-box" id="a2"><i class="fa-solid fa-check"></i></div>
+      <p class="agree-text">I understand that <strong>fraudulent returns, chargebacks, or abuse</strong> of the platform will result in permanent account ban.</p>
+    </div>
+
+    <div class="agree-row" onclick="toggleAgree('a3')">
+      <div class="agree-box" id="a3"><i class="fa-solid fa-check"></i></div>
+      <p class="agree-text">I agree that <strong>Shopbox's decision is final</strong> on all buyer-seller disputes.</p>
+    </div>
+
+    <div class="agree-row" onclick="toggleAgree('a4')">
+      <div class="agree-box" id="a4"><i class="fa-solid fa-check"></i></div>
+      <p class="agree-text">I have read, understood, and agree to all <strong>Shopbox Buyer Terms & Conditions</strong> and <a href="#">Privacy Policy</a> in full.</p>
+    </div>
+
+  </div>
+
+</div><!-- /page -->
+
+<!-- ══ BOTTOM BAR ══ -->
+<div class="bottom-bar">
+  <button class="btn-decline-terms" onclick="showToast('↩️ Returning to login…')">
+    <i class="fa-solid fa-xmark"></i> Decline
+  </button>
+  <button class="btn-accept-terms" id="acceptBtn" onclick="acceptTerms()">
+    <i class="fa-solid fa-check"></i> Accept & Continue
+  </button>
+</div>
+
+<!-- ══ SUCCESS ══ -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-icon"><i class="fa-solid fa-shield-halved"></i></div>
+  <h2 class="success-title">All Set! 🎉</h2>
+  <p class="success-sub">You've accepted the Shopbox Buyer Terms. Your account is now fully active. Happy shopping!</p>
+  <button class="continue-btn" onclick="showToast('🛍️ Welcome to Shopbox!')">
+    <i class="fa-solid fa-bag-shopping"></i> Start Shopping
+  </button>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+  /* ── Read progress tracker ── */
+  window.addEventListener('scroll', () => {
+    const doc  = document.documentElement;
+    const pct  = Math.round((doc.scrollTop / (doc.scrollHeight - doc.clientHeight)) * 100);
+    document.getElementById('readFill').style.width = pct + '%';
+    document.getElementById('readPct').textContent  = pct + '% read';
+  });
+
+  /* ── Scroll to section ── */
+  function scrollTo(id) {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /* ── Agree checkboxes ── */
+  function toggleAgree(id) {
+    document.getElementById(id).classList.toggle('checked');
+  }
+
+  /* ── Accept terms ── */
+  function acceptTerms() {
+    const checks = ['a1','a2','a3','a4'];
+    for (const c of checks) {
+      if (!document.getElementById(c).classList.contains('checked')) {
+        showToast('⚠️ Please check all agreement boxes first!');
+        return;
+      }
+    }
+    const btn = document.getElementById('acceptBtn');
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing…';
+    btn.disabled  = true;
+    setTimeout(() => {
+      document.getElementById('successOverlay').classList.add('show');
+    }, 1500);
+  }
+
+  /* ── Toast ── */
+  function showToast(msg, dur = 2600) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), dur);
+  }
+</script>
+
+<style>
+  #toast {
+    position:fixed;bottom:calc(86px + 12px);
+    left:50%;transform:translateX(-50%) translateY(20px);
+    background:#1C1C1C;border:1px solid rgba(245,166,35,0.4);
+    color:#fff;font-size:13px;font-weight:500;
+    font-family:'DM Sans',sans-serif;
+    padding:10px 22px;border-radius:999px;
+    opacity:0;transition:all .3s ease;
+    z-index:9999;white-space:nowrap;pointer-events:none;
+  }
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+
+</body>
+</html>

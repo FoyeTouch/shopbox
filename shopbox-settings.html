@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Shopbox — Settings</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --gold:          #F5A623;
+      --gold-bright:   #FFB930;
+      --gold-dark:     #C47F0A;
+      --gold-muted:    rgba(245,166,35,0.12);
+      --gold-glow:     rgba(245,166,35,0.28);
+      --bg-base:       #0D0D0D;
+      --bg-card:       #161616;
+      --bg-card-2:     #1C1C1C;
+      --border:        rgba(255,255,255,0.07);
+      --border-gold:   rgba(245,166,35,0.32);
+      --text-primary:  #FFFFFF;
+      --text-secondary:#A0A0A0;
+      --text-muted:    #555555;
+      --success:       #22C55E;
+      --danger:        #EF4444;
+      --font-display:  'Syne', sans-serif;
+      --font-body:     'DM Sans', sans-serif;
+      --px:            16px;
+      --radius-sm:     8px;
+      --radius-md:     12px;
+      --radius-lg:     16px;
+      --radius-pill:   999px;
+      --nav-h:         68px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100dvh;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: calc(var(--nav-h) + 16px);
+    }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; }
+    a { text-decoration: none; color: inherit; }
+    .page { max-width: 480px; margin: 0 auto; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);} }
+    .fu{animation:fadeUp .35s ease both;}
+    .d1{animation-delay:.04s;}.d2{animation-delay:.08s;}.d3{animation-delay:.12s;}
+    .d4{animation-delay:.16s;}.d5{animation-delay:.20s;}.d6{animation-delay:.24s;}
+
+    /* ══════════════════════════════════════
+       HEADER
+    ══════════════════════════════════════ */
+    .header {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 14px var(--px);
+      background: rgba(13,13,13,0.97);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 50;
+    }
+    .back-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--bg-card); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; transition: border-color .2s;
+    }
+    .back-btn:active { border-color: var(--border-gold); }
+    .header-title {
+      font-family: var(--font-display);
+      font-size: 18px; font-weight: 800;
+    }
+    .header-space { width: 40px; }
+
+    /* ══════════════════════════════════════
+       PROFILE MINI CARD
+    ══════════════════════════════════════ */
+    .profile-mini {
+      margin: 16px var(--px);
+      background: linear-gradient(135deg, #1a1200 0%, var(--bg-card) 100%);
+      border: 1.5px solid var(--border-gold);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex; align-items: center; gap: 14px;
+      cursor: pointer; transition: border-color .2s;
+      position: relative; overflow: hidden;
+    }
+    .profile-mini::before {
+      content: '';
+      position: absolute; top: -20px; right: -20px;
+      width: 100px; height: 100px;
+      background: radial-gradient(circle, rgba(245,166,35,0.1) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .profile-mini:active { border-color: var(--gold); }
+    .mini-avatar {
+      width: 54px; height: 54px; border-radius: 50%;
+      background: var(--gold-muted);
+      border: 2px solid var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; color: var(--gold); flex-shrink: 0;
+      box-shadow: 0 0 16px var(--gold-glow);
+      overflow: hidden;
+    }
+    .mini-avatar img { width:100%; height:100%; object-fit:cover; }
+    .mini-info { flex: 1; min-width: 0; }
+    .mini-name {
+      font-family: var(--font-display);
+      font-size: 16px; font-weight: 800; margin-bottom: 2px;
+    }
+    .mini-email { font-size: 12px; color: var(--text-secondary); margin-bottom: 5px; }
+    .mini-edit {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 700;
+      color: var(--gold); font-family: var(--font-display);
+    }
+    .mini-arrow { color: var(--text-muted); font-size: 14px; }
+
+    /* ══════════════════════════════════════
+       SECTION GROUPS
+    ══════════════════════════════════════ */
+    .settings-section { margin: 0 var(--px) 14px; }
+    .section-label {
+      font-size: 11px; font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: .08em;
+      font-family: var(--font-display);
+      margin-bottom: 8px; padding-left: 2px;
+    }
+    .settings-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    /* ══════════════════════════════════════
+       SETTINGS ITEM
+    ══════════════════════════════════════ */
+    .settings-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer; transition: background .2s;
+      position: relative;
+    }
+    .settings-item:last-child { border-bottom: none; }
+    .settings-item:active { background: var(--bg-card-2); }
+
+    .settings-icon {
+      width: 38px; height: 38px; border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+    .settings-text { flex: 1; min-width: 0; }
+    .settings-title { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+    .settings-sub { font-size: 12px; color: var(--text-muted); }
+    .settings-right {
+      display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+    }
+    .settings-value {
+      font-size: 13px; color: var(--text-secondary); font-weight: 500;
+    }
+    .settings-arrow { color: var(--text-muted); font-size: 12px; }
+
+    /* ══════════════════════════════════════
+       TOGGLE SWITCH
+    ══════════════════════════════════════ */
+    .toggle {
+      width: 46px; height: 26px; border-radius: 99px;
+      background: var(--bg-card-2); border: 1px solid var(--border);
+      position: relative; cursor: pointer;
+      transition: background .25s, border-color .25s;
+      flex-shrink: 0;
+    }
+    .toggle.on { background: var(--gold); border-color: var(--gold); }
+    .toggle-knob {
+      position: absolute; top: 3px; left: 3px;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: #fff; transition: transform .25s;
+      box-shadow: 0 1px 4px rgba(0,0,0,.3);
+    }
+    .toggle.on .toggle-knob { transform: translateX(20px); }
+
+    /* ══════════════════════════════════════
+       LANGUAGE / CURRENCY SELECTOR SHEET
+    ══════════════════════════════════════ */
+    .sheet-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.65);
+      backdrop-filter: blur(4px);
+      z-index: 200; opacity: 0; pointer-events: none;
+      transition: opacity .3s;
+    }
+    .sheet-overlay.open { opacity: 1; pointer-events: all; }
+
+    .bottom-sheet {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      max-width: 480px; margin: 0 auto;
+      background: var(--bg-card);
+      border-radius: 24px 24px 0 0;
+      border-top: 1px solid var(--border);
+      padding: 20px var(--px) 40px;
+      z-index: 201;
+      transform: translateY(100%);
+      transition: transform .35s cubic-bezier(.4,0,.2,1);
+      max-height: 80vh; overflow-y: auto;
+    }
+    .bottom-sheet.open { transform: translateY(0); }
+    .sheet-handle {
+      width: 40px; height: 4px;
+      background: var(--border); border-radius: 99px;
+      margin: 0 auto 20px;
+    }
+    .sheet-title {
+      font-family: var(--font-display);
+      font-size: 17px; font-weight: 800; margin-bottom: 16px;
+    }
+
+    /* Sheet search */
+    .sheet-search {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--bg-card-2); border: 1.5px solid var(--border);
+      border-radius: var(--radius-pill); padding: 0 14px; height: 44px;
+      margin-bottom: 14px; transition: border-color .2s;
+    }
+    .sheet-search:focus-within { border-color: var(--border-gold); }
+    .sheet-search i { color: var(--text-muted); font-size: 14px; }
+    .sheet-search input {
+      flex: 1; background: none; border: none; outline: none;
+      font-family: var(--font-body); font-size: 14px; color: var(--text-primary);
+    }
+    .sheet-search input::placeholder { color: var(--text-muted); }
+
+    /* Sheet option */
+    .sheet-option {
+      display: flex; align-items: center; gap: 12px;
+      padding: 13px 12px; border-radius: var(--radius-md);
+      cursor: pointer; transition: background .2s; margin-bottom: 2px;
+    }
+    .sheet-option:active { background: var(--bg-card-2); }
+    .sheet-option.selected { background: var(--gold-muted); }
+    .sheet-option-flag { font-size: 22px; }
+    .sheet-option-text { flex: 1; font-size: 14px; font-weight: 500; }
+    .sheet-option-check { color: var(--gold); font-size: 14px; }
+
+    /* ══════════════════════════════════════
+       DANGER ZONE
+    ══════════════════════════════════════ */
+    .danger-section { margin: 0 var(--px) 14px; }
+    .danger-card {
+      background: rgba(239,68,68,0.05);
+      border: 1px solid rgba(239,68,68,0.15);
+      border-radius: var(--radius-lg); overflow: hidden;
+    }
+    .danger-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(239,68,68,0.1);
+      cursor: pointer; transition: background .2s;
+    }
+    .danger-item:last-child { border-bottom: none; }
+    .danger-item:active { background: rgba(239,68,68,0.1); }
+    .danger-icon {
+      width: 38px; height: 38px; border-radius: var(--radius-sm);
+      background: rgba(239,68,68,0.1);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--danger); font-size: 16px; flex-shrink: 0;
+    }
+    .danger-title { font-size: 14px; font-weight: 600; color: var(--danger); }
+    .danger-sub { font-size: 12px; color: rgba(239,68,68,0.6); margin-top: 2px; }
+
+    /* App info */
+    .app-info {
+      text-align: center; padding: 20px var(--px);
+      opacity: .45;
+    }
+    .app-info-logo {
+      font-family: var(--font-display);
+      font-size: 18px; font-weight: 800; margin-bottom: 4px;
+    }
+    .app-info-logo span { color: var(--gold); }
+    .app-info-version { font-size: 11px; color: var(--text-muted); }
+
+    /* ══════════════════════════════════════
+       BOTTOM NAV
+    ══════════════════════════════════════ */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      background: rgba(18,18,18,0.97);
+      border-top: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      display: flex; align-items: center; justify-content: space-around;
+      z-index: 100; max-width: 480px; margin: 0 auto;
+      padding-bottom: env(safe-area-inset-bottom,0px);
+    }
+    .nav-item {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 4px; flex: 1;
+      padding: 8px 4px 4px; cursor: pointer;
+    }
+    .nav-item:active { opacity: .7; }
+    .nav-icon { font-size: 20px; color: var(--text-muted); }
+    .nav-item.active .nav-icon { color: var(--gold); }
+    .nav-label { font-family: var(--font-display); font-size: 10px; font-weight: 600; color: var(--text-muted); }
+    .nav-item.active .nav-label { color: var(--gold); }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══ HEADER ══ -->
+  <div class="header">
+    <button class="back-btn" onclick="history.back()">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <span class="header-title">Settings</span>
+    <div class="header-space"></div>
+  </div>
+
+  <!-- ══ PROFILE MINI ══ -->
+  <div class="profile-mini fu d1" onclick="showToast('👤 Edit Profile')">
+    <div class="mini-avatar">
+      <!-- 🖼️ IMAGE SLOT <img src="profile.jpg" /> -->
+      <i class="fa-solid fa-user"></i>
+    </div>
+    <div class="mini-info">
+      <div class="mini-name">John Doe</div>
+      <div class="mini-email">johndoe@email.com</div>
+      <div class="mini-edit">
+        <i class="fa-solid fa-pen" style="font-size:10px;"></i> Edit Profile
+      </div>
+    </div>
+    <i class="fa-solid fa-chevron-right mini-arrow"></i>
+  </div>
+
+  <!-- ══ ACCOUNT ══ -->
+  <div class="settings-section fu d2">
+    <div class="section-label">Account</div>
+    <div class="settings-card">
+
+      <div class="settings-item" onclick="showToast('👤 Profile Information')">
+        <div class="settings-icon" style="background:var(--gold-muted);">
+          <i class="fa-regular fa-user" style="color:var(--gold);"></i>
+        </div>
+        <div class="settings-text">
+          <div class="settings-title">Profile Information</div>
+          <div class="settings-sub">Name, email, phone number</div>
+        </div>
+        <div class="settings-right">
+          <i class="fa-solid fa-chevron-right settings-arrow"></i>
+        </div>
+      </div>
+
+      <div class="settings-item" onclick="showToast('🔒 Change Password')">
+        <div class="settings-icon" style="background:rgba(99,102,241,0.1);">
+          <i class="fa-solid fa-lock" style="color:#818CF8;"></i>
+        </div>
+        <div class="settings-text">
+          <div class="settings-title">Change Password</div>
+          <div class="settings-sub">Update your password</div>
+        </div>
+        <div class="settings-right">
+          <i class="fa-solid fa-chevron-right settings-arrow"></i>
+        </div>
+      </div>
+
+      <div class="settings-item" onclick="showToast('📍 Manage Addresses')">
+        <div class="settings-icon" style="background:rgba(34,197,94,0.1);">
+          <i class="fa-solid fa-location-dot" style="color:var(--success);"></i>
+        </div>
+        <div class="settings-text">
+          <div class="settings-title">Manage Addresses</div>
+          <div class="settings-sub">2 saved addresses</div>
+        </div>
+        <div class="settings-right">
+          <span class="settings-value">2</span>
+          <i class="fa-solid fa-chevron-right settings-arrow"></i>
+        </div>
+      </div>
+
+      <div class="settings-item" onclick="showToast('💳 Payment Methods')">
+        <div class="settings-icon" style="background:rgba(251,191,36,0.1);">
+          <i class="fa-solid fa-credit-card" style="color:#FBBF24;"></i>
+        </div>
+        <div class="settings-text">
+          <div class="settings-title">Payment Methods</div>
+          <div class="settings-sub">Cards, Paystack, bank accounts</div>
+        </div>
+        <div class="settings-right">
+          <i class="fa-solid fa-chevron-right settings-arrow"></i>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ NOTIFICATIONS ══ -->
+  <div class="settings-section fu d3">
+    <div class="section-label">Notifications</div>
+    <div class="settings-card">
+
+      <div class="settings-item">
+        <div class="settings-icon" style="background:rgba(99,102,241,0.1);">
+          <i class="fa-regular fa-bell" style="color:#818CF8;"></i>
+        </div>
+        <div class="settings-text">
+          <div class="settings-title">Push Notifications</div>
+          <div class="settings-sub">Orders, deals, updates</div>
+        </div>
+        <div class="toggle on" onclick="toggleSwitch(this,'Push Notifications')">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+
+      <div class="settings-item">
+        <div class="settings-icon" style="background:rgba(34,197,94,0.1);">
+          <i class="fa-solid fa-envelope" style="color:var(--success);"></i>
+        </div>
+        <div class="settings-text">
+          <div class="settings-title">Email Notifications</div>
+          <div class="settings-sub">Order updates via email</div>
+        </div>
+        <div class="toggle on" onclick="toggleSwitch(this,'Email Notifications')">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+
+      <div class="settings-item">
+        <div class="settings-icon" style="background:rgba(37,211,102,0.1);">
+          <i class="fa-brands fa-whatsapp" style="color:#25D366;"></i>
+        </div>
+        <div class="settings-text">
+          <div class="settings-title">WhatsApp Updates</div>
+          <div class="settings-sub">Order tracking on WhatsApp</div>
+        </div>
+        <div class="toggle" onclick="toggleSwitch(this,'WhatsApp Updates')">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+
+      <div class="settings-item">
+        <div class="settings-icon" style="background:rgba(239,68,68,0.1);">
+          <i class="fa-solid fa-bolt" style="color:var(--danger);"></i>
+        </div>
+        <div class="settings-text">
+          <div class="settings-title">Flash Sale Alerts</div>
+          <div class="settings-sub">Be first to know about deals</div>
+        </div>
+        <div class="toggle on" onclick="toggleSwitch(this,'Flash Sale Alerts')">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+
+      <div class="settings-item">
+        <div class="settings-icon" style="background:var(--gold-muted);">
+          <i class="fa-solid fa-arrow-trend-down" style="color:var(--gold);"></i>
+        </div>
+        <div class="settings-text">
+          <div class="settings-title">Price Drop Alerts</div>
+          <div class="settings-sub">Wishlist item price changes</div>
+        </div>
+        <div class="toggle on" onclick="toggleSwitch(this,'Price Drop Alerts')">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ PREFERENCES ══ -->
+  <div class="settings-section fu d4">
+    <div class="section-label">Preferences</div>
+    <div class="settings-card">
+
+      <div class="settings-item" onclick="openSheet('language')">
+        <div class="settings-icon" style="background:rgba(245,166,35,0.1);">
+          <i class="fa-solid fa-globe" style="color:var(--gold);"></i>
+        </div>
+        <div class="settings-text">
+          <div class="settings-title">Language</div>
+          <div class="settings-sub">App display language</div>
+        </div>
+        <div class="settings-right">
+          <span class="settings-value" id="langValue">English</span>
+          <i class="fa-solid fa-chevron-right settings-arrow"></i>
+        </div>
+      </div>
+
+      <div class="settings-item" onclick="openSheet('currency')">
+        <div class="settings-icon" style="background:rgba(34,197,94,0.1);">
+          <i class="fa-solid fa-naira-sign" style="color:var(--success);"></i>
+        </div>
+        <div class="settings-text">
+          <div class="settings-title">Currency</div>
+          <div class="settings-sub">Display prices in</div>
+        </div>
+        <div class="settings-right">
+          <span class="settings-value" id="currValue">NGN (₦)</span>
+          <i class="fa-solid fa-chevron-right settings-arrow"></i>
+        </div>
+      </div>
+
+      <div class="settings-item">
+        <div class="settings-icon" style="background:rgba(156,163,175,0.1);">
+          <i class="fa-solid fa-moon" style="color:#9CA3AF;"></i>
+        </div>
+        <div class="settings-text">
+          <div class="settings-title">Dark Mode</div>
+          <div class="settings-sub">Always on for Shopbox ✨</div>
+        </div>
+        <div class="toggle on" style="pointer-events:none; opacity:.5;">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+
+      <div class="settings-item">
+        <div class="settings-icon" style="background:rgba(99,102,241,0.1);">
+          <i class="fa-solid fa-hand-sparkles" style="color:#818CF8;"></i>
+        </div>
+        <div class="settings-text">
+          <div class="settings-title">Biometric Login</div>
+          <div class="settings-sub">Fingerprint / Face ID</div>
+        </div>
+        <div class="toggle" onclick="toggleSwitch(this,'Biometric Login')">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ PRIVACY & SECURITY ══ -->
+  <div class="settings-section fu d4">
+    <div class="section-label">Privacy & Security</div>
+    <div class="settings-card">
+
+      <div class="settings-item" onclick="showToast('🔒 Two-Factor Authentication')">
+        <div class="settings-icon" style="background:rgba(34,197,94,0.1);">
+          <i class="fa-solid fa-shield-halved" style="color:var(--success);"></i>
+        </div>
+        <div class="settings-text">
+          <div class="settings-title">Two-Factor Auth</div>
+          <div class="settings-sub">Extra layer of security</div>
+        </div>
+        <div class="settings-right">
+          <span style="font-size:11px; color:var(--danger); font-weight:600;">OFF</span>
+          <i class="fa-solid fa-chevron-right settings-arrow"></i>
+        </div>
+      </div>
+
+      <div class="settings-item" onclick="showToast('🔑 Active Sessions')">
+        <div class="settings-icon" style="background:rgba(251,191,36,0.1);">
+          <i class="fa-solid fa-mobile-screen" style="color:#FBBF24;"></i>
+        </div>
+        <div class="settings-text">
+          <div class="settings-title">Active Sessions</div>
+          <div class="settings-sub">Manage logged-in devices</div>
+        </div>
+        <div class="settings-right">
+          <span class="settings-value">1 device</span>
+          <i class="fa-solid fa-chevron-right settings-arrow"></i>
+        </div>
+      </div>
+
+      <div class="settings-item" onclick="showToast('📜 Privacy Policy')">
+        <div class="settings-icon" style="background:rgba(99,102,241,0.1);">
+          <i class="fa-solid fa-file-shield" style="color:#818CF8;"></i>
+        </div>
+        <div class="settings-text">
+          <div class="settings-title">Privacy Policy</div>
+          <div class="settings-sub">How we use your data</div>
+        </div>
+        <div class="settings-right">
+          <i class="fa-solid fa-chevron-right settings-arrow"></i>
+        </div>
+      </div>
+
+      <div class="settings-item" onclick="showToast('📋 Terms of Service')">
+        <div class="settings-icon" style="background:rgba(156,163,175,0.1);">
+          <i class="fa-solid fa-file-lines" style="color:#9CA3AF;"></i>
+        </div>
+        <div class="settings-text">
+          <div class="settings-title">Terms of Service</div>
+          <div class="settings-sub">Read our terms</div>
+        </div>
+        <div class="settings-right">
+          <i class="fa-solid fa-chevron-right settings-arrow"></i>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ SUPPORT ══ -->
+  <div class="settings-section fu d5">
+    <div class="section-label">Support</div>
+    <div class="settings-card">
+
+      <div class="settings-item" onclick="showToast('📞 Contacting support…')">
+        <div class="settings-icon" style="background:rgba(34,197,94,0.1);">
+          <i class="fa-solid fa-headset" style="color:var(--success);"></i>
+        </div>
+        <div class="settings-text">
+          <div class="settings-title">Help & Support</div>
+          <div class="settings-sub">24/7 customer service</div>
+        </div>
+        <div class="settings-right">
+          <i class="fa-solid fa-chevron-right settings-arrow"></i>
+        </div>
+      </div>
+
+      <div class="settings-item" onclick="showToast('⭐ Rating Shopbox…')">
+        <div class="settings-icon" style="background:rgba(245,166,35,0.1);">
+          <i class="fa-solid fa-star" style="color:var(--gold);"></i>
+        </div>
+        <div class="settings-text">
+          <div class="settings-title">Rate Shopbox</div>
+          <div class="settings-sub">Enjoying the app? Let us know!</div>
+        </div>
+        <div class="settings-right">
+          <i class="fa-solid fa-chevron-right settings-arrow"></i>
+        </div>
+      </div>
+
+      <div class="settings-item" onclick="showToast('🔄 Checking for updates…')">
+        <div class="settings-icon" style="background:rgba(99,102,241,0.1);">
+          <i class="fa-solid fa-rotate" style="color:#818CF8;"></i>
+        </div>
+        <div class="settings-text">
+          <div class="settings-title">Check for Updates</div>
+          <div class="settings-sub">v1.0.0 — You're up to date ✅</div>
+        </div>
+        <div class="settings-right">
+          <span style="font-size:11px; color:var(--success); font-weight:600;">Latest</span>
+          <i class="fa-solid fa-chevron-right settings-arrow"></i>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ DANGER ZONE ══ -->
+  <div class="danger-section fu d6">
+    <div class="section-label" style="color:rgba(239,68,68,0.6);">Danger Zone</div>
+    <div class="danger-card">
+
+      <div class="danger-item" onclick="confirmLogout()">
+        <div class="danger-icon">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </div>
+        <div>
+          <div class="danger-title">Log Out</div>
+          <div class="danger-sub">Sign out of your account</div>
+        </div>
+      </div>
+
+      <div class="danger-item" onclick="confirmDelete()">
+        <div class="danger-icon">
+          <i class="fa-solid fa-user-slash"></i>
+        </div>
+        <div>
+          <div class="danger-title">Delete Account</div>
+          <div class="danger-sub">Permanently remove your data</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- App info -->
+  <div class="app-info fu d6">
+    <div class="app-info-logo">shop<span>box</span></div>
+    <div class="app-info-version">Version 1.0.0 · Made with ❤️ for Nigeria & the world</div>
+  </div>
+
+</div><!-- /page -->
+
+<!-- ══ LANGUAGE SHEET ══ -->
+<div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet()"></div>
+<div class="bottom-sheet" id="bottomSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title" id="sheetTitle">Select Language</div>
+  <div class="sheet-search">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="text" placeholder="Search…" oninput="filterSheet(this.value)" id="sheetSearchInput" />
+  </div>
+  <div id="sheetOptions"></div>
+</div>
+
+<!-- ══ BOTTOM NAV ══ -->
+<nav class="bottom-nav">
+  <div class="nav-item" onclick="showToast('🏠 Home')">
+    <div class="nav-icon"><i class="fa-solid fa-house"></i></div>
+    <span class="nav-label">Home</span>
+  </div>
+  <div class="nav-item" onclick="showToast('📂 Categories')">
+    <div class="nav-icon"><i class="fa-solid fa-table-cells-large"></i></div>
+    <span class="nav-label">Categories</span>
+  </div>
+  <div class="nav-item" onclick="showToast('❤️ Wishlist')">
+    <div class="nav-icon"><i class="fa-regular fa-heart"></i></div>
+    <span class="nav-label">Wishlist</span>
+  </div>
+  <div class="nav-item" onclick="showToast('📦 Orders')">
+    <div class="nav-icon"><i class="fa-solid fa-box"></i></div>
+    <span class="nav-label">Orders</span>
+  </div>
+  <div class="nav-item active" onclick="showToast('👤 Account')">
+    <div class="nav-icon"><i class="fa-regular fa-user"></i></div>
+    <span class="nav-label">Account</span>
+  </div>
+</nav>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+  /* ══ Toggle switch ══ */
+  function toggleSwitch(el, name) {
+    el.classList.toggle('on');
+    const on = el.classList.contains('on');
+    showToast(`${on ? '✅' : '🔕'} ${name} ${on ? 'enabled' : 'disabled'}`);
+  }
+
+  /* ══ Sheet data ══ */
+  const sheetData = {
+    language: {
+      title: 'Select Language',
+      selected: 'English',
+      valueId: 'langValue',
+      options: [
+        { flag:'🇬🇧', label:'English', value:'English' },
+        { flag:'🇫🇷', label:'French', value:'French' },
+        { flag:'🇳🇬', label:'Pidgin English', value:'Pidgin English' },
+        { flag:'🇸🇦', label:'Arabic', value:'Arabic' },
+        { flag:'🇪🇸', label:'Spanish', value:'Spanish' },
+        { flag:'🇩🇪', label:'German', value:'German' },
+        { flag:'🇵🇹', label:'Portuguese', value:'Portuguese' },
+        { flag:'🇮🇹', label:'Italian', value:'Italian' },
+        { flag:'🇨🇳', label:'Chinese (Simplified)', value:'Chinese' },
+        { flag:'🇯🇵', label:'Japanese', value:'Japanese' },
+      ]
+    },
+    currency: {
+      title: 'Select Currency',
+      selected: 'NGN (₦)',
+      valueId: 'currValue',
+      options: [
+        { flag:'🇳🇬', label:'Nigerian Naira (₦)', value:'NGN (₦)' },
+        { flag:'🇺🇸', label:'US Dollar ($)', value:'USD ($)' },
+        { flag:'🇬🇧', label:'British Pound (£)', value:'GBP (£)' },
+        { flag:'🇪🇺', label:'Euro (€)', value:'EUR (€)' },
+        { flag:'🇬🇭', label:'Ghanaian Cedi (₵)', value:'GHS (₵)' },
+        { flag:'🇰🇪', label:'Kenyan Shilling (KSh)', value:'KES (KSh)' },
+        { flag:'🇿🇦', label:'South African Rand (R)', value:'ZAR (R)' },
+        { flag:'🇦🇪', label:'UAE Dirham (AED)', value:'AED' },
+        { flag:'🇨🇦', label:'Canadian Dollar (CA$)', value:'CAD (CA$)' },
+        { flag:'🇦🇺', label:'Australian Dollar (A$)', value:'AUD (A$)' },
+      ]
+    }
+  };
+
+  let currentSheet = null;
+  let allOptions   = [];
+
+  function openSheet(type) {
+    currentSheet = type;
+    const data   = sheetData[type];
+    document.getElementById('sheetTitle').textContent = data.title;
+    document.getElementById('sheetSearchInput').value = '';
+    allOptions = data.options;
+    renderOptions(allOptions, data.selected);
+    document.getElementById('sheetOverlay').classList.add('open');
+    document.getElementById('bottomSheet').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSheet() {
+    document.getElementById('sheetOverlay').classList.remove('open');
+    document.getElementById('bottomSheet').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function renderOptions(opts, selected) {
+    const container = document.getElementById('sheetOptions');
+    container.innerHTML = opts.map(o => `
+      <div class="sheet-option ${o.value === selected ? 'selected' : ''}"
+           onclick="selectOption('${o.value}')">
+        <span class="sheet-option-flag">${o.flag}</span>
+        <span class="sheet-option-text">${o.label}</span>
+        ${o.value === selected ? '<i class="fa-solid fa-check sheet-option-check"></i>' : ''}
+      </div>
+    `).join('');
+  }
+
+  function selectOption(value) {
+    const data = sheetData[currentSheet];
+    data.selected = value;
+    document.getElementById(data.valueId).textContent = value;
+    renderOptions(allOptions, value);
+    setTimeout(() => {
+      closeSheet();
+      showToast(`✅ ${currentSheet === 'language' ? 'Language' : 'Currency'} set to ${value}`);
+    }, 300);
+  }
+
+  function filterSheet(query) {
+    const filtered = allOptions.filter(o =>
+      o.label.toLowerCase().includes(query.toLowerCase())
+    );
+    renderOptions(filtered, sheetData[currentSheet].selected);
+  }
+
+  /* ══ Danger zone ══ */
+  function confirmLogout() {
+    if (confirm('Are you sure you want to log out?')) {
+      showToast('👋 Logged out successfully!');
+    }
+  }
+  function confirmDelete() {
+    if (confirm('⚠️ This will permanently delete your account and all data. Are you sure?')) {
+      showToast('🗑️ Account deletion request submitted');
+    }
+  }
+
+  /* ══ Toast ══ */
+  function showToast(msg, dur = 2600) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), dur);
+  }
+</script>
+
+<style>
+  #toast {
+    position: fixed; bottom: calc(68px + 12px);
+    left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #1C1C1C; border: 1px solid rgba(245,166,35,0.4);
+    color: #fff; font-size: 13px; font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    padding: 10px 22px; border-radius: 999px;
+    opacity: 0; transition: all .3s ease;
+    z-index: 9999; white-space: nowrap; pointer-events: none;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+
+</body>
+</html>

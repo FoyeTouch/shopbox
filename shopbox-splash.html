@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Shopbox</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --gold:        #F5A623;
+      --gold-bright: #FFB930;
+      --gold-dark:   #C47F0A;
+      --gold-muted:  rgba(245,166,35,0.15);
+      --gold-glow:   rgba(245,166,35,0.4);
+      --bg-base:     #0D0D0D;
+      --bg-card:     #161616;
+      --border:      rgba(255,255,255,0.07);
+      --border-gold: rgba(245,166,35,0.35);
+      --text-primary:#FFFFFF;
+      --text-secondary:#A0A0A0;
+      --font-display:'Syne', sans-serif;
+      --font-body:   'DM Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font-body);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    /* ══════════════════════════════════════
+       SPLASH WRAPPER
+    ══════════════════════════════════════ */
+    .splash {
+      max-width: 480px;
+      margin: 0 auto;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ── Background radial glow ── */
+    .splash::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 380px;
+      height: 380px;
+      background: radial-gradient(circle, rgba(245,166,35,0.12) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: pulse 3s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    /* ── Outer ring ── */
+    .splash::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px;
+      height: 300px;
+      border: 1px solid var(--border-gold);
+      border-radius: 50%;
+      opacity: 0.3;
+      animation: ringPulse 3s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      50%       { transform: translate(-50%, -50%) scale(1.1); opacity: 0.7; }
+    }
+    @keyframes ringPulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+      50%       { transform: translate(-50%, -50%) scale(1.08); opacity: 0.15; }
+    }
+
+    /* ── Decorative floating dots ── */
+    .dot {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--gold);
+      opacity: 0.18;
+      animation: float linear infinite;
+    }
+    .dot-1 { width:6px; height:6px; top:18%; left:14%;  animation-duration:6s;  animation-delay:0s; }
+    .dot-2 { width:4px; height:4px; top:28%; right:12%; animation-duration:8s;  animation-delay:1s; }
+    .dot-3 { width:8px; height:8px; top:72%; left:18%;  animation-duration:7s;  animation-delay:2s; }
+    .dot-4 { width:5px; height:5px; top:65%; right:16%; animation-duration:9s;  animation-delay:0.5s; }
+    .dot-5 { width:3px; height:3px; top:40%; left:8%;   animation-duration:5s;  animation-delay:1.5s; }
+    .dot-6 { width:7px; height:7px; top:80%; right:22%; animation-duration:10s; animation-delay:3s; }
+
+    @keyframes float {
+      0%   { transform: translateY(0px) rotate(0deg);   }
+      33%  { transform: translateY(-12px) rotate(120deg); }
+      66%  { transform: translateY(6px) rotate(240deg);  }
+      100% { transform: translateY(0px) rotate(360deg);  }
+    }
+
+    /* ── Corner gold lines (decorative) ── */
+    .corner {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      opacity: 0.25;
+    }
+    .corner-tl { top: 32px; left: 24px; border-top: 1.5px solid var(--gold); border-left: 1.5px solid var(--gold); border-radius: 4px 0 0 0; }
+    .corner-tr { top: 32px; right: 24px; border-top: 1.5px solid var(--gold); border-right: 1.5px solid var(--gold); border-radius: 0 4px 0 0; }
+    .corner-bl { bottom: 100px; left: 24px; border-bottom: 1.5px solid var(--gold); border-left: 1.5px solid var(--gold); border-radius: 0 0 0 4px; }
+    .corner-br { bottom: 100px; right: 24px; border-bottom: 1.5px solid var(--gold); border-right: 1.5px solid var(--gold); border-radius: 0 0 4px 0; }
+
+    /* ══════════════════════════════════════
+       LOGO AREA
+    ══════════════════════════════════════ */
+    .logo-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      position: relative;
+      z-index: 2;
+      opacity: 0;
+      animation: logoIn .7s ease .3s forwards;
+    }
+
+    @keyframes logoIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Logo icon box */
+    .logo-icon-box {
+      width: 90px;
+      height: 90px;
+      border: 2px solid var(--gold);
+      border-radius: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--gold-muted);
+      position: relative;
+      box-shadow: 0 0 40px var(--gold-glow), inset 0 0 20px rgba(245,166,35,0.05);
+      animation: iconGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes iconGlow {
+      0%, 100% { box-shadow: 0 0 30px var(--gold-glow), inset 0 0 20px rgba(245,166,35,0.05); }
+      50%       { box-shadow: 0 0 60px var(--gold-glow), inset 0 0 30px rgba(245,166,35,0.1); }
+    }
+
+    .logo-icon-box svg {
+      width: 46px;
+      height: 46px;
+    }
+
+    /* Logo text */
+    .logo-text {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+    .logo-text .shop { color: #fff; }
+    .logo-text .box  { color: var(--gold); }
+
+    /* Tagline */
+    .tagline {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      letter-spacing: 0.04em;
+      margin-top: -8px;
+    }
+
+    /* ══════════════════════════════════════
+       LOADING BAR
+    ══════════════════════════════════════ */
+    .loader-wrap {
+      position: absolute;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      z-index: 2;
+      opacity: 0;
+      animation: fadeIn .5s ease 1s forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .loader-track {
+      width: 160px;
+      height: 3px;
+      background: var(--bg-card);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .loader-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--gold-dark), var(--gold-bright));
+      border-radius: 99px;
+      animation: loadBar 2.5s ease 1.2s forwards;
+    }
+    @keyframes loadBar {
+      0%   { width: 0%; }
+      40%  { width: 55%; }
+      70%  { width: 78%; }
+      100% { width: 100%; }
+    }
+
+    .loader-text {
+      font-size: 11px;
+      color: var(--text-secondary);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-family: var(--font-display);
+      font-weight: 600;
+    }
+
+    /* ── Three dots (alternative loader) ── */
+    .dots-loader {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .dots-loader span {
+      width: 6px; height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: dotBounce .8s ease infinite;
+    }
+    .dots-loader span:nth-child(2) { animation-delay: .15s; }
+    .dots-loader span:nth-child(3) { animation-delay: .30s; }
+
+    @keyframes dotBounce {
+      0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+      40%           { transform: scale(1);   opacity: 1; }
+    }
+
+    /* ══════════════════════════════════════
+       VERSION TAG
+    ══════════════════════════════════════ */
+    .version {
+      position: absolute;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      color: var(--text-secondary);
+      opacity: 0.45;
+      letter-spacing: 0.08em;
+      z-index: 2;
+      white-space: nowrap;
+    }
+
+    /* ══════════════════════════════════════
+       FULL SCREEN FADE OUT (before redirect)
+    ══════════════════════════════════════ */
+    .splash.exit {
+      animation: exitFade .5s ease forwards;
+    }
+    @keyframes exitFade {
+      from { opacity: 1; }
+      to   { opacity: 0; }
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="splash" id="splash">
+
+  <!-- Decorative corners -->
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+
+  <!-- Floating dots -->
+  <div class="dot dot-1"></div>
+  <div class="dot dot-2"></div>
+  <div class="dot dot-3"></div>
+  <div class="dot dot-4"></div>
+  <div class="dot dot-5"></div>
+  <div class="dot dot-6"></div>
+
+  <!-- Logo -->
+  <div class="logo-wrap">
+
+    <!-- Icon box -->
+    <div class="logo-icon-box">
+      <!--
+        🖼️ LOGO SLOT — replace SVG with your actual logo icon when ready
+        Or use <img src="your-logo.png" width="46" height="46" />
+      -->
+      <svg viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Handle / arc -->
+        <path d="M16 18C16 13.582 19.134 10 23 10C26.866 10 30 13.582 30 18"
+              stroke="#F5A623" stroke-width="2.2" stroke-linecap="round"/>
+        <!-- Bag body -->
+        <path d="M11 18H35L32.2 36H13.8L11 18Z"
+              stroke="#F5A623" stroke-width="2" stroke-linejoin="round" fill="none"/>
+        <!-- Checkmark inside -->
+        <path d="M19 27L22 30L28 24"
+              stroke="#F5A623" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <!-- Text logo -->
+    <div class="logo-text">
+      <span class="shop">shop</span><span class="box">box</span>
+    </div>
+
+    <!-- Tagline -->
+    <p class="tagline">Shop Smarter. Live Better.</p>
+
+  </div>
+
+  <!-- Loading bar -->
+  <div class="loader-wrap">
+    <div class="loader-track">
+      <div class="loader-bar" id="loaderBar"></div>
+    </div>
+    <div class="dots-loader">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <!-- Version -->
+  <p class="version">Shopbox v1.0 &nbsp;·&nbsp; Fast delivery to Nigeria &amp; worldwide</p>
+
+</div>
+
+<script>
+  /* ── Auto-redirect to homepage after loading ── */
+  setTimeout(() => {
+    const splash = document.getElementById('splash');
+    splash.classList.add('exit');
+
+    // After fade out, redirect
+    // In production: change 'index.html' to your actual homepage path
+    setTimeout(() => {
+      // window.location.href = 'index.html';
+      // For preview — just show a message
+      document.body.style.background = '#0D0D0D';
+      splash.innerHTML = `
+        <div style="text-align:center; opacity:0.5; font-family:'DM Sans',sans-serif;">
+          <p style="color:#F5A623; font-size:13px; margin-bottom:6px;">✓ Splash complete</p>
+          <p style="color:#555; font-size:11px;">Would redirect to homepage</p>
+        </div>`;
+      splash.style.opacity = '1';
+      splash.style.animation = 'none';
+    }, 500);
+
+  }, 3800); // 3.8 seconds total splash duration
+</script>
+
+</body>
+</html>

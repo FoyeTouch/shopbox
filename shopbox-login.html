@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Shopbox — Login / Sign Up</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --gold:         #F5A623;
+      --gold-bright:  #FFB930;
+      --gold-dark:    #C47F0A;
+      --gold-muted:   rgba(245,166,35,0.12);
+      --gold-glow:    rgba(245,166,35,0.30);
+      --bg-base:      #0D0D0D;
+      --bg-card:      #161616;
+      --bg-card-2:    #1C1C1C;
+      --bg-input:     #1A1A1A;
+      --border:       rgba(255,255,255,0.07);
+      --border-gold:  rgba(245,166,35,0.35);
+      --text-primary: #FFFFFF;
+      --text-secondary:#A0A0A0;
+      --text-muted:   #555555;
+      --danger:       #EF4444;
+      --success:      #22C55E;
+      --font-display: 'Syne', sans-serif;
+      --font-body:    'DM Sans', sans-serif;
+      --px:           20px;
+      --radius-sm:    8px;
+      --radius-md:    12px;
+      --radius-lg:    16px;
+      --radius-xl:    24px;
+      --radius-pill:  999px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100dvh;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; }
+    input  { font-family: inherit; outline: none; border: none; background: none; }
+    a      { text-decoration: none; color: inherit; }
+
+    /* ══════════════════════════════════════
+       PAGE WRAPPER
+    ══════════════════════════════════════ */
+    .page {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ── Top decorative gold arc ── */
+    .top-arc {
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 500px;
+      height: 300px;
+      background: radial-gradient(ellipse at center top, rgba(245,166,35,0.1) 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Back button ── */
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: var(--px);
+      width: 40px; height: 40px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-primary);
+      font-size: 16px;
+      z-index: 10;
+      transition: border-color .2s;
+    }
+    .back-btn:active { border-color: var(--border-gold); }
+
+    /* ══════════════════════════════════════
+       TOP IMAGE / ILLUSTRATION AREA
+    ══════════════════════════════════════ */
+    .hero-img-area {
+      width: 100%;
+      height: 240px;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    /* Gradient overlay so text reads over any image */
+    .hero-img-area::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom,
+        rgba(13,13,13,0.2) 0%,
+        rgba(13,13,13,0.85) 100%);
+    }
+
+    .hero-img-area img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+    }
+
+    /* Placeholder shown when no image uploaded */
+    .hero-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .hero-placeholder-icon {
+      font-size: 64px;
+      color: var(--gold);
+      opacity: 0.15;
+    }
+
+    /* Logo overlay on top of image */
+    .hero-logo {
+      position: absolute;
+      bottom: 24px;
+      left: var(--px);
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .hero-logo-icon {
+      width: 40px; height: 40px;
+      border: 1.8px solid var(--gold);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(13,13,13,0.6);
+      backdrop-filter: blur(6px);
+    }
+    .hero-logo-text {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 800;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+    }
+    .hero-logo-text .shop { color: #fff; }
+    .hero-logo-text .box  { color: var(--gold); }
+
+    /* ══════════════════════════════════════
+       CARD / FORM AREA
+    ══════════════════════════════════════ */
+    .form-card {
+      flex: 1;
+      background: var(--bg-base);
+      border-radius: 28px 28px 0 0;
+      margin-top: -28px;
+      padding: 28px var(--px) 40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Tab switcher: Login | Sign Up */
+    .tab-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-pill);
+      padding: 4px;
+      margin-bottom: 28px;
+    }
+    .tab-btn {
+      padding: 10px;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-align: center;
+      transition: all .25s ease;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: var(--gold);
+      color: #000;
+      box-shadow: 0 4px 16px var(--gold-glow);
+    }
+
+    /* Greeting text */
+    .form-greeting {
+      margin-bottom: 24px;
+    }
+    .form-title {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .form-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* ── Input group ── */
+    .input-group {
+      margin-bottom: 14px;
+    }
+    .input-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 7px;
+      display: block;
+      letter-spacing: 0.03em;
+    }
+    .input-box {
+      display: flex;
+      align-items: center;
+      background: var(--bg-input);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0 14px;
+      height: 52px;
+      gap: 10px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .input-box:focus-within {
+      border-color: var(--border-gold);
+      box-shadow: 0 0 0 3px var(--gold-muted);
+    }
+    .input-box.error {
+      border-color: var(--danger);
+      box-shadow: 0 0 0 3px rgba(239,68,68,0.1);
+    }
+    .input-box i {
+      color: var(--text-muted);
+      font-size: 16px;
+      flex-shrink: 0;
+      width: 18px;
+      text-align: center;
+    }
+    .input-box input {
+      flex: 1;
+      font-size: 15px;
+      color: var(--text-primary);
+      background: none;
+      min-width: 0;
+    }
+    .input-box input::placeholder { color: var(--text-muted); font-size: 14px; }
+
+    /* Password toggle */
+    .pw-toggle {
+      color: var(--text-muted);
+      font-size: 15px;
+      padding: 4px;
+      cursor: pointer;
+      transition: color .2s;
+      flex-shrink: 0;
+    }
+    .pw-toggle:hover { color: var(--gold); }
+
+    /* Error message */
+    .input-error {
+      font-size: 11px;
+      color: var(--danger);
+      margin-top: 5px;
+      padding-left: 2px;
+      display: none;
+    }
+    .input-group.has-error .input-error { display: block; }
+
+    /* Phone row: flag + code + number */
+    .phone-row {
+      display: flex;
+      gap: 8px;
+    }
+    .phone-code {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-input);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0 12px;
+      height: 52px;
+      flex-shrink: 0;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color .2s;
+      white-space: nowrap;
+    }
+    .phone-code:focus-within { border-color: var(--border-gold); }
+    .flag { font-size: 18px; }
+
+    /* ── Forgot password ── */
+    .forgot {
+      text-align: right;
+      margin-top: -6px;
+      margin-bottom: 20px;
+    }
+    .forgot a {
+      font-size: 13px;
+      color: var(--gold);
+      font-weight: 500;
+    }
+
+    /* ── Checkbox row ── */
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .check-box {
+      width: 18px; height: 18px;
+      border: 1.5px solid var(--border-gold);
+      border-radius: 5px;
+      background: var(--gold-muted);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .check-box.checked {
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+    .check-box i { color: #000; font-size: 10px; display: none; }
+    .check-box.checked i { display: block; }
+    .check-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .check-label a { color: var(--gold); font-weight: 500; }
+
+    /* ── Primary button ── */
+    .btn-primary {
+      width: 100%;
+      height: 54px;
+      background: var(--gold);
+      color: #000;
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 800;
+      border-radius: var(--radius-pill);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 8px 28px var(--gold-glow);
+      transition: transform .15s, background .2s;
+      margin-bottom: 20px;
+    }
+    .btn-primary:active { transform: scale(0.97); background: var(--gold-dark); }
+
+    /* ── Divider ── */
+    .or-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .or-line { flex: 1; height: 1px; background: var(--border); }
+    .or-text  { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+
+    /* ── Social buttons ── */
+    .social-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .btn-social {
+      height: 48px;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      transition: border-color .2s, transform .15s;
+    }
+    .btn-social:active { transform: scale(0.97); border-color: var(--border-gold); }
+    .btn-social img { width: 20px; height: 20px; }
+
+    /* Google 'G' icon */
+    .google-g {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      color: #4285F4;
+      flex-shrink: 0;
+    }
+
+    /* Apple icon */
+    .apple-icon { font-size: 18px; }
+
+    /* ── Switch tab link ── */
+    .switch-text {
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .switch-text a {
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    /* ── Password strength bar ── */
+    .pw-strength {
+      margin-top: 6px;
+      display: none;
+    }
+    .pw-strength.show { display: block; }
+    .pw-strength-track {
+      height: 3px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+    .pw-strength-bar {
+      height: 100%;
+      border-radius: 99px;
+      transition: width .3s, background .3s;
+      width: 0%;
+    }
+    .pw-strength-label {
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(16px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .fu  { animation: fadeUp .4s ease both; }
+    .d1  { animation-delay:.05s; }
+    .d2  { animation-delay:.10s; }
+    .d3  { animation-delay:.15s; }
+    .d4  { animation-delay:.20s; }
+    .d5  { animation-delay:.25s; }
+    .d6  { animation-delay:.30s; }
+
+    /* Panel switch */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Top glow -->
+  <div class="top-arc"></div>
+
+  <!-- Back button -->
+  <button class="back-btn" onclick="history.back()">
+    <i class="fa-solid fa-arrow-left"></i>
+  </button>
+
+  <!-- ══ HERO IMAGE AREA ══ -->
+  <div class="hero-img-area">
+    <!--
+      🖼️ IMAGE SLOT — Login/signup hero image
+      Replace the placeholder div below with:
+      <img src="your-hero-image.jpg" alt="Shopbox" />
+    -->
+    <div class="hero-placeholder">
+      <i class="hero-placeholder-icon fa-solid fa-bag-shopping"></i>
+    </div>
+
+    <!-- Logo overlay -->
+    <div class="hero-logo">
+      <div class="hero-logo-icon">
+        <!-- 🖼️ LOGO SLOT -->
+        <svg viewBox="0 0 20 20" fill="none" width="22" height="22">
+          <path d="M7 7C7 5.343 8.343 4 10 4C11.657 4 13 5.343 13 7"
+                stroke="#F5A623" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M5 7h10l-1.2 8H6.2L5 7z"
+                stroke="#F5A623" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+          <path d="M8.5 11l1.2 1.2 2-2"
+                stroke="#F5A623" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="hero-logo-text">
+        <span class="shop">shop</span><span class="box">box</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ FORM CARD ══ -->
+  <div class="form-card">
+
+    <!-- Tab switcher -->
+    <div class="tab-row fu d1">
+      <div class="tab-btn active" id="loginTab" onclick="switchTab('login')">Login</div>
+      <div class="tab-btn"        id="signupTab" onclick="switchTab('signup')">Sign Up</div>
+    </div>
+
+    <!-- ════════════════════
+         LOGIN PANEL
+    ════════════════════ -->
+    <div class="panel active" id="loginPanel">
+
+      <div class="form-greeting fu d2">
+        <h1 class="form-title">Welcome Back 👋</h1>
+        <p class="form-subtitle">Sign in to continue shopping</p>
+      </div>
+
+      <!-- Google -->
+      <div class="social-row fu d3">
+        <button class="btn-social" onclick="socialLogin('Google')">
+          <div class="google-g">G</div>
+          Continue with Google
+        </button>
+        <button class="btn-social" onclick="socialLogin('Apple')">
+          <i class="fa-brands fa-apple apple-icon"></i>
+          Continue with Apple
+        </button>
+      </div>
+
+      <div class="or-row fu d3">
+        <div class="or-line"></div>
+        <span class="or-text">or</span>
+        <div class="or-line"></div>
+      </div>
+
+      <!-- Email -->
+      <div class="input-group fu d4" id="loginEmailGroup">
+        <label class="input-label">Email or Phone Number</label>
+        <div class="input-box">
+          <i class="fa-regular fa-envelope"></i>
+          <input type="email" id="loginEmail" placeholder="johndoe@email.com" />
+        </div>
+        <p class="input-error">Please enter a valid email address</p>
+      </div>
+
+      <!-- Password -->
+      <div class="input-group fu d5" id="loginPwGroup">
+        <label class="input-label">Password</label>
+        <div class="input-box">
+          <i class="fa-solid fa-lock"></i>
+          <input type="password" id="loginPw" placeholder="Enter your password" />
+          <span class="pw-toggle" onclick="togglePw('loginPw', this)">
+            <i class="fa-regular fa-eye"></i>
+          </span>
+        </div>
+        <p class="input-error">Password must be at least 6 characters</p>
+      </div>
+
+      <!-- Forgot -->
+      <div class="forgot fu d5">
+        <a href="#">Forgot Password?</a>
+      </div>
+
+      <!-- Keep updated -->
+      <div class="check-row fu d5">
+        <div class="check-box checked" id="loginCheck" onclick="toggleCheck(this)">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <p class="check-label">Keep me updated on offers and news</p>
+      </div>
+
+      <!-- Submit -->
+      <button class="btn-primary fu d6" onclick="handleLogin()">
+        <i class="fa-solid fa-arrow-right-to-bracket"></i>
+        Login
+      </button>
+
+      <p class="switch-text fu d6">
+        Don't have an account? <a href="#" onclick="switchTab('signup'); return false;">Sign up</a>
+      </p>
+
+    </div><!-- /loginPanel -->
+
+    <!-- ════════════════════
+         SIGN UP PANEL
+    ════════════════════ -->
+    <div class="panel" id="signupPanel">
+
+      <div class="form-greeting fu d2">
+        <h1 class="form-title">Create Account ✨</h1>
+        <p class="form-subtitle">Join Shopbox and start shopping</p>
+      </div>
+
+      <!-- Social -->
+      <div class="social-row fu d3">
+        <button class="btn-social" onclick="socialLogin('Google')">
+          <div class="google-g">G</div>
+          Continue with Google
+        </button>
+        <button class="btn-social" onclick="socialLogin('Apple')">
+          <i class="fa-brands fa-apple apple-icon"></i>
+          Continue with Apple
+        </button>
+      </div>
+
+      <div class="or-row fu d3">
+        <div class="or-line"></div>
+        <span class="or-text">or</span>
+        <div class="or-line"></div>
+      </div>
+
+      <!-- Full name -->
+      <div class="input-group fu d3" id="nameGroup">
+        <label class="input-label">Full Name</label>
+        <div class="input-box">
+          <i class="fa-regular fa-user"></i>
+          <input type="text" id="signupName" placeholder="John Doe" />
+        </div>
+        <p class="input-error">Please enter your full name</p>
+      </div>
+
+      <!-- Email -->
+      <div class="input-group fu d4" id="signupEmailGroup">
+        <label class="input-label">Email Address</label>
+        <div class="input-box">
+          <i class="fa-regular fa-envelope"></i>
+          <input type="email" id="signupEmail" placeholder="johndoe@email.com" />
+        </div>
+        <p class="input-error">Please enter a valid email address</p>
+      </div>
+
+      <!-- Phone -->
+      <div class="input-group fu d4" id="phoneGroup">
+        <label class="input-label">Phone Number</label>
+        <div class="phone-row">
+          <div class="phone-code">
+            <span class="flag">🇳🇬</span>
+            <span>+234</span>
+            <i class="fa-solid fa-chevron-down" style="font-size:10px; color:var(--text-muted);"></i>
+          </div>
+          <div class="input-box" style="flex:1;">
+            <input type="tel" id="signupPhone" placeholder="801 234 5678" />
+          </div>
+        </div>
+        <p class="input-error">Please enter a valid phone number</p>
+      </div>
+
+      <!-- Password -->
+      <div class="input-group fu d5" id="signupPwGroup">
+        <label class="input-label">Password</label>
+        <div class="input-box">
+          <i class="fa-solid fa-lock"></i>
+          <input type="password" id="signupPw" placeholder="Create a password" oninput="checkPwStrength(this.value)" />
+          <span class="pw-toggle" onclick="togglePw('signupPw', this)">
+            <i class="fa-regular fa-eye"></i>
+          </span>
+        </div>
+        <!-- Password strength -->
+        <div class="pw-strength" id="pwStrength">
+          <div class="pw-strength-track">
+            <div class="pw-strength-bar" id="pwBar"></div>
+          </div>
+          <p class="pw-strength-label" id="pwLabel" style="color:var(--text-muted);">Too short</p>
+        </div>
+        <p class="input-error">Password must be at least 6 characters</p>
+      </div>
+
+      <!-- Terms -->
+      <div class="check-row fu d5">
+        <div class="check-box" id="termsCheck" onclick="toggleCheck(this)">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <p class="check-label">
+          I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+        </p>
+      </div>
+
+      <!-- Submit -->
+      <button class="btn-primary fu d6" onclick="handleSignup()">
+        <i class="fa-solid fa-user-plus"></i>
+        Create Account
+      </button>
+
+      <p class="switch-text fu d6">
+        Already have an account? <a href="#" onclick="switchTab('login'); return false;">Login</a>
+      </p>
+
+    </div><!-- /signupPanel -->
+
+  </div><!-- /form-card -->
+</div><!-- /page -->
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+  /* ── Tab switch ── */
+  function switchTab(tab) {
+    const isLogin = tab === 'login';
+    document.getElementById('loginTab').classList.toggle('active', isLogin);
+    document.getElementById('signupTab').classList.toggle('active', !isLogin);
+    document.getElementById('loginPanel').classList.toggle('active', isLogin);
+    document.getElementById('signupPanel').classList.toggle('active', !isLogin);
+  }
+
+  /* ── Password visibility toggle ── */
+  function togglePw(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const isHidden = input.type === 'password';
+    input.type = isHidden ? 'text' : 'password';
+    btn.innerHTML = isHidden
+      ? '<i class="fa-regular fa-eye-slash"></i>'
+      : '<i class="fa-regular fa-eye"></i>';
+  }
+
+  /* ── Checkbox toggle ── */
+  function toggleCheck(el) {
+    el.classList.toggle('checked');
+  }
+
+  /* ── Password strength ── */
+  function checkPwStrength(val) {
+    const wrap  = document.getElementById('pwStrength');
+    const bar   = document.getElementById('pwBar');
+    const label = document.getElementById('pwLabel');
+    wrap.classList.add('show');
+
+    let score = 0;
+    if (val.length >= 6)  score++;
+    if (val.length >= 10) score++;
+    if (/[A-Z]/.test(val)) score++;
+    if (/[0-9]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+
+    const configs = [
+      { w:'20%', c:'#EF4444', t:'Too short' },
+      { w:'40%', c:'#F97316', t:'Weak' },
+      { w:'60%', c:'#EAB308', t:'Fair' },
+      { w:'80%', c:'#22C55E', t:'Strong' },
+      { w:'100%',c:'#16A34A', t:'Very strong 💪' },
+    ];
+    const cfg = configs[Math.min(score, 4)];
+    bar.style.width      = cfg.w;
+    bar.style.background = cfg.c;
+    label.style.color    = cfg.c;
+    label.textContent    = cfg.t;
+  }
+
+  /* ── Validation helpers ── */
+  function setError(groupId, show) {
+    document.getElementById(groupId).classList.toggle('has-error', show);
+    const box = document.querySelector(`#${groupId} .input-box`);
+    if (box) box.classList.toggle('error', show);
+  }
+
+  function isValidEmail(e) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+  }
+
+  /* ── Login handler ── */
+  function handleLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const pw    = document.getElementById('loginPw').value;
+    let valid   = true;
+
+    if (!isValidEmail(email)) { setError('loginEmailGroup', true); valid = false; }
+    else                       { setError('loginEmailGroup', false); }
+
+    if (pw.length < 6) { setError('loginPwGroup', true); valid = false; }
+    else               { setError('loginPwGroup', false); }
+
+    if (!valid) return;
+
+    // Show loading state
+    const btn = document.querySelector('#loginPanel .btn-primary');
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Signing in…';
+    btn.style.opacity = '0.8';
+
+    setTimeout(() => {
+      showToast('✅ Login successful! Redirecting…');
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> Welcome back!';
+      // In production: window.location.href = 'index.html';
+    }, 1800);
+  }
+
+  /* ── Sign up handler ── */
+  function handleSignup() {
+    const name  = document.getElementById('signupName').value.trim();
+    const email = document.getElementById('signupEmail').value.trim();
+    const pw    = document.getElementById('signupPw').value;
+    const terms = document.getElementById('termsCheck').classList.contains('checked');
+    let valid   = true;
+
+    if (name.length < 2)       { setError('nameGroup', true); valid = false; }
+    else                        { setError('nameGroup', false); }
+
+    if (!isValidEmail(email))  { setError('signupEmailGroup', true); valid = false; }
+    else                        { setError('signupEmailGroup', false); }
+
+    if (pw.length < 6)         { setError('signupPwGroup', true); valid = false; }
+    else                        { setError('signupPwGroup', false); }
+
+    if (!terms) { showToast('⚠️ Please accept the Terms of Service'); return; }
+
+    if (!valid) return;
+
+    const btn = document.querySelector('#signupPanel .btn-primary');
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating account…';
+    btn.style.opacity = '0.8';
+
+    setTimeout(() => {
+      showToast('🎉 Account created! Welcome to Shopbox!');
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> Account Created!';
+      // In production: window.location.href = 'index.html';
+    }, 1800);
+  }
+
+  /* ── Social login ── */
+  function socialLogin(provider) {
+    showToast(`🔗 Connecting to ${provider}…`);
+  }
+
+  /* ── Toast ── */
+  function showToast(msg, dur = 2800) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), dur);
+  }
+</script>
+
+<style>
+  #toast {
+    position: fixed; bottom: 32px;
+    left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #1C1C1C; border: 1px solid rgba(245,166,35,0.4);
+    color: #fff; font-size: 13px; font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    padding: 10px 22px; border-radius: 999px;
+    opacity: 0; transition: all .3s ease;
+    z-index: 9999; white-space: nowrap; pointer-events: none;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+
+</body>
+</html>

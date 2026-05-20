@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Shopbox — My Cart</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --gold:          #F5A623;
+      --gold-bright:   #FFB930;
+      --gold-dark:     #C47F0A;
+      --gold-muted:    rgba(245,166,35,0.12);
+      --gold-glow:     rgba(245,166,35,0.28);
+      --bg-base:       #0D0D0D;
+      --bg-card:       #161616;
+      --bg-card-2:     #1C1C1C;
+      --border:        rgba(255,255,255,0.07);
+      --border-gold:   rgba(245,166,35,0.32);
+      --text-primary:  #FFFFFF;
+      --text-secondary:#A0A0A0;
+      --text-muted:    #555555;
+      --success:       #22C55E;
+      --danger:        #EF4444;
+      --font-display:  'Syne', sans-serif;
+      --font-body:     'DM Sans', sans-serif;
+      --px:            16px;
+      --radius-sm:     8px;
+      --radius-md:     12px;
+      --radius-lg:     16px;
+      --radius-pill:   999px;
+      --bar-h:         100px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100dvh;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: calc(var(--bar-h) + 16px);
+    }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; }
+    a { text-decoration: none; color: inherit; }
+    .page { max-width: 480px; margin: 0 auto; }
+
+    /* ══════════════════════════════════════
+       HEADER
+    ══════════════════════════════════════ */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px var(--px);
+      position: sticky;
+      top: 0;
+      background: rgba(13,13,13,0.97);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 50;
+    }
+
+    .back-btn {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      transition: border-color .2s;
+    }
+    .back-btn:active { border-color: var(--border-gold); }
+
+    .header-title {
+      font-family: var(--font-display);
+      font-size: 18px; font-weight: 800;
+    }
+    .header-title span {
+      font-size: 13px; font-weight: 500;
+      color: var(--text-muted);
+      margin-left: 6px;
+    }
+
+    .edit-btn {
+      font-family: var(--font-display);
+      font-size: 13px; font-weight: 600;
+      color: var(--gold);
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      background: var(--gold-muted);
+      border: 1px solid var(--border-gold);
+      transition: background .2s;
+    }
+    .edit-btn:active { background: rgba(245,166,35,0.2); }
+
+    /* ══════════════════════════════════════
+       PROMO BANNER STRIP
+    ══════════════════════════════════════ */
+    .promo-strip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 14px var(--px);
+      background: var(--gold-muted);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+    }
+    .promo-strip i { color: var(--gold); font-size: 16px; flex-shrink: 0; }
+    .promo-strip p { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+    .promo-strip strong { color: var(--gold); }
+
+    /* ══════════════════════════════════════
+       CART ITEMS
+    ══════════════════════════════════════ */
+    .cart-items {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 0 var(--px);
+    }
+
+    .cart-item {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 14px;
+      display: flex;
+      gap: 12px;
+      position: relative;
+      transition: border-color .2s, opacity .3s;
+      animation: fadeUp .35s ease both;
+    }
+    .cart-item:nth-child(1) { animation-delay: .04s; }
+    .cart-item:nth-child(2) { animation-delay: .08s; }
+    .cart-item:nth-child(3) { animation-delay: .12s; }
+    .cart-item.removing {
+      opacity: 0;
+      transform: translateX(40px);
+      transition: all .35s ease;
+    }
+
+    /* Product image */
+    .item-img {
+      width: 82px; height: 82px;
+      border-radius: var(--radius-md);
+      background: var(--bg-card-2);
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .item-img img { width: 100%; height: 100%; object-fit: cover; }
+    .item-img i { font-size: 32px; color: var(--text-muted); opacity: .35; }
+
+    /* Item details */
+    .item-details { flex: 1; min-width: 0; }
+
+    .item-name {
+      font-family: var(--font-display);
+      font-size: 14px; font-weight: 700;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .item-variant {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    /* Price + qty row */
+    .item-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .item-price {
+      font-family: var(--font-display);
+      font-size: 16px; font-weight: 800;
+      color: var(--gold);
+    }
+    .item-old-price {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-decoration: line-through;
+      margin-left: 4px;
+    }
+
+    /* Qty control */
+    .item-qty {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: var(--bg-card-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+    }
+    .qty-btn {
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      transition: background .2s, color .2s;
+    }
+    .qty-btn:active { background: var(--gold-muted); color: var(--gold); }
+    .qty-val {
+      font-family: var(--font-display);
+      font-size: 14px; font-weight: 800;
+      min-width: 28px; text-align: center;
+    }
+
+    /* Delete button */
+    .item-delete {
+      position: absolute;
+      top: 12px; right: 12px;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.2);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--danger);
+      font-size: 12px;
+      transition: background .2s;
+    }
+    .item-delete:active { background: rgba(239,68,68,0.25); }
+
+    /* Save for later link */
+    .save-later {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      cursor: pointer;
+      width: fit-content;
+      transition: color .2s;
+    }
+    .save-later:active { color: var(--gold); }
+
+    /* ══════════════════════════════════════
+       PROMO CODE INPUT
+    ══════════════════════════════════════ */
+    .promo-section {
+      margin: 20px var(--px) 0;
+    }
+    .promo-label {
+      font-family: var(--font-display);
+      font-size: 14px; font-weight: 700;
+      margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .promo-label i { color: var(--gold); }
+
+    .promo-input-row {
+      display: flex;
+      gap: 10px;
+    }
+    .promo-field {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0 14px;
+      height: 48px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--text-primary);
+      transition: border-color .2s;
+      outline: none;
+    }
+    .promo-field::placeholder { color: var(--text-muted); }
+    .promo-field:focus { border-color: var(--border-gold); }
+    .promo-field.applied { border-color: var(--success); color: var(--success); }
+
+    .promo-apply-btn {
+      height: 48px;
+      padding: 0 20px;
+      background: var(--gold);
+      color: #000;
+      font-family: var(--font-display);
+      font-size: 14px; font-weight: 800;
+      border-radius: var(--radius-md);
+      transition: background .2s, transform .15s;
+      white-space: nowrap;
+    }
+    .promo-apply-btn:active { transform: scale(0.96); background: var(--gold-dark); }
+
+    .promo-success {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--success);
+      margin-top: 8px;
+      font-weight: 600;
+    }
+    .promo-success.show { display: flex; }
+
+    /* ══════════════════════════════════════
+       ORDER SUMMARY CARD
+    ══════════════════════════════════════ */
+    .summary-card {
+      margin: 20px var(--px) 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .summary-head {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-display);
+      font-size: 15px; font-weight: 700;
+    }
+    .summary-body { padding: 14px 16px; }
+
+    .summary-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .summary-row:last-child { margin-bottom: 0; }
+
+    .summary-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .summary-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .summary-value.free  { color: var(--success); font-weight: 700; }
+    .summary-value.disc  { color: var(--success); }
+    .summary-value.gold  {
+      color: var(--gold);
+      font-family: var(--font-display);
+      font-size: 20px; font-weight: 800;
+    }
+
+    .summary-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 14px 0;
+    }
+
+    /* Total row */
+    .total-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .total-label {
+      font-family: var(--font-display);
+      font-size: 16px; font-weight: 800;
+    }
+
+    /* Savings badge */
+    .savings-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: var(--radius-pill);
+      padding: 8px 14px;
+      margin-top: 14px;
+    }
+    .savings-badge i { color: var(--success); font-size: 14px; }
+    .savings-badge p { font-size: 13px; color: var(--success); font-weight: 600; }
+
+    /* ══════════════════════════════════════
+       DELIVERY ESTIMATE
+    ══════════════════════════════════════ */
+    .delivery-card {
+      margin: 14px var(--px) 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .delivery-icon {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--gold-muted);
+      border: 1px solid var(--border-gold);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold);
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .delivery-info { flex: 1; }
+    .delivery-title {
+      font-family: var(--font-display);
+      font-size: 14px; font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .delivery-sub { font-size: 12px; color: var(--text-secondary); }
+    .delivery-sub strong { color: var(--success); }
+
+    /* ══════════════════════════════════════
+       ALSO BOUGHT / SUGGESTED
+    ══════════════════════════════════════ */
+    .suggest-section {
+      margin: 20px var(--px) 0;
+    }
+    .suggest-title {
+      font-family: var(--font-display);
+      font-size: 15px; font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .suggest-scroll {
+      display: flex; gap: 10px;
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .suggest-scroll::-webkit-scrollbar { display: none; }
+
+    .suggest-card {
+      flex-shrink: 0;
+      width: 130px;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color .2s;
+    }
+    .suggest-card:active { border-color: var(--border-gold); }
+    .suggest-img {
+      height: 100px;
+      background: var(--bg-card-2);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .suggest-img i { font-size: 36px; color: var(--text-muted); opacity: .3; }
+    .suggest-body { padding: 8px 10px 10px; }
+    .suggest-name { font-size: 11px; font-weight: 500; margin-bottom: 6px; line-height: 1.3; }
+    .suggest-price { font-family: var(--font-display); font-size: 13px; font-weight: 800; color: var(--gold); }
+    .suggest-add {
+      display: flex; align-items: center; justify-content: center;
+      gap: 4px;
+      width: 100%; height: 30px;
+      background: var(--gold-muted);
+      border-top: 1px solid var(--border-gold);
+      font-size: 11px; font-weight: 700;
+      color: var(--gold);
+      font-family: var(--font-display);
+      transition: background .2s;
+    }
+    .suggest-add:active { background: rgba(245,166,35,0.25); }
+
+    /* ══════════════════════════════════════
+       BOTTOM CHECKOUT BAR
+    ══════════════════════════════════════ */
+    .checkout-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      max-width: 480px;
+      margin: 0 auto;
+      background: rgba(13,13,13,0.97);
+      border-top: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      padding: 12px var(--px);
+      padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+      z-index: 100;
+    }
+
+    .checkout-total-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .checkout-total-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .checkout-total-amount {
+      font-family: var(--font-display);
+      font-size: 20px; font-weight: 800;
+      color: var(--gold);
+    }
+
+    .checkout-btn {
+      width: 100%;
+      height: 54px;
+      background: var(--gold);
+      color: #000;
+      font-family: var(--font-display);
+      font-size: 16px; font-weight: 800;
+      border-radius: var(--radius-pill);
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px;
+      box-shadow: 0 6px 24px var(--gold-glow);
+      transition: transform .15s, background .2s;
+    }
+    .checkout-btn:active { transform: scale(0.97); background: var(--gold-dark); }
+
+    /* Secure label */
+    .secure-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+    .secure-label i { color: var(--success); font-size: 11px; }
+
+    /* Animations */
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);} }
+
+    /* ══════════════════════════════════════
+       EMPTY CART STATE (hidden by default)
+    ══════════════════════════════════════ */
+    .empty-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px var(--px);
+      text-align: center;
+      min-height: 60vh;
+    }
+    .empty-icon {
+      font-size: 80px;
+      color: var(--text-muted);
+      opacity: .2;
+      margin-bottom: 24px;
+    }
+    .empty-title {
+      font-family: var(--font-display);
+      font-size: 22px; font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .empty-sub {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+    .empty-btn {
+      height: 52px;
+      padding: 0 32px;
+      background: var(--gold);
+      color: #000;
+      font-family: var(--font-display);
+      font-size: 15px; font-weight: 800;
+      border-radius: var(--radius-pill);
+      display: flex; align-items: center; gap: 8px;
+      box-shadow: 0 6px 20px var(--gold-glow);
+    }
+    .empty-btn2 {
+      margin-top: 12px;
+      height: 48px; padding: 0 28px;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-gold);
+      color: var(--gold);
+      font-family: var(--font-display);
+      font-size: 14px; font-weight: 700;
+      border-radius: var(--radius-pill);
+      display: flex; align-items: center; gap: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ══ HEADER ══ -->
+  <div class="header">
+    <button class="back-btn" onclick="history.back()">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <div class="header-title">
+      My Cart <span id="cartCountLabel">(3)</span>
+    </div>
+    <button class="edit-btn" id="editBtn" onclick="toggleEdit()">Edit</button>
+  </div>
+
+  <!-- ══ FREE DELIVERY PROMO STRIP ══ -->
+  <div class="promo-strip">
+    <i class="fa-solid fa-truck-fast"></i>
+    <p>Add <strong>₦1,000 more</strong> to get <strong>FREE delivery!</strong> 🎉</p>
+  </div>
+
+  <!-- ══ CART ITEMS ══ -->
+  <div class="cart-items" id="cartItems">
+
+    <!-- Item 1 -->
+    <div class="cart-item" id="item1">
+      <div class="item-img">
+        <!--
+          🖼️ IMAGE SLOT
+          <img src="jacket.jpg" alt="Jacket" />
+        -->
+        <i class="fa-solid fa-shirt"></i>
+      </div>
+      <div class="item-details">
+        <p class="item-name">Royal Heritage Men's Jacket</p>
+        <p class="item-variant">Black / Gold &nbsp;·&nbsp; Size: M</p>
+        <div class="item-bottom">
+          <div>
+            <span class="item-price">₦28,500</span>
+            <span class="item-old-price">₦37,500</span>
+          </div>
+          <div class="item-qty">
+            <button class="qty-btn" onclick="changeQty('item1', -1)">
+              <i class="fa-solid fa-minus" style="font-size:11px;"></i>
+            </button>
+            <span class="qty-val" id="qty1">1</span>
+            <button class="qty-btn" onclick="changeQty('item1', 1)">
+              <i class="fa-solid fa-plus" style="font-size:11px;"></i>
+            </button>
+          </div>
+        </div>
+        <div class="save-later" onclick="saveLater('item1', 'Royal Heritage Jacket')">
+          <i class="fa-regular fa-heart" style="font-size:11px;"></i>
+          Save for later
+        </div>
+      </div>
+      <button class="item-delete" onclick="removeItem('item1')">
+        <i class="fa-solid fa-trash-can"></i>
+      </button>
+    </div>
+
+    <!-- Item 2 -->
+    <div class="cart-item" id="item2">
+      <div class="item-img">
+        <!-- 🖼️ IMAGE SLOT -->
+        <i class="fa-solid fa-clock"></i>
+      </div>
+      <div class="item-details">
+        <p class="item-name">Classic Leather Watch</p>
+        <p class="item-variant">Black</p>
+        <div class="item-bottom">
+          <div>
+            <span class="item-price">₦18,000</span>
+            <span class="item-old-price">₦24,000</span>
+          </div>
+          <div class="item-qty">
+            <button class="qty-btn" onclick="changeQty('item2', -1)">
+              <i class="fa-solid fa-minus" style="font-size:11px;"></i>
+            </button>
+            <span class="qty-val" id="qty2">1</span>
+            <button class="qty-btn" onclick="changeQty('item2', 1)">
+              <i class="fa-solid fa-plus" style="font-size:11px;"></i>
+            </button>
+          </div>
+        </div>
+        <div class="save-later" onclick="saveLater('item2', 'Classic Leather Watch')">
+          <i class="fa-regular fa-heart" style="font-size:11px;"></i>
+          Save for later
+        </div>
+      </div>
+      <button class="item-delete" onclick="removeItem('item2')">
+        <i class="fa-solid fa-trash-can"></i>
+      </button>
+    </div>
+
+    <!-- Item 3 -->
+    <div class="cart-item" id="item3">
+      <div class="item-img">
+        <!-- 🖼️ IMAGE SLOT -->
+        <i class="fa-solid fa-shoe-prints"></i>
+      </div>
+      <div class="item-details">
+        <p class="item-name">Urban Black Sneakers</p>
+        <p class="item-variant">Black &nbsp;·&nbsp; Size: 42</p>
+        <div class="item-bottom">
+          <div>
+            <span class="item-price">₦22,500</span>
+            <span class="item-old-price">₦29,000</span>
+          </div>
+          <div class="item-qty">
+            <button class="qty-btn" onclick="changeQty('item3', -1)">
+              <i class="fa-solid fa-minus" style="font-size:11px;"></i>
+            </button>
+            <span class="qty-val" id="qty3">1</span>
+            <button class="qty-btn" onclick="changeQty('item3', 1)">
+              <i class="fa-solid fa-plus" style="font-size:11px;"></i>
+            </button>
+          </div>
+        </div>
+        <div class="save-later" onclick="saveLater('item3', 'Urban Black Sneakers')">
+          <i class="fa-regular fa-heart" style="font-size:11px;"></i>
+          Save for later
+        </div>
+      </div>
+      <button class="item-delete" onclick="removeItem('item3')">
+        <i class="fa-solid fa-trash-can"></i>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ══ EMPTY STATE (shown when cart is empty) ══ -->
+  <div class="empty-state" id="emptyState">
+    <i class="fa-solid fa-cart-shopping empty-icon"></i>
+    <h2 class="empty-title">Your Cart is Empty</h2>
+    <p class="empty-sub">Looks like you haven't added anything yet.<br>Find the perfect items for you!</p>
+    <button class="empty-btn" onclick="showToast('🛍️ Opening shop…')">
+      <i class="fa-solid fa-bag-shopping"></i> Start Shopping
+    </button>
+    <button class="empty-btn2" onclick="showToast('📂 Opening categories…')">
+      <i class="fa-solid fa-table-cells-large"></i> Browse Categories
+    </button>
+  </div>
+
+  <!-- ══ PROMO CODE ══ -->
+  <div class="promo-section" id="promoSection">
+    <div class="promo-label">
+      <i class="fa-solid fa-tag"></i> Have a promo code?
+    </div>
+    <div class="promo-input-row">
+      <input class="promo-field" id="promoField" type="text" placeholder="Enter promo code" />
+      <button class="promo-apply-btn" onclick="applyPromo()">Apply</button>
+    </div>
+    <div class="promo-success" id="promoSuccess">
+      <i class="fa-solid fa-circle-check"></i>
+      <span id="promoMsg">Code applied! You saved ₦5,000</span>
+    </div>
+  </div>
+
+  <!-- ══ ORDER SUMMARY ══ -->
+  <div class="summary-card" id="summaryCard">
+    <div class="summary-head">Order Summary</div>
+    <div class="summary-body">
+
+      <div class="summary-row">
+        <span class="summary-label">Subtotal (<span id="itemCount">3</span> items)</span>
+        <span class="summary-value" id="subtotalVal">₦69,000</span>
+      </div>
+
+      <div class="summary-row">
+        <span class="summary-label">Shipping</span>
+        <span class="summary-value free">FREE</span>
+      </div>
+
+      <div class="summary-row" id="discountRow" style="display:none;">
+        <span class="summary-label">Promo Discount</span>
+        <span class="summary-value disc" id="discountVal">− ₦5,000</span>
+      </div>
+
+      <div class="summary-divider"></div>
+
+      <div class="total-row">
+        <span class="total-label">Total</span>
+        <span class="summary-value gold" id="totalVal">₦69,000</span>
+      </div>
+
+      <!-- Savings badge -->
+      <div class="savings-badge">
+        <i class="fa-solid fa-piggy-bank"></i>
+        <p>You're saving <strong id="savingsAmt">₦19,500</strong> on this order! 🎉</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ DELIVERY ESTIMATE ══ -->
+  <div class="delivery-card" id="deliveryCard">
+    <div class="delivery-icon">
+      <i class="fa-solid fa-truck-fast"></i>
+    </div>
+    <div class="delivery-info">
+      <p class="delivery-title">Estimated Delivery</p>
+      <p class="delivery-sub">
+        Lagos & Abuja: <strong>1–3 days</strong> &nbsp;·&nbsp;
+        Nationwide: <strong>5–7 days</strong>
+      </p>
+    </div>
+  </div>
+
+  <!-- ══ SUGGESTED ITEMS ══ -->
+  <div class="suggest-section">
+    <p class="suggest-title">You might also like</p>
+    <div class="suggest-scroll">
+
+      <div class="suggest-card">
+        <div class="suggest-img">
+          <!-- 🖼️ IMAGE SLOT -->
+          <i class="fa-solid fa-glasses"></i>
+        </div>
+        <div class="suggest-body">
+          <p class="suggest-name">Slim Fit Chino Pants</p>
+          <span class="suggest-price">₦9,800</span>
+        </div>
+        <button class="suggest-add" onclick="showToast('🛒 Chino Pants added!')">
+          <i class="fa-solid fa-plus"></i> Add
+        </button>
+      </div>
+
+      <div class="suggest-card">
+        <div class="suggest-img">
+          <!-- 🖼️ IMAGE SLOT -->
+          <i class="fa-solid fa-hat-cowboy"></i>
+        </div>
+        <div class="suggest-body">
+          <p class="suggest-name">Classic Cap Black</p>
+          <span class="suggest-price">₦4,500</span>
+        </div>
+        <button class="suggest-add" onclick="showToast('🛒 Cap added!')">
+          <i class="fa-solid fa-plus"></i> Add
+        </button>
+      </div>
+
+      <div class="suggest-card">
+        <div class="suggest-img">
+          <!-- 🖼️ IMAGE SLOT -->
+          <i class="fa-solid fa-ring"></i>
+        </div>
+        <div class="suggest-body">
+          <p class="suggest-name">Gold Chain Necklace</p>
+          <span class="suggest-price">₦6,200</span>
+        </div>
+        <button class="suggest-add" onclick="showToast('🛒 Necklace added!')">
+          <i class="fa-solid fa-plus"></i> Add
+        </button>
+      </div>
+
+      <div class="suggest-card">
+        <div class="suggest-img">
+          <!-- 🖼️ IMAGE SLOT -->
+          <i class="fa-solid fa-spray-can-sparkles"></i>
+        </div>
+        <div class="suggest-body">
+          <p class="suggest-name">Luxury Perfume 50ml</p>
+          <span class="suggest-price">₦12,800</span>
+        </div>
+        <button class="suggest-add" onclick="showToast('🛒 Perfume added!')">
+          <i class="fa-solid fa-plus"></i> Add
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<!-- ══ CHECKOUT BAR ══ -->
+<div class="checkout-bar" id="checkoutBar">
+  <div class="checkout-total-row">
+    <span class="checkout-total-label">Total Amount</span>
+    <span class="checkout-total-amount" id="barTotal">₦69,000</span>
+  </div>
+  <button class="checkout-btn" onclick="goCheckout()">
+    <i class="fa-solid fa-lock"></i>
+    Proceed to Checkout
+    <i class="fa-solid fa-arrow-right"></i>
+  </button>
+  <div class="secure-label">
+    <i class="fa-solid fa-shield-halved"></i>
+    100% Secure & Encrypted Checkout
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+  /* ══ Cart state ══ */
+  const items = {
+    item1: { price: 28500, qty: 1, oldPrice: 37500, name: 'Royal Heritage Jacket' },
+    item2: { price: 18000, qty: 1, oldPrice: 24000, name: 'Classic Leather Watch' },
+    item3: { price: 22500, qty: 1, oldPrice: 29000, name: 'Urban Black Sneakers' },
+  };
+  let promoDiscount = 0;
+  let editMode = false;
+
+  /* ── Recalculate totals ── */
+  function recalc() {
+    const activeItems = Object.values(items).filter(i => !i.removed);
+    const count    = activeItems.reduce((s, i) => s + i.qty, 0);
+    const subtotal = activeItems.reduce((s, i) => s + i.price * i.qty, 0);
+    const savings  = Object.values(items).filter(i => !i.removed)
+                       .reduce((s, i) => s + (i.oldPrice - i.price) * i.qty, 0);
+    const total    = Math.max(0, subtotal - promoDiscount);
+
+    document.getElementById('cartCountLabel').textContent = `(${activeItems.length})`;
+    document.getElementById('itemCount').textContent      = count;
+    document.getElementById('subtotalVal').textContent    = '₦' + subtotal.toLocaleString();
+    document.getElementById('totalVal').textContent       = '₦' + total.toLocaleString();
+    document.getElementById('barTotal').textContent       = '₦' + total.toLocaleString();
+    document.getElementById('savingsAmt').textContent     = '₦' + savings.toLocaleString();
+
+    // Promo row
+    if (promoDiscount > 0) {
+      document.getElementById('discountRow').style.display = 'flex';
+      document.getElementById('discountVal').textContent   = '− ₦' + promoDiscount.toLocaleString();
+    }
+
+    // Free delivery strip update
+    const needed = Math.max(0, 20000 - subtotal);
+    const strip  = document.querySelector('.promo-strip p');
+    if (strip) {
+      if (needed <= 0) {
+        strip.innerHTML = '🎉 You qualify for <strong>FREE delivery!</strong>';
+      } else {
+        strip.innerHTML = `Add <strong>₦${needed.toLocaleString()} more</strong> to get <strong>FREE delivery!</strong> 🎉`;
+      }
+    }
+
+    // Show empty state if no items
+    const hasItems = activeItems.length > 0;
+    document.getElementById('cartItems').style.display     = hasItems ? 'flex' : 'none';
+    document.getElementById('emptyState').style.display    = hasItems ? 'none' : 'flex';
+    document.getElementById('promoSection').style.display  = hasItems ? 'block' : 'none';
+    document.getElementById('summaryCard').style.display   = hasItems ? 'block' : 'none';
+    document.getElementById('deliveryCard').style.display  = hasItems ? 'flex' : 'none';
+    document.getElementById('checkoutBar').style.display   = hasItems ? 'block' : 'none';
+    document.querySelector('.promo-strip').style.display   = hasItems ? 'flex' : 'none';
+    document.getElementById('editBtn').style.display       = hasItems ? 'block' : 'none';
+  }
+
+  /* ── Qty change ── */
+  function changeQty(id, delta) {
+    const item = items[id];
+    item.qty = Math.max(1, Math.min(10, item.qty + delta));
+    document.getElementById('qty' + id.replace('item','')).textContent = item.qty;
+    recalc();
+  }
+
+  /* ── Remove item ── */
+  function removeItem(id) {
+    const el = document.getElementById(id);
+    el.classList.add('removing');
+    setTimeout(() => {
+      el.style.display = 'none';
+      items[id].removed = true;
+      recalc();
+      showToast('🗑️ Item removed from cart');
+    }, 350);
+  }
+
+  /* ── Save for later ── */
+  function saveLater(id, name) {
+    removeItem(id);
+    setTimeout(() => showToast(`❤️ "${name}" saved to Wishlist`), 400);
+  }
+
+  /* ── Promo code ── */
+  const validCodes = { 'SHOPBOX10': 5000, 'NIGERIA20': 8000, 'WELCOME': 3000 };
+  function applyPromo() {
+    const code = document.getElementById('promoField').value.trim().toUpperCase();
+    const field = document.getElementById('promoField');
+    const successEl = document.getElementById('promoSuccess');
+    const msgEl     = document.getElementById('promoMsg');
+
+    if (validCodes[code]) {
+      promoDiscount = validCodes[code];
+      field.classList.add('applied');
+      field.disabled = true;
+      successEl.classList.add('show');
+      msgEl.textContent = `✅ "${code}" applied! You saved ₦${promoDiscount.toLocaleString()}`;
+      recalc();
+      showToast(`🎉 Promo code applied! -₦${promoDiscount.toLocaleString()}`);
+    } else if (code === '') {
+      showToast('⚠️ Please enter a promo code');
+    } else {
+      field.style.borderColor = 'var(--danger)';
+      showToast('❌ Invalid promo code. Try: SHOPBOX10');
+      setTimeout(() => field.style.borderColor = '', 2000);
+    }
+  }
+
+  /* ── Edit mode ── */
+  function toggleEdit() {
+    editMode = !editMode;
+    document.getElementById('editBtn').textContent = editMode ? 'Done' : 'Edit';
+    document.querySelectorAll('.item-delete').forEach(btn => {
+      btn.style.display = editMode ? 'flex' : 'flex'; // always visible in this design
+    });
+    showToast(editMode ? '✏️ Edit mode on' : '✅ Done editing');
+  }
+
+  /* ── Checkout ── */
+  function goCheckout() {
+    showToast('🔒 Redirecting to checkout…');
+    // window.location.href = 'checkout.html';
+  }
+
+  /* ── Toast ── */
+  function showToast(msg, dur = 2600) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), dur);
+  }
+
+  /* Init */
+  recalc();
+</script>
+
+<style>
+  #toast {
+    position: fixed;
+    bottom: calc(100px + 12px);
+    left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #1C1C1C; border: 1px solid rgba(245,166,35,0.4);
+    color: #fff; font-size: 13px; font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    padding: 10px 22px; border-radius: 999px;
+    opacity: 0; transition: all .3s ease;
+    z-index: 9999; white-space: nowrap; pointer-events: none;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+
+</body>
+</html>

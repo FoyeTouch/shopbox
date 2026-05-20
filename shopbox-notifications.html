@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Shopbox — Notifications</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --gold:          #F5A623;
+      --gold-bright:   #FFB930;
+      --gold-dark:     #C47F0A;
+      --gold-muted:    rgba(245,166,35,0.12);
+      --gold-glow:     rgba(245,166,35,0.28);
+      --bg-base:       #0D0D0D;
+      --bg-card:       #161616;
+      --bg-card-2:     #1C1C1C;
+      --border:        rgba(255,255,255,0.07);
+      --border-gold:   rgba(245,166,35,0.32);
+      --text-primary:  #FFFFFF;
+      --text-secondary:#A0A0A0;
+      --text-muted:    #555555;
+      --success:       #22C55E;
+      --danger:        #EF4444;
+      --info:          #3B82F6;
+      --font-display:  'Syne', sans-serif;
+      --font-body:     'DM Sans', sans-serif;
+      --px:            16px;
+      --radius-sm:     8px;
+      --radius-md:     12px;
+      --radius-lg:     16px;
+      --radius-pill:   999px;
+      --nav-h:         68px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100dvh;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: calc(var(--nav-h) + 16px);
+    }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; }
+    a { text-decoration: none; color: inherit; }
+    .page { max-width: 480px; margin: 0 auto; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);} }
+    @keyframes slideIn { from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);} }
+    .fu { animation: fadeUp .35s ease both; }
+    .d1{animation-delay:.04s;}.d2{animation-delay:.08s;}.d3{animation-delay:.12s;}
+    .d4{animation-delay:.16s;}.d5{animation-delay:.20s;}.d6{animation-delay:.24s;}
+
+    /* ══════════════════════════════════════
+       HEADER
+    ══════════════════════════════════════ */
+    .header {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 14px var(--px);
+      background: rgba(13,13,13,0.97);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 50;
+    }
+    .back-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--bg-card); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; transition: border-color .2s;
+    }
+    .back-btn:active { border-color: var(--border-gold); }
+
+    .header-center {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .header-title {
+      font-family: var(--font-display);
+      font-size: 18px; font-weight: 800;
+    }
+    .unread-badge {
+      background: var(--danger);
+      color: #fff;
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 800;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { transform: scale(1); }
+      50%      { transform: scale(1.08); }
+    }
+
+    .mark-all-btn {
+      font-family: var(--font-display);
+      font-size: 12px; font-weight: 700;
+      color: var(--gold);
+      padding: 6px 12px;
+      background: var(--gold-muted);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius-pill);
+      transition: background .2s;
+    }
+    .mark-all-btn:active { background: rgba(245,166,35,0.22); }
+
+    /* ══════════════════════════════════════
+       FILTER TABS
+    ══════════════════════════════════════ */
+    .filter-tabs {
+      display: flex; gap: 0;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-base);
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .filter-tabs::-webkit-scrollbar { display: none; }
+
+    .filter-tab {
+      flex-shrink: 0;
+      padding: 12px 18px;
+      font-family: var(--font-display);
+      font-size: 13px; font-weight: 700;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      cursor: pointer; white-space: nowrap;
+      transition: color .2s, border-color .2s;
+      position: relative;
+    }
+    .filter-tab.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+    }
+    .tab-dot {
+      position: absolute;
+      top: 10px; right: 10px;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--danger);
+    }
+
+    /* ══════════════════════════════════════
+       NOTIFICATION GROUPS
+    ══════════════════════════════════════ */
+    .notif-group { margin-bottom: 4px; }
+
+    .group-label {
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding: 14px var(--px) 6px;
+    }
+
+    /* ══════════════════════════════════════
+       NOTIFICATION ITEM
+    ══════════════════════════════════════ */
+    .notif-item {
+      display: flex; gap: 12px;
+      padding: 14px var(--px);
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      position: relative;
+      transition: background .2s;
+      animation: slideIn .3s ease both;
+    }
+    .notif-item:active { background: var(--bg-card); }
+
+    /* Unread indicator */
+    .notif-item.unread {
+      background: rgba(245,166,35,0.03);
+    }
+    .notif-item.unread::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--gold);
+      border-radius: 0 3px 3px 0;
+    }
+
+    /* Swipe-to-dismiss overlay */
+    .notif-item.dismissing {
+      transition: all .3s ease;
+      opacity: 0;
+      transform: translateX(60px);
+      max-height: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    /* Icon circle */
+    .notif-icon {
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+      position: relative;
+    }
+    /* Small badge on icon */
+    .notif-icon-badge {
+      position: absolute;
+      bottom: -1px; right: -1px;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--bg-base);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px;
+      border: 2px solid var(--bg-base);
+    }
+
+    /* Icon color variants */
+    .icon-order    { background: var(--gold-muted); color: var(--gold); }
+    .icon-sale     { background: rgba(239,68,68,0.12); color: var(--danger); }
+    .icon-delivery { background: rgba(34,197,94,0.12); color: var(--success); }
+    .icon-new      { background: rgba(99,102,241,0.12); color: #818CF8; }
+    .icon-promo    { background: rgba(251,191,36,0.12); color: #FBBF24; }
+    .icon-review   { background: rgba(245,166,35,0.12); color: var(--gold); }
+    .icon-system   { background: rgba(156,163,175,0.12); color: #9CA3AF; }
+    .icon-price    { background: rgba(34,197,94,0.12); color: var(--success); }
+
+    /* Content */
+    .notif-content { flex: 1; min-width: 0; }
+    .notif-title {
+      font-family: var(--font-display);
+      font-size: 14px; font-weight: 700;
+      margin-bottom: 3px;
+      color: var(--text-primary);
+    }
+    .notif-item:not(.unread) .notif-title { font-weight: 600; color: var(--text-secondary); }
+
+    .notif-body {
+      font-size: 13px; color: var(--text-secondary);
+      line-height: 1.5; margin-bottom: 5px;
+    }
+    .notif-item:not(.unread) .notif-body { color: var(--text-muted); }
+
+    /* Highlight amount/code in body */
+    .notif-body strong { color: var(--gold); font-weight: 700; }
+    .notif-body em { color: var(--success); font-style: normal; font-weight: 700; }
+
+    .notif-time {
+      font-size: 11px; color: var(--text-muted);
+      display: flex; align-items: center; gap: 4px;
+    }
+    .notif-time i { font-size: 10px; }
+
+    /* Action buttons inside notification */
+    .notif-actions {
+      display: flex; gap: 8px; margin-top: 8px;
+    }
+    .notif-act-btn {
+      height: 30px; padding: 0 14px;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 700;
+      transition: all .2s;
+    }
+    .notif-act-gold {
+      background: var(--gold); color: #000;
+    }
+    .notif-act-gold:active { background: var(--gold-dark); }
+    .notif-act-outline {
+      background: var(--bg-card-2);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+    .notif-act-outline:active { border-color: var(--border-gold); color: var(--gold); }
+
+    /* Dismiss button */
+    .notif-dismiss {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--bg-card-2);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-size: 11px;
+      flex-shrink: 0; align-self: flex-start;
+      margin-top: 2px;
+      transition: all .2s;
+    }
+    .notif-dismiss:active { background: rgba(239,68,68,0.15); color: var(--danger); border-color: var(--danger); }
+
+    /* Product thumbnail in notification */
+    .notif-thumb {
+      width: 42px; height: 42px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-card-2);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 18px;
+      color: var(--text-muted); opacity: .4;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .notif-thumb img { width:100%; height:100%; object-fit:cover; opacity:1; }
+
+    /* ══════════════════════════════════════
+       EMPTY STATE
+    ══════════════════════════════════════ */
+    .empty-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px var(--px);
+      text-align: center;
+    }
+    .empty-state.show { display: flex; }
+    .empty-icon { font-size: 72px; color: var(--text-muted); opacity: .15; margin-bottom: 24px; }
+    .empty-title { font-family: var(--font-display); font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+    .empty-sub { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+
+    /* ══════════════════════════════════════
+       BOTTOM NAV
+    ══════════════════════════════════════ */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      background: rgba(18,18,18,0.97);
+      border-top: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      display: flex; align-items: center; justify-content: space-around;
+      z-index: 100; max-width: 480px; margin: 0 auto;
+      padding-bottom: env(safe-area-inset-bottom,0px);
+    }
+    .nav-item {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 4px; flex: 1;
+      padding: 8px 4px 4px; cursor: pointer;
+    }
+    .nav-item:active { opacity: .7; }
+    .nav-icon { font-size: 20px; color: var(--text-muted); }
+    .nav-item.active .nav-icon { color: var(--gold); }
+    .nav-label { font-family: var(--font-display); font-size: 10px; font-weight: 600; color: var(--text-muted); }
+    .nav-item.active .nav-label { color: var(--gold); }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══ HEADER ══ -->
+  <div class="header">
+    <button class="back-btn" onclick="history.back()">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <div class="header-center">
+      <span class="header-title">Notifications</span>
+      <span class="unread-badge" id="unreadBadge">4</span>
+    </div>
+    <button class="mark-all-btn" onclick="markAllRead()">
+      Mark all read
+    </button>
+  </div>
+
+  <!-- ══ FILTER TABS ══ -->
+  <div class="filter-tabs fu d1">
+    <div class="filter-tab active" onclick="setTab(this,'all')">
+      All <div class="tab-dot"></div>
+    </div>
+    <div class="filter-tab" onclick="setTab(this,'orders')">Orders</div>
+    <div class="filter-tab" onclick="setTab(this,'deals')">
+      Deals <div class="tab-dot"></div>
+    </div>
+    <div class="filter-tab" onclick="setTab(this,'delivery')">Delivery</div>
+    <div class="filter-tab" onclick="setTab(this,'system')">System</div>
+  </div>
+
+  <!-- ══ TODAY ══ -->
+  <div class="notif-group">
+    <div class="group-label fu d1">Today</div>
+
+    <!-- 1. Order Shipped (unread) -->
+    <div class="notif-item unread fu d2" id="n1">
+      <div class="notif-icon icon-order">
+        <i class="fa-solid fa-truck-fast"></i>
+        <div class="notif-icon-badge" style="background:var(--gold); color:#000;">
+          <i class="fa-solid fa-check" style="font-size:7px;"></i>
+        </div>
+      </div>
+      <div class="notif-content">
+        <div class="notif-title">Order Shipped! 📦</div>
+        <div class="notif-body">
+          Your order <strong>#SBX-784512</strong> has been shipped and is on its way to you. Expected delivery: <em>May 28–Jun 2</em>
+        </div>
+        <div class="notif-actions">
+          <button class="notif-act-btn notif-act-gold" onclick="showToast('📦 Opening tracking…')">Track Order</button>
+          <button class="notif-act-btn notif-act-outline" onclick="showToast('📄 Order details…')">View Details</button>
+        </div>
+        <div class="notif-time" style="margin-top:8px;">
+          <i class="fa-regular fa-clock"></i> 1h ago
+        </div>
+      </div>
+      <button class="notif-dismiss" onclick="dismissNotif('n1',event)">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- 2. Flash Sale (unread) -->
+    <div class="notif-item unread fu d3" id="n2">
+      <div class="notif-icon icon-sale">
+        <i class="fa-solid fa-bolt"></i>
+        <div class="notif-icon-badge" style="background:var(--danger); color:#fff;">
+          <i class="fa-solid fa-fire" style="font-size:7px;"></i>
+        </div>
+      </div>
+      <div class="notif-content">
+        <div class="notif-title">⚡ Flash Sale Alert!</div>
+        <div class="notif-body">
+          Up to <strong>60% OFF</strong> on selected items. Sale ends in <em>08:45:30</em> — don't miss out!
+        </div>
+        <div class="notif-actions">
+          <button class="notif-act-btn notif-act-gold" onclick="showToast('🛍️ Opening flash sale…')">Shop Now</button>
+        </div>
+        <div class="notif-time" style="margin-top:8px;">
+          <i class="fa-regular fa-clock"></i> 2h ago
+        </div>
+      </div>
+      <button class="notif-dismiss" onclick="dismissNotif('n2',event)">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- 3. New Collection (unread) -->
+    <div class="notif-item unread fu d4" id="n3">
+      <div class="notif-icon icon-new">
+        <i class="fa-solid fa-sparkles"></i>
+      </div>
+      <div class="notif-content">
+        <div class="notif-title">✨ New Collection Just Dropped!</div>
+        <div class="notif-body">
+          Check out our latest arrivals in Men's Fashion — over <strong>200 new items</strong> added this week.
+        </div>
+        <div class="notif-thumb" style="margin-top:8px;">
+          <!-- 🖼️ IMAGE SLOT -->
+          <i class="fa-solid fa-shirt"></i>
+        </div>
+        <div class="notif-actions" style="margin-top:8px;">
+          <button class="notif-act-btn notif-act-gold" onclick="showToast('👔 Opening new arrivals…')">Explore</button>
+        </div>
+        <div class="notif-time" style="margin-top:8px;">
+          <i class="fa-regular fa-clock"></i> 4h ago
+        </div>
+      </div>
+      <button class="notif-dismiss" onclick="dismissNotif('n3',event)">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- 4. Price Drop (unread) -->
+    <div class="notif-item unread fu d5" id="n4">
+      <div class="notif-icon icon-price">
+        <i class="fa-solid fa-arrow-trend-down"></i>
+      </div>
+      <div class="notif-content">
+        <div class="notif-title">📉 Price Drop on Your Wishlist!</div>
+        <div class="notif-body">
+          <strong>Classic Leather Watch</strong> in your wishlist dropped from <strong>₦24,000</strong> to <em>₦18,000</em>. Grab it now!
+        </div>
+        <div class="notif-actions">
+          <button class="notif-act-btn notif-act-gold" onclick="showToast('🛒 Adding to cart…')">Add to Cart</button>
+          <button class="notif-act-btn notif-act-outline" onclick="showToast('❤️ Opening wishlist…')">Wishlist</button>
+        </div>
+        <div class="notif-time" style="margin-top:8px;">
+          <i class="fa-regular fa-clock"></i> 6h ago
+        </div>
+      </div>
+      <button class="notif-dismiss" onclick="dismissNotif('n4',event)">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ══ YESTERDAY ══ -->
+  <div class="notif-group">
+    <div class="group-label">Yesterday</div>
+
+    <!-- 5. Order Delivered (read) -->
+    <div class="notif-item fu d2" id="n5">
+      <div class="notif-icon icon-delivery">
+        <i class="fa-solid fa-house"></i>
+      </div>
+      <div class="notif-content">
+        <div class="notif-title">Order Delivered ✅</div>
+        <div class="notif-body">
+          Your order <strong>#SBX-651203</strong> has been delivered successfully. We hope you love it!
+        </div>
+        <div class="notif-actions">
+          <button class="notif-act-btn notif-act-gold" onclick="showToast('⭐ Opening review form…')">Leave Review</button>
+          <button class="notif-act-btn notif-act-outline" onclick="showToast('↩️ Return options…')">Return</button>
+        </div>
+        <div class="notif-time" style="margin-top:8px;">
+          <i class="fa-regular fa-clock"></i> 1d ago
+        </div>
+      </div>
+      <button class="notif-dismiss" onclick="dismissNotif('n5',event)">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- 6. Promo Code (read) -->
+    <div class="notif-item fu d3" id="n6">
+      <div class="notif-icon icon-promo">
+        <i class="fa-solid fa-tag"></i>
+      </div>
+      <div class="notif-content">
+        <div class="notif-title">🎁 Exclusive Promo Code!</div>
+        <div class="notif-body">
+          Use code <strong>SHOPBOX10</strong> to get <em>₦5,000 OFF</em> your next order. Valid for 48 hours only!
+        </div>
+        <div class="notif-actions">
+          <button class="notif-act-btn notif-act-gold" onclick="copyCode()">
+            <i class="fa-regular fa-copy" style="font-size:10px;"></i> Copy Code
+          </button>
+        </div>
+        <div class="notif-time" style="margin-top:8px;">
+          <i class="fa-regular fa-clock"></i> 1d ago
+        </div>
+      </div>
+      <button class="notif-dismiss" onclick="dismissNotif('n6',event)">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- 7. Review Reminder (read) -->
+    <div class="notif-item fu d4" id="n7">
+      <div class="notif-icon icon-review">
+        <i class="fa-solid fa-star"></i>
+      </div>
+      <div class="notif-content">
+        <div class="notif-title">Rate Your Recent Purchase ⭐</div>
+        <div class="notif-body">
+          How was your <strong>SoundX Pro Wireless Earbuds</strong>? Share your experience to help other shoppers.
+        </div>
+        <div class="notif-actions">
+          <button class="notif-act-btn notif-act-gold" onclick="showToast('⭐ Opening review form…')">Write Review</button>
+        </div>
+        <div class="notif-time" style="margin-top:8px;">
+          <i class="fa-regular fa-clock"></i> 1d ago
+        </div>
+      </div>
+      <button class="notif-dismiss" onclick="dismissNotif('n7',event)">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ══ EARLIER ══ -->
+  <div class="notif-group">
+    <div class="group-label">Earlier</div>
+
+    <!-- 8. Order Confirmed (read) -->
+    <div class="notif-item fu d2" id="n8">
+      <div class="notif-icon icon-order">
+        <i class="fa-solid fa-circle-check"></i>
+      </div>
+      <div class="notif-content">
+        <div class="notif-title">Order Confirmed 🎉</div>
+        <div class="notif-body">
+          Order <strong>#SBX-784512</strong> confirmed! Total: <em>₦64,000</em>. We're preparing your items.
+        </div>
+        <div class="notif-time">
+          <i class="fa-regular fa-clock"></i> May 20, 2024
+        </div>
+      </div>
+      <button class="notif-dismiss" onclick="dismissNotif('n8',event)">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- 9. Welcome (read) -->
+    <div class="notif-item fu d3" id="n9">
+      <div class="notif-icon" style="background:var(--gold-muted);">
+        <svg viewBox="0 0 20 20" fill="none" width="22" height="22">
+          <path d="M7 7C7 5.343 8.343 4 10 4C11.657 4 13 5.343 13 7" stroke="#F5A623" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M5 7h10l-1.2 8H6.2L5 7z" stroke="#F5A623" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+          <path d="M8.5 11l1.2 1.2 2-2" stroke="#F5A623" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="notif-content">
+        <div class="notif-title">Welcome to Shopbox! 👋</div>
+        <div class="notif-body">
+          Your account is ready. Use code <strong>WELCOME</strong> for <em>₦3,000 OFF</em> your first order!
+        </div>
+        <div class="notif-time">
+          <i class="fa-regular fa-clock"></i> May 18, 2024
+        </div>
+      </div>
+      <button class="notif-dismiss" onclick="dismissNotif('n9',event)">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- 10. System update (read) -->
+    <div class="notif-item fu d4" id="n10">
+      <div class="notif-icon icon-system">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <div class="notif-content">
+        <div class="notif-title">Security Update</div>
+        <div class="notif-body">
+          We've updated our privacy policy to better protect your data. No action required.
+        </div>
+        <div class="notif-time">
+          <i class="fa-regular fa-clock"></i> May 15, 2024
+        </div>
+      </div>
+      <button class="notif-dismiss" onclick="dismissNotif('n10',event)">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ══ EMPTY STATE ══ -->
+  <div class="empty-state" id="emptyState">
+    <i class="fa-regular fa-bell empty-icon"></i>
+    <h2 class="empty-title">All Caught Up!</h2>
+    <p class="empty-sub">No new notifications right now.<br>We'll let you know when something happens.</p>
+  </div>
+
+</div><!-- /page -->
+
+<!-- ══ BOTTOM NAV ══ -->
+<nav class="bottom-nav">
+  <div class="nav-item" onclick="showToast('🏠 Home')">
+    <div class="nav-icon"><i class="fa-solid fa-house"></i></div>
+    <span class="nav-label">Home</span>
+  </div>
+  <div class="nav-item" onclick="showToast('📂 Categories')">
+    <div class="nav-icon"><i class="fa-solid fa-table-cells-large"></i></div>
+    <span class="nav-label">Categories</span>
+  </div>
+  <div class="nav-item" onclick="showToast('❤️ Wishlist')">
+    <div class="nav-icon"><i class="fa-regular fa-heart"></i></div>
+    <span class="nav-label">Wishlist</span>
+  </div>
+  <div class="nav-item" onclick="showToast('📦 Orders')">
+    <div class="nav-icon"><i class="fa-solid fa-box"></i></div>
+    <span class="nav-label">Orders</span>
+  </div>
+  <div class="nav-item" onclick="showToast('👤 Account')">
+    <div class="nav-icon"><i class="fa-regular fa-user"></i></div>
+    <span class="nav-label">Account</span>
+  </div>
+</nav>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+  /* ══ State ══ */
+  let unreadCount = 4;
+  const unreadIds = ['n1','n2','n3','n4'];
+
+  /* ── Dismiss notification ── */
+  function dismissNotif(id, e) {
+    e.stopPropagation();
+    const el = document.getElementById(id);
+    el.style.transition = 'all .35s ease';
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(60px)';
+    el.style.maxHeight = el.offsetHeight + 'px';
+    setTimeout(() => {
+      el.style.maxHeight = '0';
+      el.style.padding = '0';
+      el.style.margin = '0';
+      el.style.border = 'none';
+    }, 200);
+    setTimeout(() => {
+      el.remove();
+      if (unreadIds.includes(id)) {
+        unreadCount = Math.max(0, unreadCount - 1);
+        updateBadge();
+      }
+      checkEmpty();
+    }, 380);
+    showToast('🗑️ Notification dismissed');
+  }
+
+  /* ── Mark all read ── */
+  function markAllRead() {
+    document.querySelectorAll('.notif-item.unread').forEach(el => {
+      el.classList.remove('unread');
+    });
+    unreadCount = 0;
+    updateBadge();
+    showToast('✅ All notifications marked as read');
+  }
+
+  /* ── Update badge ── */
+  function updateBadge() {
+    const badge = document.getElementById('unreadBadge');
+    badge.textContent = unreadCount;
+    badge.style.display = unreadCount === 0 ? 'none' : 'inline-block';
+  }
+
+  /* ── Check empty ── */
+  function checkEmpty() {
+    const remaining = document.querySelectorAll('.notif-item').length;
+    document.getElementById('emptyState').classList.toggle('show', remaining === 0);
+  }
+
+  /* ── Tab switch ── */
+  function setTab(el, tab) {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    showToast(`🔔 ${el.textContent.trim()} notifications`);
+  }
+
+  /* ── Copy promo code ── */
+  function copyCode() {
+    navigator.clipboard?.writeText('SHOPBOX10').catch(() => {});
+    showToast('✅ Code "SHOPBOX10" copied!');
+  }
+
+  /* ── Mark as read on tap ── */
+  document.querySelectorAll('.notif-item').forEach(el => {
+    el.addEventListener('click', function() {
+      if (this.classList.contains('unread')) {
+        this.classList.remove('unread');
+        unreadCount = Math.max(0, unreadCount - 1);
+        updateBadge();
+      }
+    });
+  });
+
+  /* ── Toast ── */
+  function showToast(msg, dur = 2600) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), dur);
+  }
+</script>
+
+<style>
+  #toast {
+    position: fixed; bottom: calc(68px + 12px);
+    left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #1C1C1C; border: 1px solid rgba(245,166,35,0.4);
+    color: #fff; font-size: 13px; font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    padding: 10px 22px; border-radius: 999px;
+    opacity: 0; transition: all .3s ease;
+    z-index: 9999; white-space: nowrap; pointer-events: none;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+
+</body>
+</html>

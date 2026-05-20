@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Shopbox — Customer Reviews</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --gold:          #F5A623;
+      --gold-bright:   #FFB930;
+      --gold-dark:     #C47F0A;
+      --gold-muted:    rgba(245,166,35,0.12);
+      --gold-glow:     rgba(245,166,35,0.28);
+      --bg-base:       #0D0D0D;
+      --bg-card:       #161616;
+      --bg-card-2:     #1C1C1C;
+      --border:        rgba(255,255,255,0.07);
+      --border-gold:   rgba(245,166,35,0.32);
+      --text-primary:  #FFFFFF;
+      --text-secondary:#A0A0A0;
+      --text-muted:    #555555;
+      --success:       #22C55E;
+      --danger:        #EF4444;
+      --font-display:  'Syne', sans-serif;
+      --font-body:     'DM Sans', sans-serif;
+      --px:            16px;
+      --radius-sm:     8px;
+      --radius-md:     12px;
+      --radius-lg:     16px;
+      --radius-pill:   999px;
+      --bar-h:         88px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100dvh;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: calc(var(--bar-h) + 16px);
+    }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; }
+    input, textarea { font-family: inherit; outline: none; border: none; background: none; }
+    a { text-decoration: none; color: inherit; }
+    .page { max-width: 480px; margin: 0 auto; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);} }
+    .fu{animation:fadeUp .35s ease both;}
+    .d1{animation-delay:.04s;}.d2{animation-delay:.08s;}.d3{animation-delay:.12s;}
+    .d4{animation-delay:.16s;}.d5{animation-delay:.20s;}.d6{animation-delay:.24s;}
+
+    /* ══════════════════════════════════════
+       HEADER
+    ══════════════════════════════════════ */
+    .header {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 14px var(--px);
+      background: rgba(13,13,13,0.97);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 50;
+    }
+    .back-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--bg-card); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; transition: border-color .2s;
+    }
+    .back-btn:active { border-color: var(--border-gold); }
+    .header-title {
+      font-family: var(--font-display);
+      font-size: 17px; font-weight: 800;
+    }
+    .header-title span {
+      font-size: 13px; color: var(--text-muted);
+      font-weight: 500; margin-left: 4px;
+    }
+    .sort-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--bg-card); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; color: var(--text-secondary);
+      transition: all .2s;
+    }
+    .sort-btn:active { border-color: var(--border-gold); color: var(--gold); }
+
+    /* ══════════════════════════════════════
+       PRODUCT MINI CARD
+    ══════════════════════════════════════ */
+    .product-mini {
+      display: flex; gap: 12px;
+      margin: 14px var(--px);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 12px 14px;
+      align-items: center;
+      cursor: pointer;
+      transition: border-color .2s;
+    }
+    .product-mini:active { border-color: var(--border-gold); }
+    .product-mini-img {
+      width: 56px; height: 56px;
+      border-radius: var(--radius-md);
+      background: var(--bg-card-2);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 22px;
+      color: var(--text-muted); opacity: .4;
+      overflow: hidden;
+    }
+    .product-mini-img img { width:100%; height:100%; object-fit:cover; opacity:1; }
+    .product-mini-info { flex: 1; min-width: 0; }
+    .product-mini-name {
+      font-size: 13px; font-weight: 600;
+      margin-bottom: 3px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .product-mini-price {
+      font-family: var(--font-display);
+      font-size: 14px; font-weight: 800; color: var(--gold);
+    }
+    .product-mini-arrow { color: var(--text-muted); font-size: 13px; }
+
+    /* ══════════════════════════════════════
+       RATING SUMMARY CARD
+    ══════════════════════════════════════ */
+    .rating-summary {
+      margin: 0 var(--px) 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+    }
+    .rating-top {
+      display: flex; gap: 20px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    /* Big score */
+    .big-score {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 6px;
+      flex-shrink: 0;
+    }
+    .big-score-num {
+      font-family: var(--font-display);
+      font-size: 52px; font-weight: 800;
+      color: var(--gold); line-height: 1;
+    }
+    .big-score-stars {
+      display: flex; gap: 3px;
+      color: var(--gold); font-size: 14px;
+    }
+    .big-score-count {
+      font-size: 11px; color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* Bar chart */
+    .rating-bars { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .bar-row {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .bar-label {
+      font-size: 12px; color: var(--text-muted);
+      width: 10px; text-align: right; flex-shrink: 0;
+    }
+    .bar-track {
+      flex: 1; height: 6px;
+      background: var(--bg-card-2);
+      border-radius: 99px; overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      background: var(--gold);
+      border-radius: 99px;
+      transition: width 1s ease;
+    }
+    .bar-count {
+      font-size: 11px; color: var(--text-muted);
+      width: 28px; text-align: right; flex-shrink: 0;
+    }
+
+    /* Sentiment badges */
+    .sentiment-row {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .sentiment-chip {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all .2s;
+    }
+    .sentiment-chip.positive {
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.25);
+      color: var(--success);
+    }
+    .sentiment-chip.neutral {
+      background: var(--gold-muted);
+      border: 1px solid var(--border-gold);
+      color: var(--gold);
+    }
+    .sentiment-chip.negative {
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.2);
+      color: var(--danger);
+    }
+    .sentiment-chip:active { transform: scale(0.96); }
+
+    /* ══════════════════════════════════════
+       FILTER CHIPS
+    ══════════════════════════════════════ */
+    .filter-row {
+      display: flex; gap: 8px;
+      padding: 0 var(--px) 12px;
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .filter-row::-webkit-scrollbar { display: none; }
+    .filter-chip {
+      flex-shrink: 0;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-display);
+      font-size: 12px; font-weight: 700;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      color: var(--text-secondary);
+      cursor: pointer; transition: all .2s;
+      white-space: nowrap;
+    }
+    .filter-chip.active {
+      background: var(--gold); border-color: var(--gold); color: #000;
+    }
+    .filter-chip:active { transform: scale(0.96); }
+
+    /* ══════════════════════════════════════
+       REVIEW CARDS
+    ══════════════════════════════════════ */
+    .reviews-list {
+      display: flex; flex-direction: column;
+      gap: 12px; padding: 0 var(--px);
+    }
+
+    .review-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      transition: border-color .2s;
+      animation: fadeUp .35s ease both;
+    }
+    .review-card:nth-child(1){animation-delay:.04s;}
+    .review-card:nth-child(2){animation-delay:.08s;}
+    .review-card:nth-child(3){animation-delay:.12s;}
+    .review-card:nth-child(4){animation-delay:.16s;}
+    .review-card:nth-child(5){animation-delay:.20s;}
+    .review-card:hover { border-color: var(--border-gold); }
+
+    /* Review header */
+    .review-head {
+      display: flex; align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .reviewer {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .reviewer-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-size: 15px; font-weight: 800;
+      flex-shrink: 0; overflow: hidden;
+    }
+    .reviewer-avatar img { width:100%; height:100%; object-fit:cover; }
+    .reviewer-info { }
+    .reviewer-name {
+      font-family: var(--font-display);
+      font-size: 14px; font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .reviewer-badges {
+      display: flex; align-items: center; gap: 5px;
+    }
+    .verified-badge {
+      font-size: 10px; font-weight: 600;
+      color: var(--success);
+      display: flex; align-items: center; gap: 3px;
+    }
+    .purchase-badge {
+      font-size: 10px; color: var(--text-muted);
+    }
+
+    .review-meta {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .review-date { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+    .review-stars { color: var(--gold); font-size: 12px; display: flex; gap: 2px; justify-content: flex-end; }
+
+    /* Review body */
+    .review-title {
+      font-family: var(--font-display);
+      font-size: 14px; font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .review-text {
+      font-size: 13px; color: var(--text-secondary);
+      line-height: 1.6; margin-bottom: 10px;
+    }
+    .review-text.collapsed {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .read-more {
+      font-size: 12px; color: var(--gold);
+      font-weight: 600; cursor: pointer;
+      margin-bottom: 10px;
+      display: inline-block;
+    }
+
+    /* Review photos */
+    .review-photos {
+      display: flex; gap: 8px;
+      margin-bottom: 10px;
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .review-photos::-webkit-scrollbar { display: none; }
+    .review-photo {
+      width: 72px; height: 72px; border-radius: var(--radius-sm);
+      background: var(--bg-card-2); flex-shrink: 0;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; color: var(--text-muted); opacity: .4;
+      overflow: hidden; cursor: pointer; transition: border-color .2s;
+    }
+    .review-photo:active { border-color: var(--border-gold); }
+    .review-photo img { width:100%; height:100%; object-fit:cover; opacity:1; }
+
+    /* Variant info */
+    .review-variant {
+      font-size: 11px; color: var(--text-muted);
+      background: var(--bg-card-2);
+      padding: 4px 10px; border-radius: var(--radius-pill);
+      display: inline-block; margin-bottom: 10px;
+    }
+
+    /* Helpful row */
+    .helpful-row {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+    .helpful-text { font-size: 12px; color: var(--text-muted); }
+    .helpful-btns { display: flex; gap: 8px; }
+    .helpful-btn {
+      display: flex; align-items: center; gap: 5px;
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 12px; font-weight: 600;
+      background: var(--bg-card-2);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      transition: all .2s;
+    }
+    .helpful-btn:active { border-color: var(--border-gold); color: var(--gold); }
+    .helpful-btn.voted { color: var(--gold); border-color: var(--border-gold); background: var(--gold-muted); }
+    .helpful-btn i { font-size: 11px; }
+
+    /* ══════════════════════════════════════
+       BOTTOM WRITE REVIEW BAR
+    ══════════════════════════════════════ */
+    .bottom-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      max-width: 480px; margin: 0 auto;
+      background: rgba(13,13,13,0.97);
+      border-top: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      padding: 14px var(--px);
+      padding-bottom: calc(14px + env(safe-area-inset-bottom,0px));
+      z-index: 100;
+    }
+    .write-review-btn {
+      width: 100%; height: 54px;
+      background: var(--gold); color: #000;
+      font-family: var(--font-display);
+      font-size: 16px; font-weight: 800;
+      border-radius: var(--radius-pill);
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px;
+      box-shadow: 0 6px 24px var(--gold-glow);
+      transition: transform .15s, background .2s;
+    }
+    .write-review-btn:active { transform: scale(0.97); background: var(--gold-dark); }
+
+    /* ══════════════════════════════════════
+       WRITE REVIEW SHEET
+    ══════════════════════════════════════ */
+    .sheet-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.65);
+      backdrop-filter: blur(4px);
+      z-index: 200; opacity: 0; pointer-events: none;
+      transition: opacity .3s;
+    }
+    .sheet-overlay.open { opacity: 1; pointer-events: all; }
+
+    .review-sheet {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      max-width: 480px; margin: 0 auto;
+      background: var(--bg-card);
+      border-radius: 24px 24px 0 0;
+      border-top: 1px solid var(--border);
+      padding: 20px var(--px) 40px;
+      z-index: 201;
+      transform: translateY(100%);
+      transition: transform .35s cubic-bezier(.4,0,.2,1);
+      max-height: 90vh; overflow-y: auto;
+    }
+    .review-sheet.open { transform: translateY(0); }
+    .sheet-handle {
+      width: 40px; height: 4px;
+      background: var(--border); border-radius: 99px;
+      margin: 0 auto 20px;
+    }
+    .sheet-title {
+      font-family: var(--font-display);
+      font-size: 18px; font-weight: 800; margin-bottom: 20px;
+    }
+
+    /* Star picker */
+    .star-picker {
+      display: flex; justify-content: center;
+      gap: 12px; margin-bottom: 20px;
+    }
+    .star-pick {
+      font-size: 36px; color: var(--text-muted);
+      cursor: pointer; transition: color .15s, transform .15s;
+    }
+    .star-pick.lit { color: var(--gold); transform: scale(1.1); }
+    .star-pick:active { transform: scale(0.9); }
+
+    .star-label {
+      text-align: center; margin-bottom: 20px;
+      font-family: var(--font-display);
+      font-size: 14px; font-weight: 700;
+      color: var(--gold); min-height: 20px;
+    }
+
+    /* Input fields */
+    .review-field { margin-bottom: 14px; }
+    .review-field label {
+      display: block; font-size: 12px; font-weight: 600;
+      color: var(--text-muted); margin-bottom: 7px;
+      text-transform: uppercase; letter-spacing: .04em;
+    }
+    .review-input {
+      width: 100%;
+      background: var(--bg-card-2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      font-size: 14px; color: var(--text-primary);
+      transition: border-color .2s;
+    }
+    .review-input:focus { border-color: var(--border-gold); outline: none; }
+    .review-input::placeholder { color: var(--text-muted); }
+    textarea.review-input {
+      min-height: 100px; resize: none; line-height: 1.6;
+    }
+
+    /* Photo upload */
+    .photo-upload {
+      display: flex; gap: 10px; flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .upload-slot {
+      width: 72px; height: 72px;
+      border-radius: var(--radius-md);
+      background: var(--bg-card-2);
+      border: 1.5px dashed var(--border);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 4px; cursor: pointer;
+      transition: border-color .2s;
+      font-size: 22px; color: var(--text-muted);
+    }
+    .upload-slot span { font-size: 10px; color: var(--text-muted); }
+    .upload-slot:active { border-color: var(--border-gold); color: var(--gold); }
+
+    /* Submit */
+    .submit-review-btn {
+      width: 100%; height: 52px;
+      background: var(--gold); color: #000;
+      font-family: var(--font-display);
+      font-size: 15px; font-weight: 800;
+      border-radius: var(--radius-pill);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 4px 16px var(--gold-glow);
+      transition: background .2s, transform .15s;
+    }
+    .submit-review-btn:active { transform: scale(0.97); background: var(--gold-dark); }
+
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══ HEADER ══ -->
+  <div class="header">
+    <button class="back-btn" onclick="history.back()">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <div class="header-title">
+      Customer Reviews <span>(210)</span>
+    </div>
+    <button class="sort-btn" onclick="showToast('🔀 Sort options')">
+      <i class="fa-solid fa-arrow-up-wide-short"></i>
+    </button>
+  </div>
+
+  <!-- ══ PRODUCT MINI ══ -->
+  <div class="product-mini fu d1" onclick="history.back()">
+    <div class="product-mini-img">
+      <!-- 🖼️ IMAGE SLOT -->
+      <i class="fa-solid fa-headphones"></i>
+    </div>
+    <div class="product-mini-info">
+      <div class="product-mini-name">SoundX Pro Wireless Earbuds</div>
+      <div class="product-mini-price">₦24,500</div>
+    </div>
+    <i class="fa-solid fa-chevron-right product-mini-arrow"></i>
+  </div>
+
+  <!-- ══ RATING SUMMARY ══ -->
+  <div class="rating-summary fu d2">
+    <div class="rating-top">
+
+      <!-- Big score -->
+      <div class="big-score">
+        <div class="big-score-num">4.8</div>
+        <div class="big-score-stars">
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star-half-stroke"></i>
+        </div>
+        <div class="big-score-count">210 reviews</div>
+      </div>
+
+      <!-- Bars -->
+      <div class="rating-bars">
+        <div class="bar-row">
+          <span class="bar-label">5</span>
+          <div class="bar-track"><div class="bar-fill" style="width:75%;"></div></div>
+          <span class="bar-count">158</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">4</span>
+          <div class="bar-track"><div class="bar-fill" style="width:15%; background:var(--gold-bright);"></div></div>
+          <span class="bar-count">31</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">3</span>
+          <div class="bar-track"><div class="bar-fill" style="width:6%; background:var(--gold-dark);"></div></div>
+          <span class="bar-count">13</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">2</span>
+          <div class="bar-track"><div class="bar-fill" style="width:2%; background:#F97316;"></div></div>
+          <span class="bar-count">5</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">1</span>
+          <div class="bar-track"><div class="bar-fill" style="width:1%; background:var(--danger);"></div></div>
+          <span class="bar-count">3</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Sentiment chips -->
+    <div class="sentiment-row">
+      <div class="sentiment-chip positive" onclick="setFilter(this,'5star')">
+        <i class="fa-solid fa-thumbs-up"></i> Sound Quality (145)
+      </div>
+      <div class="sentiment-chip positive" onclick="setFilter(this,'comfort')">
+        <i class="fa-solid fa-check"></i> Comfort (98)
+      </div>
+      <div class="sentiment-chip neutral" onclick="setFilter(this,'value')">
+        <i class="fa-solid fa-tag"></i> Value (72)
+      </div>
+      <div class="sentiment-chip negative" onclick="setFilter(this,'battery')">
+        <i class="fa-solid fa-battery-half"></i> Battery (12)
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ FILTER CHIPS ══ -->
+  <div class="filter-row fu d3">
+    <div class="filter-chip active" onclick="setFilterChip(this,'all')">All (210)</div>
+    <div class="filter-chip" onclick="setFilterChip(this,'5')">⭐⭐⭐⭐⭐ (158)</div>
+    <div class="filter-chip" onclick="setFilterChip(this,'4')">⭐⭐⭐⭐ (31)</div>
+    <div class="filter-chip" onclick="setFilterChip(this,'photos')">With Photos</div>
+    <div class="filter-chip" onclick="setFilterChip(this,'verified')">Verified Only</div>
+    <div class="filter-chip" onclick="setFilterChip(this,'nigeria')">From Nigeria</div>
+  </div>
+
+  <!-- ══ REVIEWS LIST ══ -->
+  <div class="reviews-list">
+
+    <!-- Review 1 -->
+    <div class="review-card">
+      <div class="review-head">
+        <div class="reviewer">
+          <div class="reviewer-avatar" style="background:var(--gold-muted); color:var(--gold);">EJ</div>
+          <div class="reviewer-info">
+            <div class="reviewer-name">Emeka Johnson</div>
+            <div class="reviewer-badges">
+              <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Purchase</span>
+              <span class="purchase-badge">· Lagos</span>
+            </div>
+          </div>
+        </div>
+        <div class="review-meta">
+          <div class="review-date">May 18, 2024</div>
+          <div class="review-stars">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+          </div>
+        </div>
+      </div>
+      <div class="review-title">Absolutely incredible sound! 🔥</div>
+      <span class="review-variant">Color: Black · Size: Standard</span>
+      <div class="review-text collapsed" id="rt1">
+        Excellent quality and fits perfectly. The design is unique and premium! The bass is incredibly deep and the highs are crystal clear. I've tried many earbuds but nothing comes close to this. Call quality is outstanding — everyone on the other end says they can hear me perfectly. Delivered to Lagos in just 4 days. Very impressed with Shopbox!
+      </div>
+      <span class="read-more" onclick="toggleRead('rt1',this)">Read more</span>
+      <!-- Review photos -->
+      <div class="review-photos">
+        <div class="review-photo" onclick="showToast('📸 Viewing photo…')">
+          <!-- 🖼️ IMAGE SLOT -->
+          <i class="fa-solid fa-image"></i>
+        </div>
+        <div class="review-photo" onclick="showToast('📸 Viewing photo…')">
+          <!-- 🖼️ IMAGE SLOT -->
+          <i class="fa-solid fa-image"></i>
+        </div>
+      </div>
+      <div class="helpful-row">
+        <span class="helpful-text">48 people found this helpful</span>
+        <div class="helpful-btns">
+          <button class="helpful-btn" onclick="markHelpful(this)">
+            <i class="fa-regular fa-thumbs-up"></i> Helpful
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Review 2 -->
+    <div class="review-card">
+      <div class="review-head">
+        <div class="reviewer">
+          <div class="reviewer-avatar" style="background:rgba(99,102,241,0.15); color:#818CF8;">AT</div>
+          <div class="reviewer-info">
+            <div class="reviewer-name">Adaeze Tunde</div>
+            <div class="reviewer-badges">
+              <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Purchase</span>
+              <span class="purchase-badge">· Abuja</span>
+            </div>
+          </div>
+        </div>
+        <div class="review-meta">
+          <div class="review-date">Apr 30, 2024</div>
+          <div class="review-stars">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+          </div>
+        </div>
+      </div>
+      <div class="review-title">Great earbuds, minor setup issue</div>
+      <span class="review-variant">Color: White · Size: Standard</span>
+      <div class="review-text">
+        Great sound quality, very comfortable to wear for hours. The noise cancellation works really well in noisy environments. The only minus is the app setup took a bit of figuring out. Once connected though, it's perfect. Would definitely recommend to anyone looking for quality earbuds at a great price!
+      </div>
+      <div class="helpful-row">
+        <span class="helpful-text">32 people found this helpful</span>
+        <div class="helpful-btns">
+          <button class="helpful-btn" onclick="markHelpful(this)">
+            <i class="fa-regular fa-thumbs-up"></i> Helpful
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Review 3 -->
+    <div class="review-card">
+      <div class="review-head">
+        <div class="reviewer">
+          <div class="reviewer-avatar" style="background:rgba(34,197,94,0.15); color:var(--success);">KA</div>
+          <div class="reviewer-info">
+            <div class="reviewer-name">Kunle Adewale</div>
+            <div class="reviewer-badges">
+              <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Purchase</span>
+              <span class="purchase-badge">· Port Harcourt</span>
+            </div>
+          </div>
+        </div>
+        <div class="review-meta">
+          <div class="review-date">Apr 15, 2024</div>
+          <div class="review-stars">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+          </div>
+        </div>
+      </div>
+      <div class="review-title">Best purchase of the year! 💯</div>
+      <span class="review-variant">Color: Gold · Size: Standard</span>
+      <div class="review-text collapsed" id="rt3">
+        I was skeptical at first but these earbuds completely blew me away. The Gold color variant looks absolutely stunning. Battery life is incredible — I've used it for 3 days straight without charging. The fast charge feature is a lifesaver. IPX5 water resistance is real, tested it in the rain! Shopbox delivered in record time too. 10/10 would buy again!
+      </div>
+      <span class="read-more" onclick="toggleRead('rt3',this)">Read more</span>
+      <div class="review-photos">
+        <div class="review-photo" onclick="showToast('📸 Viewing photo…')">
+          <i class="fa-solid fa-image"></i>
+        </div>
+        <div class="review-photo" onclick="showToast('📸 Viewing photo…')">
+          <i class="fa-solid fa-image"></i>
+        </div>
+        <div class="review-photo" onclick="showToast('📸 Viewing photo…')">
+          <i class="fa-solid fa-image"></i>
+        </div>
+      </div>
+      <div class="helpful-row">
+        <span class="helpful-text">67 people found this helpful</span>
+        <div class="helpful-btns">
+          <button class="helpful-btn" onclick="markHelpful(this)">
+            <i class="fa-regular fa-thumbs-up"></i> Helpful
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Review 4 -->
+    <div class="review-card">
+      <div class="review-head">
+        <div class="reviewer">
+          <div class="reviewer-avatar" style="background:rgba(239,68,68,0.12); color:var(--danger);">FO</div>
+          <div class="reviewer-info">
+            <div class="reviewer-name">Funmi Okonkwo</div>
+            <div class="reviewer-badges">
+              <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Purchase</span>
+              <span class="purchase-badge">· Ibadan</span>
+            </div>
+          </div>
+        </div>
+        <div class="review-meta">
+          <div class="review-date">Mar 28, 2024</div>
+          <div class="review-stars">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+          </div>
+        </div>
+      </div>
+      <div class="review-title">Good but battery could be better</div>
+      <span class="review-variant">Color: Blue · Size: Standard</span>
+      <div class="review-text">
+        Sound quality is amazing and the design is beautiful. My only complaint is the battery doesn't quite last as long as advertised — I get about 6 hours on a charge, not 8. Still, the fast charging makes up for it. Customer service was responsive when I reached out. Overall a solid product.
+      </div>
+      <div class="helpful-row">
+        <span class="helpful-text">19 people found this helpful</span>
+        <div class="helpful-btns">
+          <button class="helpful-btn" onclick="markHelpful(this)">
+            <i class="fa-regular fa-thumbs-up"></i> Helpful
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Review 5 -->
+    <div class="review-card">
+      <div class="review-head">
+        <div class="reviewer">
+          <div class="reviewer-avatar" style="background:var(--gold-muted); color:var(--gold);">BI</div>
+          <div class="reviewer-info">
+            <div class="reviewer-name">Bisi Ike</div>
+            <div class="reviewer-badges">
+              <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Purchase</span>
+              <span class="purchase-badge">· Kano</span>
+            </div>
+          </div>
+        </div>
+        <div class="review-meta">
+          <div class="review-date">Mar 10, 2024</div>
+          <div class="review-stars">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star-half-stroke"></i>
+          </div>
+        </div>
+      </div>
+      <div class="review-title">Superb quality for the price 🙌</div>
+      <span class="review-variant">Color: Black · Size: Standard</span>
+      <div class="review-text">
+        I bought this as a gift for my husband and he absolutely loves it. The packaging was premium — feels like an expensive product. Sound is rich and detailed. Delivery was fast and the product came exactly as described. Will definitely be ordering from Shopbox again!
+      </div>
+      <div class="helpful-row">
+        <span class="helpful-text">24 people found this helpful</span>
+        <div class="helpful-btns">
+          <button class="helpful-btn" onclick="markHelpful(this)">
+            <i class="fa-regular fa-thumbs-up"></i> Helpful
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Load more -->
+    <button style="width:100%; height:48px; background:var(--bg-card); border:1.5px solid var(--border); border-radius:var(--radius-pill); font-family:var(--font-display); font-size:14px; font-weight:700; color:var(--text-secondary); margin-bottom:8px; transition:all .2s;"
+            onclick="showToast('📝 Loading more reviews…')">
+      Load More Reviews (205)
+    </button>
+
+  </div>
+
+</div><!-- /page -->
+
+<!-- ══ BOTTOM BAR ══ -->
+<div class="bottom-bar">
+  <button class="write-review-btn" onclick="openReviewSheet()">
+    <i class="fa-solid fa-pen-to-square"></i>
+    Write a Review
+  </button>
+</div>
+
+<!-- ══ WRITE REVIEW SHEET ══ -->
+<div class="sheet-overlay" id="sheetOverlay" onclick="closeReviewSheet()"></div>
+<div class="review-sheet" id="reviewSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">✍️ Write a Review</div>
+
+  <!-- Star picker -->
+  <div class="star-picker" id="starPicker">
+    <i class="fa-solid fa-star star-pick" onclick="setStars(1)"></i>
+    <i class="fa-solid fa-star star-pick" onclick="setStars(2)"></i>
+    <i class="fa-solid fa-star star-pick" onclick="setStars(3)"></i>
+    <i class="fa-solid fa-star star-pick" onclick="setStars(4)"></i>
+    <i class="fa-solid fa-star star-pick" onclick="setStars(5)"></i>
+  </div>
+  <div class="star-label" id="starLabel">Tap to rate</div>
+
+  <!-- Review title -->
+  <div class="review-field">
+    <label>Review Title</label>
+    <input class="review-input" type="text" placeholder="Sum up your experience in one line" />
+  </div>
+
+  <!-- Review body -->
+  <div class="review-field">
+    <label>Your Review</label>
+    <textarea class="review-input" placeholder="Tell us what you loved or didn't love about this product…"></textarea>
+  </div>
+
+  <!-- Photo upload -->
+  <div class="review-field">
+    <label>Add Photos (optional)</label>
+    <div class="photo-upload">
+      <div class="upload-slot" onclick="showToast('📷 Camera opened…')">
+        <i class="fa-solid fa-plus"></i>
+        <span>Add</span>
+      </div>
+      <div class="upload-slot" onclick="showToast('📷 Camera opened…')">
+        <i class="fa-solid fa-plus"></i>
+        <span>Add</span>
+      </div>
+      <div class="upload-slot" onclick="showToast('📷 Camera opened…')">
+        <i class="fa-solid fa-plus"></i>
+        <span>Add</span>
+      </div>
+    </div>
+  </div>
+
+  <button class="submit-review-btn" onclick="submitReview()">
+    <i class="fa-solid fa-paper-plane"></i>
+    Submit Review
+  </button>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+  /* ── Filter chips ── */
+  function setFilterChip(el, val) {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    showToast(`⭐ Showing: ${el.textContent.trim()}`);
+  }
+  function setFilter(el, val) {
+    showToast(`🔍 Filtering by: ${el.textContent.trim()}`);
+  }
+
+  /* ── Read more toggle ── */
+  function toggleRead(id, btn) {
+    const el = document.getElementById(id);
+    const collapsed = el.classList.contains('collapsed');
+    el.classList.toggle('collapsed', !collapsed);
+    btn.textContent = collapsed ? 'Show less' : 'Read more';
+  }
+
+  /* ── Helpful ── */
+  function markHelpful(btn) {
+    btn.classList.toggle('voted');
+    showToast(btn.classList.contains('voted') ? '👍 Marked as helpful!' : '👋 Removed vote');
+  }
+
+  /* ── Star rating ── */
+  let selectedStars = 0;
+  const labels = ['','😕 Poor','😐 Fair','😊 Good','😄 Great!','🎉 Excellent!'];
+  function setStars(n) {
+    selectedStars = n;
+    document.querySelectorAll('.star-pick').forEach((s,i) => {
+      s.classList.toggle('lit', i < n);
+    });
+    document.getElementById('starLabel').textContent = labels[n];
+  }
+
+  /* ── Review sheet ── */
+  function openReviewSheet() {
+    document.getElementById('sheetOverlay').classList.add('open');
+    document.getElementById('reviewSheet').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeReviewSheet() {
+    document.getElementById('sheetOverlay').classList.remove('open');
+    document.getElementById('reviewSheet').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function submitReview() {
+    if (selectedStars === 0) {
+      showToast('⚠️ Please select a star rating first!');
+      return;
+    }
+    const btn = document.querySelector('.submit-review-btn');
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting…';
+    btn.style.opacity = '.8';
+    setTimeout(() => {
+      closeReviewSheet();
+      showToast('🎉 Review submitted! Thank you!');
+      btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Review';
+      btn.style.opacity = '1';
+      selectedStars = 0;
+      setStars(0);
+    }, 1800);
+  }
+
+  /* ── Toast ── */
+  function showToast(msg, dur = 2600) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), dur);
+  }
+</script>
+
+<style>
+  #toast {
+    position: fixed; bottom: calc(88px + 12px);
+    left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #1C1C1C; border: 1px solid rgba(245,166,35,0.4);
+    color: #fff; font-size: 13px; font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    padding: 10px 22px; border-radius: 999px;
+    opacity: 0; transition: all .3s ease;
+    z-index: 9999; white-space: nowrap; pointer-events: none;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+
+</body>
+</html>

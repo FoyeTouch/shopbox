@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Shopbox — Upload Product</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    :root {
+      --gold:#F5A623; --gold-bright:#FFB930; --gold-dark:#C47F0A;
+      --gold-muted:rgba(245,166,35,0.12); --gold-glow:rgba(245,166,35,0.28);
+      --bg-base:#0D0D0D; --bg-card:#161616; --bg-card-2:#1C1C1C;
+      --bg-input:#1A1A1A; --border:rgba(255,255,255,0.07);
+      --border-gold:rgba(245,166,35,0.32);
+      --text-primary:#FFFFFF; --text-secondary:#A0A0A0; --text-muted:#555;
+      --success:#22C55E; --danger:#EF4444;
+      --font-display:'Syne',sans-serif; --font-body:'DM Sans',sans-serif;
+      --px:16px; --radius-sm:8px; --radius-md:12px;
+      --radius-lg:16px; --radius-pill:999px; --bar-h:86px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{-webkit-tap-highlight-color:transparent;}
+    body{
+      font-family:var(--font-body); background:var(--bg-base);
+      color:var(--text-primary); min-height:100dvh;
+      -webkit-font-smoothing:antialiased;
+      padding-bottom:calc(var(--bar-h) + 16px);
+    }
+    button{cursor:pointer;border:none;background:none;font-family:inherit;color:inherit;}
+    input,select,textarea{font-family:inherit;outline:none;border:none;background:none;}
+    .page{max-width:480px;margin:0 auto;}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .fu{animation:fadeUp .35s ease both;}
+    .d1{animation-delay:.04s;}.d2{animation-delay:.08s;}.d3{animation-delay:.12s;}
+    .d4{animation-delay:.16s;}.d5{animation-delay:.20s;}
+
+    /* ══ HEADER ══ */
+    .header{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px var(--px);
+      background:rgba(13,13,13,0.97);
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--border);
+      position:sticky;top:0;z-index:50;
+    }
+    .back-btn{
+      width:40px;height:40px;border-radius:50%;
+      background:var(--bg-card);border:1px solid var(--border);
+      display:flex;align-items:center;justify-content:center;
+      font-size:16px;transition:border-color .2s;
+    }
+    .back-btn:active{border-color:var(--border-gold);}
+    .header-title{font-family:var(--font-display);font-size:17px;font-weight:800;}
+    .draft-btn{
+      font-family:var(--font-display);font-size:12px;font-weight:700;
+      color:var(--gold);padding:6px 14px;
+      background:var(--gold-muted);border:1px solid var(--border-gold);
+      border-radius:var(--radius-pill);transition:background .2s;
+    }
+    .draft-btn:active{background:rgba(245,166,35,0.22);}
+
+    /* ══ DAILY LIMIT BANNER ══ */
+    .limit-banner{
+      display:flex;align-items:center;gap:10px;
+      margin:14px var(--px);
+      background:var(--gold-muted);
+      border:1px solid var(--border-gold);
+      border-radius:var(--radius-md);
+      padding:10px 14px;
+    }
+    .limit-banner i{color:var(--gold);font-size:16px;flex-shrink:0;}
+    .limit-banner p{font-size:12px;font-weight:500;color:var(--text-secondary);}
+    .limit-banner strong{color:var(--gold);}
+
+    /* ══ SECTION CARD ══ */
+    .form-section{
+      margin:0 var(--px) 14px;
+      background:var(--bg-card);
+      border:1px solid var(--border);
+      border-radius:var(--radius-lg);
+      overflow:hidden;
+    }
+    .section-head{
+      display:flex;align-items:center;gap:10px;
+      padding:14px 16px;
+      border-bottom:1px solid var(--border);
+      background:var(--bg-card-2);
+    }
+    .section-num{
+      width:26px;height:26px;border-radius:50%;
+      background:var(--gold);color:#000;
+      font-family:var(--font-display);font-size:12px;font-weight:800;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    }
+    .section-title{font-family:var(--font-display);font-size:14px;font-weight:700;}
+    .section-sub{font-size:11px;color:var(--text-muted);margin-top:1px;}
+    .section-body{padding:16px;}
+
+    /* ══ FIELDS ══ */
+    .field-group{margin-bottom:14px;}
+    .field-group:last-child{margin-bottom:0;}
+    .field-label{
+      display:block;font-size:11px;font-weight:700;
+      color:var(--text-muted);margin-bottom:7px;
+      text-transform:uppercase;letter-spacing:.04em;
+    }
+    .field-req{color:var(--danger);margin-left:2px;}
+    .field-box{
+      display:flex;align-items:center;
+      background:var(--bg-input);border:1.5px solid var(--border);
+      border-radius:var(--radius-md);padding:0 14px;height:50px;gap:10px;
+      transition:border-color .2s,box-shadow .2s;
+    }
+    .field-box:focus-within{
+      border-color:var(--border-gold);
+      box-shadow:0 0 0 3px var(--gold-muted);
+    }
+    .field-box.error{border-color:var(--danger);}
+    .field-box i{color:var(--text-muted);font-size:15px;flex-shrink:0;}
+    .field-box input,.field-box select{
+      flex:1;font-size:14px;color:var(--text-primary);min-width:0;
+    }
+    .field-box input::placeholder{color:var(--text-muted);}
+    .field-box select{-webkit-appearance:none;}
+    .field-box select option{background:var(--bg-card-2);}
+    textarea.field-area{
+      width:100%;background:var(--bg-input);
+      border:1.5px solid var(--border);border-radius:var(--radius-md);
+      padding:12px 14px;font-size:14px;color:var(--text-primary);
+      min-height:100px;resize:none;line-height:1.6;
+      transition:border-color .2s;
+    }
+    textarea.field-area:focus{border-color:var(--border-gold);outline:none;}
+    textarea.field-area::placeholder{color:var(--text-muted);}
+    .char-count{text-align:right;font-size:10px;color:var(--text-muted);margin-top:4px;}
+
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .field-hint{font-size:11px;color:var(--text-muted);margin-top:5px;line-height:1.4;}
+
+    /* ══ PHOTO UPLOAD ══ */
+    .photo-grid{
+      display:grid;grid-template-columns:repeat(5,1fr);gap:8px;
+    }
+    .photo-slot{
+      aspect-ratio:1;border-radius:var(--radius-sm);
+      background:var(--bg-input);
+      border:1.5px dashed var(--border);
+      display:flex;flex-direction:column;
+      align-items:center;justify-content:center;
+      gap:4px;cursor:pointer;
+      transition:border-color .2s,background .2s;
+      position:relative;overflow:hidden;
+    }
+    .photo-slot:first-child{
+      border-color:var(--border-gold);
+    }
+    .photo-slot:active{border-color:var(--gold);background:var(--gold-muted);}
+    .photo-slot i{font-size:18px;color:var(--text-muted);}
+    .photo-slot span{font-size:8px;color:var(--text-muted);font-weight:600;text-align:center;line-height:1.3;}
+    .photo-slot .main-tag{
+      position:absolute;bottom:0;left:0;right:0;
+      background:var(--gold);color:#000;
+      font-size:8px;font-weight:800;
+      font-family:var(--font-display);
+      text-align:center;padding:2px 0;
+    }
+    /* Filled photo slot */
+    .photo-slot.filled{border-style:solid;border-color:var(--border-gold);}
+    .photo-slot.filled i{color:var(--gold);font-size:22px;}
+    .photo-slot .remove-photo{
+      position:absolute;top:2px;right:2px;
+      width:16px;height:16px;border-radius:50%;
+      background:var(--danger);color:#fff;
+      font-size:8px;display:flex;align-items:center;justify-content:center;
+    }
+
+    .photo-tip{
+      font-size:11px;color:var(--text-muted);
+      margin-top:10px;line-height:1.5;
+      background:var(--bg-card-2);border-radius:var(--radius-sm);
+      padding:8px 10px;
+    }
+    .photo-tip i{color:var(--gold);margin-right:4px;}
+
+    /* ══ PRICE FIELDS ══ */
+    .price-prefix{
+      font-family:var(--font-display);font-size:15px;font-weight:800;
+      color:var(--gold);flex-shrink:0;
+    }
+    .discount-toggle{
+      display:flex;align-items:center;gap:10px;
+      margin-top:10px;cursor:pointer;
+    }
+    .toggle-sw{
+      width:42px;height:24px;border-radius:99px;
+      background:var(--bg-card-2);border:1px solid var(--border);
+      position:relative;transition:background .25s;flex-shrink:0;
+    }
+    .toggle-sw.on{background:var(--gold);border-color:var(--gold);}
+    .toggle-knob{
+      position:absolute;top:3px;left:3px;
+      width:16px;height:16px;border-radius:50%;
+      background:#fff;transition:transform .25s;
+      box-shadow:0 1px 4px rgba(0,0,0,.3);
+    }
+    .toggle-sw.on .toggle-knob{transform:translateX(18px);}
+    .toggle-label{font-size:13px;color:var(--text-secondary);}
+
+    /* ══ VARIANTS ══ */
+    .variant-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+    .variant-chip{
+      display:flex;align-items:center;gap:5px;
+      padding:5px 12px;border-radius:var(--radius-pill);
+      font-size:12px;font-weight:600;
+      background:var(--gold-muted);border:1px solid var(--border-gold);
+      color:var(--gold);cursor:pointer;transition:all .2s;
+    }
+    .variant-chip i{font-size:10px;}
+    .variant-chip:active{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3);color:var(--danger);}
+    .add-variant-btn{
+      display:flex;align-items:center;gap:6px;
+      padding:6px 14px;border-radius:var(--radius-pill);
+      font-size:12px;font-weight:700;
+      font-family:var(--font-display);
+      background:var(--bg-card-2);border:1.5px dashed var(--border);
+      color:var(--text-muted);transition:all .2s;cursor:pointer;
+    }
+    .add-variant-btn:active{border-color:var(--border-gold);color:var(--gold);}
+
+    /* ══ COLOR PICKER ══ */
+    .color-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .color-dot{
+      width:32px;height:32px;border-radius:50%;
+      border:2px solid transparent;cursor:pointer;
+      transition:all .2s;position:relative;
+    }
+    .color-dot.selected{
+      border-color:var(--gold);
+      box-shadow:0 0 0 2px var(--gold-muted);
+    }
+    .color-dot.selected::after{
+      content:'✓';position:absolute;inset:0;
+      display:flex;align-items:center;justify-content:center;
+      font-size:12px;font-weight:800;color:#fff;
+    }
+    .add-color{
+      width:32px;height:32px;border-radius:50%;
+      background:var(--bg-card-2);border:1.5px dashed var(--border);
+      display:flex;align-items:center;justify-content:center;
+      color:var(--text-muted);font-size:14px;cursor:pointer;
+      transition:border-color .2s;
+    }
+    .add-color:active{border-color:var(--border-gold);color:var(--gold);}
+
+    /* ══ DELIVERY SECTION ══ */
+    .delivery-options{display:flex;flex-direction:column;gap:8px;}
+    .delivery-opt{
+      display:flex;align-items:center;gap:12px;
+      padding:12px 14px;
+      background:var(--bg-card-2);border:1.5px solid var(--border);
+      border-radius:var(--radius-md);cursor:pointer;transition:all .2s;
+    }
+    .delivery-opt.selected{
+      border-color:var(--gold);background:var(--gold-muted);
+    }
+    .del-radio{
+      width:18px;height:18px;border-radius:50%;
+      border:2px solid var(--border);flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;
+      transition:border-color .2s;
+    }
+    .delivery-opt.selected .del-radio{border-color:var(--gold);}
+    .del-radio-inner{
+      width:8px;height:8px;border-radius:50%;
+      background:var(--gold);display:none;
+    }
+    .delivery-opt.selected .del-radio-inner{display:block;}
+    .del-icon{color:var(--gold);font-size:16px;width:20px;text-align:center;}
+    .del-info{flex:1;}
+    .del-name{font-size:13px;font-weight:600;margin-bottom:2px;}
+    .del-sub{font-size:11px;color:var(--text-muted);}
+
+    /* ══ LOCATION ══ */
+    .location-map{
+      width:100%;height:100px;
+      background:var(--bg-card-2);
+      border:1.5px solid var(--border);
+      border-radius:var(--radius-md);
+      display:flex;align-items:center;justify-content:center;
+      gap:10px;cursor:pointer;
+      transition:border-color .2s;
+      margin-bottom:10px;
+    }
+    .location-map:active{border-color:var(--border-gold);}
+    .location-map i{font-size:24px;color:var(--gold);}
+    .location-map p{font-size:13px;color:var(--text-secondary);}
+
+    /* ══ CHECKLIST ══ */
+    .checklist{
+      background:var(--bg-card-2);
+      border:1px solid var(--border);
+      border-radius:var(--radius-md);
+      padding:14px;margin-bottom:14px;
+    }
+    .checklist-title{
+      font-family:var(--font-display);font-size:13px;font-weight:700;
+      color:var(--gold);margin-bottom:10px;
+      display:flex;align-items:center;gap:6px;
+    }
+    .check-item{
+      display:flex;align-items:center;gap:8px;
+      font-size:12px;color:var(--text-secondary);
+      margin-bottom:6px;line-height:1.4;
+    }
+    .check-item:last-child{margin-bottom:0;}
+    .check-item i{font-size:11px;flex-shrink:0;}
+    .check-item.ok i{color:var(--success);}
+    .check-item.warn i{color:var(--warning,#F59E0B);}
+    .check-item.bad i{color:var(--danger);}
+
+    /* ══ BOTTOM BAR ══ */
+    .bottom-bar{
+      position:fixed;bottom:0;left:0;right:0;
+      max-width:480px;margin:0 auto;
+      background:rgba(13,13,13,0.97);
+      border-top:1px solid var(--border);
+      backdrop-filter:blur(16px);
+      padding:12px var(--px);
+      padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));
+      z-index:100;display:flex;gap:10px;
+    }
+    .btn-preview{
+      height:52px;flex:1;
+      background:var(--bg-card);
+      border:1.5px solid var(--border);
+      color:var(--text-primary);
+      font-family:var(--font-display);font-size:14px;font-weight:700;
+      border-radius:var(--radius-pill);
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      transition:border-color .2s;
+    }
+    .btn-preview:active{border-color:var(--border-gold);}
+    .btn-upload{
+      height:52px;flex:2;
+      background:var(--gold);color:#000;
+      font-family:var(--font-display);font-size:15px;font-weight:800;
+      border-radius:var(--radius-pill);
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      box-shadow:0 4px 16px var(--gold-glow);
+      transition:background .2s,transform .15s;
+    }
+    .btn-upload:active{transform:scale(0.97);background:var(--gold-dark);}
+
+    /* ══ SUCCESS STATE ══ */
+    .success-overlay{
+      display:none;
+      position:fixed;inset:0;
+      background:rgba(13,13,13,0.97);
+      z-index:200;
+      flex-direction:column;
+      align-items:center;justify-content:center;
+      text-align:center;padding:32px;
+      max-width:480px;margin:0 auto;
+    }
+    .success-overlay.show{display:flex;}
+    .success-icon{
+      width:100px;height:100px;border-radius:50%;
+      background:var(--gold-muted);border:2px solid var(--border-gold);
+      display:flex;align-items:center;justify-content:center;
+      font-size:44px;color:var(--gold);margin-bottom:24px;
+      animation:popIn .5s cubic-bezier(.34,1.56,.64,1) both;
+      box-shadow:0 0 40px var(--gold-glow);
+    }
+    @keyframes popIn{from{transform:scale(0);}to{transform:scale(1);}}
+    .success-title{
+      font-family:var(--font-display);font-size:24px;font-weight:800;margin-bottom:8px;
+    }
+    .success-sub{
+      font-size:14px;color:var(--text-secondary);line-height:1.6;
+      margin-bottom:28px;max-width:300px;
+    }
+    .success-info{
+      background:var(--bg-card);border:1px solid var(--border);
+      border-radius:var(--radius-lg);padding:16px;
+      width:100%;text-align:left;margin-bottom:20px;
+    }
+    .sinfo-row{
+      display:flex;align-items:center;justify-content:space-between;
+      font-size:13px;padding:8px 0;
+      border-bottom:1px solid var(--border);
+    }
+    .sinfo-row:last-child{border-bottom:none;}
+    .sinfo-label{color:var(--text-muted);}
+    .sinfo-value{font-weight:600;color:var(--text-primary);}
+    .sinfo-value.gold{color:var(--gold);}
+    .done-btn{
+      width:100%;height:52px;
+      background:var(--gold);color:#000;
+      font-family:var(--font-display);font-size:15px;font-weight:800;
+      border-radius:var(--radius-pill);
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      box-shadow:0 4px 16px var(--gold-glow);
+    }
+    .done-btn:active{background:var(--gold-dark);}
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══ HEADER ══ -->
+  <div class="header">
+    <button class="back-btn" onclick="history.back()">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <span class="header-title">Upload Product</span>
+    <button class="draft-btn" onclick="showToast('💾 Draft saved!')">
+      <i class="fa-regular fa-floppy-disk"></i> Draft
+    </button>
+  </div>
+
+  <!-- ══ DAILY LIMIT ══ -->
+  <div class="limit-banner fu d1">
+    <i class="fa-solid fa-clock"></i>
+    <p>Daily limit: <strong>3/5 used</strong> — You have <strong>2 uploads</strong> remaining today. Resets at midnight.</p>
+  </div>
+
+  <!-- ══ SECTION 1: PHOTOS ══ -->
+  <div class="form-section fu d1">
+    <div class="section-head">
+      <div class="section-num">1</div>
+      <div>
+        <div class="section-title">Product Photos</div>
+        <div class="section-sub">Max 5 photos · Real photos only · Auto-compressed on upload</div>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="photo-grid">
+        <!-- Slot 1 — Main photo -->
+        <div class="photo-slot filled" onclick="showToast('📸 Change main photo')">
+          <i class="fa-solid fa-shirt"></i>
+          <div class="main-tag">MAIN</div>
+          <div class="remove-photo" onclick="event.stopPropagation();showToast('🗑️ Photo removed')">
+            <i class="fa-solid fa-xmark"></i>
+          </div>
+        </div>
+        <!-- Slot 2 -->
+        <div class="photo-slot filled" onclick="showToast('📸 Change photo 2')">
+          <i class="fa-solid fa-shirt"></i>
+          <div class="remove-photo" onclick="event.stopPropagation();showToast('🗑️ Photo removed')">
+            <i class="fa-solid fa-xmark"></i>
+          </div>
+        </div>
+        <!-- Slot 3 -->
+        <div class="photo-slot" onclick="showToast('📷 Add photo 3')">
+          <i class="fa-solid fa-plus"></i>
+          <span>Add Photo</span>
+        </div>
+        <!-- Slot 4 -->
+        <div class="photo-slot" onclick="showToast('📷 Add photo 4')">
+          <i class="fa-solid fa-plus"></i>
+          <span>Add Photo</span>
+        </div>
+        <!-- Slot 5 -->
+        <div class="photo-slot" onclick="showToast('📷 Add photo 5')">
+          <i class="fa-solid fa-plus"></i>
+          <span>Add Photo</span>
+        </div>
+      </div>
+
+      <div class="photo-tip">
+        <i class="fa-solid fa-circle-info"></i>
+        <strong>Photo Rules:</strong> Real photos of your actual product only. No watermarks, no stock images. First photo = main display photo. Each photo auto-compressed to reduce size while maintaining quality.
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ SECTION 2: BASIC INFO ══ -->
+  <div class="form-section fu d2">
+    <div class="section-head">
+      <div class="section-num">2</div>
+      <div>
+        <div class="section-title">Product Information</div>
+        <div class="section-sub">Be accurate and detailed — wrong info = declined</div>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="field-group">
+        <label class="field-label">Product Name <span class="field-req">*</span></label>
+        <div class="field-box">
+          <i class="fa-solid fa-tag"></i>
+          <input type="text" id="pname" placeholder="e.g. Ankara Print Fitted Dress" maxlength="80"
+                 oninput="updateChar('pname','nameCount',80)" />
+        </div>
+        <div class="char-count"><span id="nameCount">0</span>/80</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Category <span class="field-req">*</span></label>
+        <div class="field-box">
+          <i class="fa-solid fa-table-cells-large"></i>
+          <select id="pcat">
+            <option value="">Select category</option>
+            <option>Fashion & Clothing</option>
+            <option>Shoes & Footwear</option>
+            <option>Electronics & Gadgets</option>
+            <option>Beauty & Skincare</option>
+            <option>Home & Living</option>
+            <option>Fitness & Sports</option>
+            <option>Accessories & Jewellery</option>
+            <option>Food & Drinks</option>
+            <option>Books & Stationery</option>
+            <option>Kids & Baby</option>
+            <option>Other</option>
+          </select>
+          <i class="fa-solid fa-chevron-down" style="font-size:11px;color:var(--text-muted);"></i>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Brand / Maker (optional)</label>
+        <div class="field-box">
+          <i class="fa-solid fa-copyright"></i>
+          <input type="text" placeholder="e.g. Emeka Styles, Handmade, No Brand" />
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Product Description <span class="field-req">*</span></label>
+        <textarea class="field-area" id="pdesc" placeholder="Describe your product accurately. Include material, features, condition, what's in the box…" maxlength="500"
+                  oninput="updateChar('pdesc','descCount',500)"></textarea>
+        <div class="char-count"><span id="descCount">0</span>/500</div>
+        <div class="field-hint">⚠️ Do NOT claim "original/authentic brand" unless you have proof ready. False claims = instant decline + strike.</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Condition <span class="field-req">*</span></label>
+        <div class="field-box">
+          <i class="fa-solid fa-circle-check"></i>
+          <select>
+            <option value="">Select condition</option>
+            <option>Brand New</option>
+            <option>New (Open Box)</option>
+            <option>Like New (Used once)</option>
+            <option>Good (Minor signs of use)</option>
+            <option>Fair (Visible wear)</option>
+          </select>
+          <i class="fa-solid fa-chevron-down" style="font-size:11px;color:var(--text-muted);"></i>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Stock Quantity <span class="field-req">*</span></label>
+        <div class="field-box">
+          <i class="fa-solid fa-cubes"></i>
+          <input type="number" placeholder="How many do you have?" min="1" id="pstock" />
+        </div>
+        <div class="field-hint">Be accurate. Overselling leads to cancellations and strikes.</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Product Tags (optional)</label>
+        <div class="field-box">
+          <i class="fa-solid fa-hashtag"></i>
+          <input type="text" placeholder="e.g. ankara, dress, fashion, lagos" />
+        </div>
+        <div class="field-hint">Separate with commas. Helps buyers find your product in search.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ SECTION 3: VARIANTS ══ -->
+  <div class="form-section fu d2">
+    <div class="section-head">
+      <div class="section-num">3</div>
+      <div>
+        <div class="section-title">Sizes & Variants</div>
+        <div class="section-sub">Add sizes, colours or other variants (optional)</div>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <!-- Sizes -->
+      <div class="field-group">
+        <label class="field-label">Available Sizes</label>
+        <div class="variant-chips" id="sizeChips">
+          <div class="variant-chip" onclick="removeChip(this)">S <i class="fa-solid fa-xmark"></i></div>
+          <div class="variant-chip" onclick="removeChip(this)">M <i class="fa-solid fa-xmark"></i></div>
+          <div class="variant-chip" onclick="removeChip(this)">L <i class="fa-solid fa-xmark"></i></div>
+          <div class="variant-chip" onclick="removeChip(this)">XL <i class="fa-solid fa-xmark"></i></div>
+        </div>
+        <div class="add-variant-btn" onclick="addSize()">
+          <i class="fa-solid fa-plus"></i> Add Size
+        </div>
+      </div>
+
+      <!-- Colors -->
+      <div class="field-group">
+        <label class="field-label">Available Colors</label>
+        <div class="color-row" id="colorRow">
+          <div class="color-dot selected" style="background:#000;" onclick="toggleColor(this)" title="Black"></div>
+          <div class="color-dot selected" style="background:#fff; border:1px solid #333;" onclick="toggleColor(this)" title="White"></div>
+          <div class="color-dot" style="background:#EF4444;" onclick="toggleColor(this)" title="Red"></div>
+          <div class="color-dot" style="background:#3B82F6;" onclick="toggleColor(this)" title="Blue"></div>
+          <div class="color-dot" style="background:#F5A623;" onclick="toggleColor(this)" title="Gold"></div>
+          <div class="color-dot" style="background:#22C55E;" onclick="toggleColor(this)" title="Green"></div>
+          <div class="color-dot" style="background:#8B5CF6;" onclick="toggleColor(this)" title="Purple"></div>
+          <div class="add-color" onclick="showToast('🎨 Custom colour picker')">
+            <i class="fa-solid fa-plus"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Other variant -->
+      <div class="field-group">
+        <label class="field-label">Other Variants (optional)</label>
+        <div class="field-box">
+          <i class="fa-solid fa-list"></i>
+          <input type="text" placeholder="e.g. Material: Cotton / Silk" />
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ SECTION 4: PRICING ══ -->
+  <div class="form-section fu d3">
+    <div class="section-head">
+      <div class="section-num">4</div>
+      <div>
+        <div class="section-title">Pricing</div>
+        <div class="section-sub">Set fair prices — suspicious pricing will be flagged</div>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="field-group">
+        <label class="field-label">Selling Price <span class="field-req">*</span></label>
+        <div class="field-box">
+          <span class="price-prefix">₦</span>
+          <input type="number" id="pprice" placeholder="0.00" min="100" />
+        </div>
+        <div class="field-hint">Shopbox commission: <strong style="color:var(--gold);">12%</strong> deducted from this price. You receive: <strong style="color:var(--success);" id="youReceive">₦0.00</strong></div>
+      </div>
+
+      <!-- Discount toggle -->
+      <div class="discount-toggle" onclick="toggleDiscount()">
+        <div class="toggle-sw" id="discToggle"><div class="toggle-knob"></div></div>
+        <span class="toggle-label">Add original price (shows discount %)</span>
+      </div>
+
+      <div id="discountField" style="display:none; margin-top:12px;">
+        <label class="field-label">Original / Crossed-out Price</label>
+        <div class="field-box">
+          <span class="price-prefix">₦</span>
+          <input type="number" id="poriginal" placeholder="e.g. 15,000" min="100" oninput="calcDiscount()" />
+        </div>
+        <div class="field-hint" id="discountInfo">Discount badge will show on product card.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ SECTION 5: DELIVERY ══ -->
+  <div class="form-section fu d3">
+    <div class="section-head">
+      <div class="section-num">5</div>
+      <div>
+        <div class="section-title">Delivery Method</div>
+        <div class="section-sub">How will you get this to buyers?</div>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="delivery-options">
+
+        <div class="delivery-opt selected" onclick="selectDel(this)">
+          <div class="del-radio"><div class="del-radio-inner"></div></div>
+          <i class="del-icon fa-solid fa-person-running"></i>
+          <div class="del-info">
+            <div class="del-name">I deliver myself</div>
+            <div class="del-sub">You handle delivery personally to buyer</div>
+          </div>
+        </div>
+
+        <div class="delivery-opt" onclick="selectDel(this)">
+          <div class="del-radio"><div class="del-radio-inner"></div></div>
+          <i class="del-icon fa-solid fa-truck-fast"></i>
+          <div class="del-info">
+            <div class="del-name">Courier / Dispatch</div>
+            <div class="del-sub">You use GIG, DHL, Kwik or other courier</div>
+          </div>
+        </div>
+
+        <div class="delivery-opt" onclick="selectDel(this)">
+          <div class="del-radio"><div class="del-radio-inner"></div></div>
+          <i class="del-icon fa-solid fa-store"></i>
+          <div class="del-info">
+            <div class="del-name">Pickup Only</div>
+            <div class="del-sub">Buyer comes to your location to pick up</div>
+          </div>
+        </div>
+
+        <div class="delivery-opt" onclick="selectDel(this)">
+          <div class="del-radio"><div class="del-radio-inner"></div></div>
+          <i class="del-icon fa-solid fa-boxes-stacked"></i>
+          <div class="del-info">
+            <div class="del-name">Both (Delivery + Pickup)</div>
+            <div class="del-sub">Buyer can choose either option</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="margin-top:12px;">
+        <label class="field-label">Delivery Timeframe <span class="field-req">*</span></label>
+        <div class="field-box">
+          <i class="fa-regular fa-clock"></i>
+          <select>
+            <option value="">How long does delivery take?</option>
+            <option>Same day (Lagos only)</option>
+            <option>1 – 2 days</option>
+            <option>2 – 3 days</option>
+            <option>3 – 5 days</option>
+            <option>5 – 7 days</option>
+            <option>1 – 2 weeks</option>
+          </select>
+          <i class="fa-solid fa-chevron-down" style="font-size:11px;color:var(--text-muted);"></i>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <label class="field-label">Delivery Fee <span class="field-req">*</span></label>
+        <div class="field-box">
+          <span class="price-prefix">₦</span>
+          <input type="number" placeholder="0 = FREE delivery" min="0" />
+        </div>
+        <div class="field-hint">Set 0 if delivery is free. Free delivery gets more buyers!</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ SECTION 6: LOCATION ══ -->
+  <div class="form-section fu d4">
+    <div class="section-head">
+      <div class="section-num">6</div>
+      <div>
+        <div class="section-title">Product Location</div>
+        <div class="section-sub">Where is the product physically located?</div>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="location-map" onclick="showToast('📍 Map picker coming in final build!')">
+        <i class="fa-solid fa-location-dot"></i>
+        <p>Tap to set product location on map</p>
+      </div>
+
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">State <span class="field-req">*</span></label>
+          <div class="field-box">
+            <select>
+              <option>Lagos</option>
+              <option>Abuja (FCT)</option>
+              <option>Rivers</option>
+              <option>Kano</option>
+              <option>Oyo</option>
+              <option>Delta</option>
+              <option>Anambra</option>
+              <option>Enugu</option>
+              <option>Kaduna</option>
+              <option>Ogun</option>
+              <option>Ondo</option>
+              <option>Osun</option>
+              <option>Edo</option>
+            </select>
+            <i class="fa-solid fa-chevron-down" style="font-size:11px;color:var(--text-muted);"></i>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">City / Area <span class="field-req">*</span></label>
+          <div class="field-box">
+            <input type="text" placeholder="e.g. Ikeja" />
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Full Address (optional)</label>
+        <div class="field-box">
+          <i class="fa-solid fa-map-pin"></i>
+          <input type="text" placeholder="Street address for pickup buyers" />
+        </div>
+        <div class="field-hint">Only show if you offer pickup. Leave blank for delivery-only.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ SECTION 7: REVIEW CHECKLIST ══ -->
+  <div class="form-section fu d4">
+    <div class="section-head">
+      <div class="section-num">7</div>
+      <div>
+        <div class="section-title">Pre-Upload Checklist</div>
+        <div class="section-sub">Make sure everything is correct before submitting</div>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="checklist">
+        <div class="checklist-title">
+          <i class="fa-solid fa-clipboard-check"></i> Admin will check all of these:
+        </div>
+        <div class="check-item ok"><i class="fa-solid fa-circle-check"></i> Photos are real, clear, and of actual product</div>
+        <div class="check-item ok"><i class="fa-solid fa-circle-check"></i> Product name is accurate and descriptive</div>
+        <div class="check-item warn"><i class="fa-solid fa-triangle-exclamation"></i> No false brand/authenticity claims</div>
+        <div class="check-item ok"><i class="fa-solid fa-circle-check"></i> Price is reasonable for the market</div>
+        <div class="check-item warn"><i class="fa-solid fa-triangle-exclamation"></i> Stock quantity is accurate</div>
+        <div class="check-item ok"><i class="fa-solid fa-circle-check"></i> Delivery timeframe is realistic</div>
+        <div class="check-item bad"><i class="fa-solid fa-circle-xmark"></i> No prohibited or illegal items</div>
+        <div class="check-item ok"><i class="fa-solid fa-circle-check"></i> Location is correct</div>
+      </div>
+
+      <!-- Final declaration -->
+      <div style="background:var(--gold-muted);border:1px solid var(--border-gold);border-radius:var(--radius-md);padding:12px;">
+        <div style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;" onclick="toggleFinalAgree()">
+          <div class="toggle-sw" id="finalToggle"><div class="toggle-knob"></div></div>
+          <p style="font-size:12px;color:var(--text-secondary);line-height:1.5;">
+            I confirm all information above is <strong style="color:var(--text-primary);">accurate and truthful</strong>. I understand that false information will result in product decline and a <strong style="color:var(--danger);">strike on my account</strong>.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<!-- ══ BOTTOM BAR ══ -->
+<div class="bottom-bar">
+  <button class="btn-preview" onclick="showToast('👀 Preview mode coming!')">
+    <i class="fa-regular fa-eye"></i> Preview
+  </button>
+  <button class="btn-upload" onclick="submitProduct()">
+    <i class="fa-solid fa-cloud-arrow-up"></i> Submit for Review
+  </button>
+</div>
+
+<!-- ══ SUCCESS OVERLAY ══ -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-icon">
+    <i class="fa-solid fa-cloud-arrow-up"></i>
+  </div>
+  <h2 class="success-title">Product Submitted! 🎉</h2>
+  <p class="success-sub">
+    Your product is now under admin review. You'll be notified once it's approved or if changes are needed.
+  </p>
+
+  <div class="success-info">
+    <div class="sinfo-row">
+      <span class="sinfo-label">Status</span>
+      <span class="sinfo-value" style="color:var(--warning,#F59E0B);">⏳ Under Review</span>
+    </div>
+    <div class="sinfo-row">
+      <span class="sinfo-label">Review Time</span>
+      <span class="sinfo-value">Within 24 hours</span>
+    </div>
+    <div class="sinfo-row">
+      <span class="sinfo-label">Uploads Today</span>
+      <span class="sinfo-value gold">4 / 5 used</span>
+    </div>
+    <div class="sinfo-row">
+      <span class="sinfo-label">Notification</span>
+      <span class="sinfo-value">SMS + App notification</span>
+    </div>
+  </div>
+
+  <button class="done-btn" onclick="document.getElementById('successOverlay').classList.remove('show'); showToast('📦 Back to dashboard')">
+    <i class="fa-solid fa-house"></i> Back to Dashboard
+  </button>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+  /* ── Char counter ── */
+  function updateChar(inputId, countId, max) {
+    const len = document.getElementById(inputId).value.length;
+    document.getElementById(countId).textContent = len;
+  }
+
+  /* ── You receive calc ── */
+  document.getElementById('pprice').addEventListener('input', function() {
+    const price = parseFloat(this.value) || 0;
+    const receive = price * 0.88;
+    document.getElementById('youReceive').textContent = '₦' + receive.toLocaleString('en-NG', {minimumFractionDigits:2, maximumFractionDigits:2});
+    calcDiscount();
+  });
+
+  /* ── Discount calc ── */
+  function calcDiscount() {
+    const price    = parseFloat(document.getElementById('pprice').value) || 0;
+    const original = parseFloat(document.getElementById('poriginal')?.value) || 0;
+    const infoEl   = document.getElementById('discountInfo');
+    if (original > price && price > 0) {
+      const pct = Math.round(((original - price) / original) * 100);
+      infoEl.innerHTML = `Discount badge: <strong style="color:var(--gold);">-${pct}%</strong> will show on product card.`;
+    } else {
+      infoEl.textContent = 'Discount badge will show on product card.';
+    }
+  }
+
+  /* ── Discount toggle ── */
+  function toggleDiscount() {
+    const tog = document.getElementById('discToggle');
+    const field = document.getElementById('discountField');
+    tog.classList.toggle('on');
+    field.style.display = tog.classList.contains('on') ? 'block' : 'none';
+  }
+
+  /* ── Final agree toggle ── */
+  function toggleFinalAgree() {
+    document.getElementById('finalToggle').classList.toggle('on');
+  }
+
+  /* ── Delivery option select ── */
+  function selectDel(el) {
+    document.querySelectorAll('.delivery-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  /* ── Size chips ── */
+  function removeChip(chip) {
+    chip.style.transition = 'all .2s';
+    chip.style.opacity = '0';
+    chip.style.transform = 'scale(0.8)';
+    setTimeout(() => chip.remove(), 200);
+  }
+  function addSize() {
+    const s = prompt('Enter size (e.g. XXL, 42, 6.5):');
+    if (!s) return;
+    const chip = document.createElement('div');
+    chip.className = 'variant-chip';
+    chip.innerHTML = `${s.trim()} <i class="fa-solid fa-xmark"></i>`;
+    chip.onclick = () => removeChip(chip);
+    document.getElementById('sizeChips').appendChild(chip);
+  }
+
+  /* ── Color toggle ── */
+  function toggleColor(dot) {
+    dot.classList.toggle('selected');
+  }
+
+  /* ── Submit ── */
+  function submitProduct() {
+    // Basic validation
+    const name = document.getElementById('pname').value.trim();
+    const cat  = document.getElementById('pcat').value;
+    const desc = document.getElementById('pdesc').value.trim();
+    const price = document.getElementById('pprice').value;
+    const final = document.getElementById('finalToggle').classList.contains('on');
+
+    if (!name)  { showToast('⚠️ Please enter a product name!'); return; }
+    if (!cat)   { showToast('⚠️ Please select a category!'); return; }
+    if (!desc)  { showToast('⚠️ Please add a product description!'); return; }
+    if (!price) { showToast('⚠️ Please enter a selling price!'); return; }
+    if (!final) { showToast('⚠️ Please confirm the declaration at the bottom!'); return; }
+
+    const btn = document.querySelector('.btn-upload');
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting…';
+    btn.style.opacity = '.8';
+
+    setTimeout(() => {
+      document.getElementById('successOverlay').classList.add('show');
+      btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Submit for Review';
+      btn.style.opacity = '1';
+    }, 2000);
+  }
+
+  /* ── Toast ── */
+  function showToast(msg, dur = 2600) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), dur);
+  }
+</script>
+
+<style>
+  #toast {
+    position:fixed;bottom:calc(86px + 12px);
+    left:50%;transform:translateX(-50%) translateY(20px);
+    background:#1C1C1C;border:1px solid rgba(245,166,35,0.4);
+    color:#fff;font-size:13px;font-weight:500;
+    font-family:'DM Sans',sans-serif;
+    padding:10px 22px;border-radius:999px;
+    opacity:0;transition:all .3s ease;
+    z-index:9999;white-space:nowrap;pointer-events:none;
+  }
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+
+</body>
+</html>

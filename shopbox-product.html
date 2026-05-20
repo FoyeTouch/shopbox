@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Shopbox — Product Detail</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --gold:         #F5A623;
+      --gold-bright:  #FFB930;
+      --gold-dark:    #C47F0A;
+      --gold-muted:   rgba(245,166,35,0.12);
+      --gold-glow:    rgba(245,166,35,0.28);
+      --bg-base:      #0D0D0D;
+      --bg-card:      #161616;
+      --bg-card-2:    #1C1C1C;
+      --border:       rgba(255,255,255,0.07);
+      --border-gold:  rgba(245,166,35,0.32);
+      --text-primary: #FFFFFF;
+      --text-secondary:#A0A0A0;
+      --text-muted:   #555555;
+      --success:      #22C55E;
+      --danger:       #EF4444;
+      --font-display: 'Syne', sans-serif;
+      --font-body:    'DM Sans', sans-serif;
+      --px:           16px;
+      --radius-sm:    8px;
+      --radius-md:    12px;
+      --radius-lg:    16px;
+      --radius-xl:    22px;
+      --radius-pill:  999px;
+      --nav-h:        68px;
+      --bar-h:        88px; /* bottom action bar */
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100dvh;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: calc(var(--bar-h) + 16px);
+    }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; }
+    a { text-decoration: none; color: inherit; }
+
+    .page { max-width: 480px; margin: 0 auto; position: relative; }
+
+    /* ══════════════════════════════════════
+       TOP BAR (back + share + wishlist)
+    ══════════════════════════════════════ */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px var(--px);
+      background: transparent;
+      transition: background .3s;
+    }
+    .top-bar.scrolled {
+      background: rgba(13,13,13,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .icon-btn {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: rgba(22,22,22,0.85);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      backdrop-filter: blur(8px);
+      transition: border-color .2s;
+    }
+    .icon-btn:active { border-color: var(--border-gold); }
+
+    .top-right { display: flex; gap: 8px; }
+
+    .wish-btn-top {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: rgba(22,22,22,0.85);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      color: var(--text-secondary);
+      backdrop-filter: blur(8px);
+      transition: all .2s;
+    }
+    .wish-btn-top.active { color: var(--danger); border-color: var(--danger); }
+
+    /* ══════════════════════════════════════
+       PRODUCT IMAGE GALLERY
+    ══════════════════════════════════════ */
+    .gallery {
+      position: relative;
+      background: var(--bg-card);
+      margin-top: -68px; /* go under top-bar */
+    }
+
+    /* Main image */
+    .gallery-main {
+      width: 100%;
+      height: 360px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .gallery-main img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: opacity .3s;
+    }
+    /* Placeholder icon */
+    .gallery-icon {
+      font-size: 96px;
+      color: var(--text-muted);
+      opacity: .2;
+    }
+
+    /* Discount chip */
+    .disc-chip {
+      position: absolute;
+      top: 84px; left: var(--px);
+      background: var(--gold);
+      color: #000;
+      font-family: var(--font-display);
+      font-size: 13px; font-weight: 800;
+      padding: 5px 12px;
+      border-radius: var(--radius-sm);
+      z-index: 2;
+    }
+
+    /* Bottom gradient */
+    .gallery-main::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 80px;
+      background: linear-gradient(to top, var(--bg-base) 0%, transparent 100%);
+      pointer-events: none;
+    }
+
+    /* Thumbnail strip */
+    .gallery-thumbs {
+      display: flex;
+      gap: 10px;
+      padding: 14px var(--px) 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .gallery-thumbs::-webkit-scrollbar { display: none; }
+
+    .thumb {
+      width: 68px; height: 68px;
+      border-radius: var(--radius-md);
+      background: var(--bg-card-2);
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color .2s;
+    }
+    .thumb.active { border-color: var(--gold); }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .thumb i { font-size: 22px; color: var(--text-muted); opacity: .5; }
+
+    /* Image dots */
+    .img-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px 0 0;
+    }
+    .img-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: all .2s;
+    }
+    .img-dot.active {
+      background: var(--gold);
+      width: 18px;
+      border-radius: 3px;
+    }
+
+    /* ══════════════════════════════════════
+       BREADCRUMB
+    ══════════════════════════════════════ */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 16px var(--px) 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+      white-space: nowrap;
+    }
+    .breadcrumb::-webkit-scrollbar { display: none; }
+    .breadcrumb span {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .breadcrumb span.current { color: var(--gold); font-weight: 500; }
+    .breadcrumb i { font-size: 9px; color: var(--text-muted); }
+
+    /* ══════════════════════════════════════
+       PRODUCT INFO
+    ══════════════════════════════════════ */
+    .product-info {
+      padding: 14px var(--px) 0;
+    }
+
+    .product-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    /* Rating row */
+    .rating-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .stars { display: flex; gap: 2px; color: var(--gold); font-size: 13px; }
+    .rating-score { font-family: var(--font-display); font-size: 14px; font-weight: 700; }
+    .rating-count { font-size: 13px; color: var(--text-secondary); }
+    .in-stock {
+      margin-left: auto;
+      font-size: 12px; font-weight: 600;
+      color: var(--success);
+      background: rgba(34,197,94,0.12);
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+    }
+    .out-stock { color: var(--danger); background: rgba(239,68,68,0.1); }
+
+    /* Price row */
+    .price-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .price-now {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--gold);
+    }
+    .price-old {
+      font-size: 16px;
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+    .price-save {
+      font-size: 12px; font-weight: 700;
+      color: var(--success);
+      background: rgba(34,197,94,0.12);
+      padding: 3px 9px;
+      border-radius: var(--radius-pill);
+    }
+
+    /* Short description */
+    .product-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    /* ── Feature pills ── */
+    .feature-pills {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 4px;
+      margin-bottom: 20px;
+    }
+    .feature-pills::-webkit-scrollbar { display: none; }
+    .pill {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      min-width: 72px;
+    }
+    .pill i { color: var(--gold); font-size: 16px; }
+    .pill span { font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; line-height: 1.3; }
+
+    /* ══════════════════════════════════════
+       COLOR SELECTOR
+    ══════════════════════════════════════ */
+    .selector-section { margin-bottom: 20px; }
+    .selector-label {
+      font-family: var(--font-display);
+      font-size: 14px; font-weight: 700;
+      margin-bottom: 10px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .selector-label span { color: var(--text-secondary); font-weight: 400; font-size: 13px; }
+
+    .color-options { display: flex; gap: 10px; }
+    .color-opt {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: border-color .2s, transform .2s;
+      position: relative;
+    }
+    .color-opt.active {
+      border-color: var(--gold);
+      transform: scale(1.1);
+    }
+    .color-opt.active::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-gold);
+    }
+    .color-inner {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    /* Colour label chips */
+    .color-labels { display: flex; gap: 8px; margin-top: 8px; }
+    .color-label-chip {
+      font-size: 12px; font-weight: 600;
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .color-label-chip.active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: var(--gold-muted);
+    }
+
+    /* ══════════════════════════════════════
+       SIZE SELECTOR
+    ══════════════════════════════════════ */
+    .size-options { display: flex; gap: 8px; flex-wrap: wrap; }
+    .size-opt {
+      min-width: 48px; height: 40px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      font-family: var(--font-display);
+      font-size: 13px; font-weight: 700;
+      color: var(--text-secondary);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      padding: 0 12px;
+      transition: all .2s;
+    }
+    .size-opt.active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: var(--gold-muted);
+    }
+    .size-opt.unavailable {
+      opacity: .35;
+      text-decoration: line-through;
+      cursor: not-allowed;
+    }
+
+    /* ══════════════════════════════════════
+       QUANTITY
+    ══════════════════════════════════════ */
+    .qty-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .qty-label {
+      font-family: var(--font-display);
+      font-size: 14px; font-weight: 700;
+    }
+    .qty-ctrl {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+    }
+    .qty-btn {
+      width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      color: var(--text-primary);
+      transition: background .2s, color .2s;
+    }
+    .qty-btn:active { background: var(--gold-muted); color: var(--gold); }
+    .qty-val {
+      font-family: var(--font-display);
+      font-size: 16px; font-weight: 800;
+      min-width: 36px;
+      text-align: center;
+      color: var(--text-primary);
+    }
+
+    /* ══════════════════════════════════════
+       TRUST MINI STRIP
+    ══════════════════════════════════════ */
+    .trust-mini {
+      display: flex;
+      justify-content: space-between;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 12px var(--px);
+      margin: 0 var(--px) 20px;
+    }
+    .trust-mini-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      text-align: center;
+    }
+    .trust-mini-item i { color: var(--gold); font-size: 16px; }
+    .trust-mini-item span { font-size: 10px; font-weight: 600; color: var(--text-secondary); line-height: 1.3; }
+
+    /* ══════════════════════════════════════
+       TABS: Description / Specs / Reviews / Shipping
+    ══════════════════════════════════════ */
+    .product-tabs {
+      border-top: 1px solid var(--border);
+      margin: 0 var(--px);
+    }
+    .tab-scroll {
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tab-scroll::-webkit-scrollbar { display: none; }
+
+    .product-tab {
+      flex-shrink: 0;
+      padding: 14px 16px;
+      font-family: var(--font-display);
+      font-size: 13px; font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color .2s, border-color .2s;
+    }
+    .product-tab.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+    }
+
+    .tab-content { padding: 16px 0 0; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    .tab-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+
+    /* Spec table */
+    .spec-table { width: 100%; border-collapse: collapse; }
+    .spec-table tr { border-bottom: 1px solid var(--border); }
+    .spec-table tr:last-child { border-bottom: none; }
+    .spec-table td {
+      padding: 10px 0;
+      font-size: 13px;
+    }
+    .spec-table td:first-child {
+      color: var(--text-muted);
+      width: 44%;
+      padding-right: 12px;
+    }
+    .spec-table td:last-child { color: var(--text-primary); font-weight: 500; }
+
+    /* Reviews */
+    .review-summary {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .review-big-score {
+      font-family: var(--font-display);
+      font-size: 48px; font-weight: 800;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .review-bars { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+    .review-bar-row { display: flex; align-items: center; gap: 8px; }
+    .review-bar-row span { font-size: 11px; color: var(--text-muted); width: 12px; text-align: right; }
+    .review-track { flex: 1; height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .review-fill { height: 100%; background: var(--gold); border-radius: 99px; }
+    .review-bar-row .count { font-size: 10px; color: var(--text-muted); width: 28px; }
+
+    .review-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .review-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .reviewer-info { display: flex; align-items: center; gap: 8px; }
+    .reviewer-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--gold-muted);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-size: 13px; font-weight: 700;
+      color: var(--gold);
+    }
+    .reviewer-name { font-size: 13px; font-weight: 600; }
+    .reviewer-verified { font-size: 10px; color: var(--success); }
+    .review-date { font-size: 11px; color: var(--text-muted); }
+    .review-stars { color: var(--gold); font-size: 11px; margin-bottom: 6px; }
+    .review-text { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+    .write-review-btn {
+      width: 100%;
+      padding: 13px;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-gold);
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 14px; font-weight: 700;
+      color: var(--gold);
+      text-align: center;
+      margin-top: 8px;
+      transition: background .2s;
+    }
+    .write-review-btn:active { background: var(--gold-muted); }
+
+    /* ══════════════════════════════════════
+       YOU MAY ALSO LIKE
+    ══════════════════════════════════════ */
+    .related-section { padding: 24px var(--px) 0; }
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .section-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; }
+    .view-all { font-size: 13px; font-weight: 600; color: var(--gold); display: flex; align-items: center; gap: 4px; }
+
+    .related-scroll {
+      display: flex; gap: 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 4px;
+    }
+    .related-scroll::-webkit-scrollbar { display: none; }
+
+    .related-card {
+      flex-shrink: 0;
+      width: 150px;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color .2s;
+      position: relative;
+    }
+    .related-card:active { border-color: var(--border-gold); }
+    .related-img {
+      height: 120px;
+      background: var(--bg-card-2);
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .related-img i { font-size: 40px; color: var(--text-muted); opacity: .3; }
+    .related-chip {
+      position: absolute; top: 8px; left: 8px;
+      background: var(--gold); color: #000;
+      font-family: var(--font-display); font-size: 10px; font-weight: 800;
+      padding: 2px 7px; border-radius: 5px;
+    }
+    .related-add {
+      position: absolute; bottom: 8px; right: 8px;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--gold);
+      color: #000;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+    }
+    .related-body { padding: 10px; }
+    .related-name { font-size: 12px; font-weight: 500; margin-bottom: 4px; line-height: 1.3; }
+    .related-stars { color: var(--gold); font-size: 10px; margin-bottom: 4px; }
+    .related-price { font-family: var(--font-display); font-size: 13px; font-weight: 800; color: var(--gold); }
+    .related-old   { font-size: 10px; color: var(--text-muted); text-decoration: line-through; margin-left: 4px; }
+
+    /* ══════════════════════════════════════
+       BOTTOM ACTION BAR
+    ══════════════════════════════════════ */
+    .action-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: var(--bar-h);
+      background: rgba(13,13,13,0.97);
+      border-top: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 var(--px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      max-width: 480px;
+      margin: 0 auto;
+      z-index: 100;
+    }
+
+    .btn-add-cart {
+      flex: 1;
+      height: 52px;
+      background: var(--bg-card-2);
+      border: 1.5px solid var(--border-gold);
+      color: var(--gold);
+      font-family: var(--font-display);
+      font-size: 15px; font-weight: 800;
+      border-radius: var(--radius-pill);
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px;
+      transition: all .2s;
+    }
+    .btn-add-cart:active { background: var(--gold-muted); transform: scale(0.97); }
+
+    .btn-buy-now {
+      flex: 1;
+      height: 52px;
+      background: var(--gold);
+      color: #000;
+      font-family: var(--font-display);
+      font-size: 15px; font-weight: 800;
+      border-radius: var(--radius-pill);
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px;
+      box-shadow: 0 6px 20px var(--gold-glow);
+      transition: all .2s;
+    }
+    .btn-buy-now:active { transform: scale(0.97); background: var(--gold-dark); }
+
+    /* Animations */
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);} }
+    .fu{animation:fadeUp .35s ease both;}
+    .d1{animation-delay:.04s;}.d2{animation-delay:.08s;}.d3{animation-delay:.12s;}
+    .d4{animation-delay:.16s;}.d5{animation-delay:.20s;}
+
+    /* ── Share sheet (bottom sheet) ── */
+    .sheet-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s;
+    }
+    .sheet-overlay.open { opacity: 1; pointer-events: all; }
+
+    .share-sheet {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      max-width: 480px;
+      margin: 0 auto;
+      background: var(--bg-card);
+      border-radius: 24px 24px 0 0;
+      border-top: 1px solid var(--border);
+      padding: 20px var(--px) 40px;
+      z-index: 201;
+      transform: translateY(100%);
+      transition: transform .35s cubic-bezier(.4,0,.2,1);
+    }
+    .share-sheet.open { transform: translateY(0); }
+
+    .sheet-handle {
+      width: 40px; height: 4px;
+      background: var(--border);
+      border-radius: 99px;
+      margin: 0 auto 20px;
+    }
+    .sheet-title {
+      font-family: var(--font-display);
+      font-size: 16px; font-weight: 700;
+      text-align: center; margin-bottom: 20px;
+    }
+    .share-icons {
+      display: flex; justify-content: space-around;
+    }
+    .share-icon-item {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 8px;
+      cursor: pointer;
+    }
+    .share-icon-circle {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+    }
+    .share-icon-item span { font-size: 11px; color: var(--text-secondary); }
+
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ══ TOP BAR ══ -->
+  <div class="top-bar" id="topBar">
+    <button class="icon-btn" onclick="history.back()">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <div class="top-right">
+      <button class="icon-btn" onclick="openShare()">
+        <i class="fa-solid fa-share-nodes"></i>
+      </button>
+      <button class="wish-btn-top" id="wishBtn" onclick="toggleWish()">
+        <i class="fa-regular fa-heart"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ GALLERY ══ -->
+  <div class="gallery fu">
+
+    <!-- Main image -->
+    <div class="gallery-main" id="mainImg">
+      <span class="disc-chip">−24%</span>
+      <!--
+        🖼️ IMAGE SLOT — Main product image
+        <img src="your-product-main.jpg" alt="Product" id="mainImgEl" />
+      -->
+      <i class="gallery-icon fa-solid fa-headphones"></i>
+    </div>
+
+    <!-- Thumbnails -->
+    <div class="gallery-thumbs">
+      <div class="thumb active" onclick="setThumb(this, 0)">
+        <!-- 🖼️ IMAGE SLOT <img src="thumb1.jpg" /> -->
+        <i class="fa-solid fa-headphones"></i>
+      </div>
+      <div class="thumb" onclick="setThumb(this, 1)">
+        <!-- 🖼️ IMAGE SLOT <img src="thumb2.jpg" /> -->
+        <i class="fa-solid fa-headphones"></i>
+      </div>
+      <div class="thumb" onclick="setThumb(this, 2)">
+        <!-- 🖼️ IMAGE SLOT <img src="thumb3.jpg" /> -->
+        <i class="fa-solid fa-headphones"></i>
+      </div>
+      <div class="thumb" onclick="setThumb(this, 3)">
+        <!-- 🖼️ IMAGE SLOT <img src="thumb4.jpg" /> -->
+        <i class="fa-solid fa-box"></i>
+      </div>
+    </div>
+
+    <!-- Dots -->
+    <div class="img-dots">
+      <div class="img-dot active"></div>
+      <div class="img-dot"></div>
+      <div class="img-dot"></div>
+      <div class="img-dot"></div>
+    </div>
+
+  </div>
+
+  <!-- ══ BREADCRUMB ══ -->
+  <div class="breadcrumb fu d1">
+    <span>Home</span>
+    <i class="fa-solid fa-chevron-right"></i>
+    <span>Electronics</span>
+    <i class="fa-solid fa-chevron-right"></i>
+    <span>Audio</span>
+    <i class="fa-solid fa-chevron-right"></i>
+    <span class="current">Wireless Earbuds</span>
+  </div>
+
+  <!-- ══ PRODUCT INFO ══ -->
+  <div class="product-info fu d2">
+
+    <h1 class="product-title">SoundX Pro Wireless Earbuds</h1>
+
+    <!-- Rating row -->
+    <div class="rating-row">
+      <div class="stars">
+        <i class="fa-solid fa-star"></i>
+        <i class="fa-solid fa-star"></i>
+        <i class="fa-solid fa-star"></i>
+        <i class="fa-solid fa-star"></i>
+        <i class="fa-solid fa-star-half-stroke"></i>
+      </div>
+      <span class="rating-score">4.8</span>
+      <span class="rating-count">(320 reviews)</span>
+      <span class="in-stock">In Stock</span>
+    </div>
+
+    <!-- Price -->
+    <div class="price-row">
+      <span class="price-now">₦24,500</span>
+      <span class="price-old">₦32,000</span>
+      <span class="price-save">Save ₦7,500</span>
+    </div>
+
+    <!-- Description -->
+    <p class="product-desc">
+      Experience premium sound quality with deep bass, crystal clear calls and all-day comfort. Perfect for music, calls, workouts and everyday use.
+    </p>
+
+    <!-- Feature pills -->
+    <div class="feature-pills">
+      <div class="pill">
+        <i class="fa-brands fa-bluetooth"></i>
+        <span>Bluetooth 5.3</span>
+      </div>
+      <div class="pill">
+        <i class="fa-solid fa-battery-full"></i>
+        <span>30H Playtime</span>
+      </div>
+      <div class="pill">
+        <i class="fa-solid fa-droplet-slash"></i>
+        <span>Water Resistant IPX5</span>
+      </div>
+      <div class="pill">
+        <i class="fa-solid fa-microphone"></i>
+        <span>HD Call Quality</span>
+      </div>
+      <div class="pill">
+        <i class="fa-solid fa-bolt"></i>
+        <span>Fast Charge</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ COLOR SELECTOR ══ -->
+  <div class="selector-section fu d3" style="padding: 0 var(--px);">
+    <div class="selector-label">
+      Color: <span id="colorName">Black</span>
+    </div>
+    <div class="color-labels">
+      <div class="color-label-chip active" onclick="setColorChip(this,'Black')">Black</div>
+      <div class="color-label-chip" onclick="setColorChip(this,'White')">White</div>
+      <div class="color-label-chip" onclick="setColorChip(this,'Blue')">Blue</div>
+      <div class="color-label-chip" onclick="setColorChip(this,'Gold')">Gold</div>
+    </div>
+  </div>
+
+  <!-- ══ SIZE SELECTOR ══ -->
+  <div class="selector-section fu d3" style="padding: 16px var(--px) 0;">
+    <div class="selector-label">
+      Size: <span id="sizeName">M</span>
+    </div>
+    <div class="size-options">
+      <div class="size-opt" onclick="setSize(this,'S')">S</div>
+      <div class="size-opt active" onclick="setSize(this,'M')">M</div>
+      <div class="size-opt" onclick="setSize(this,'L')">L</div>
+      <div class="size-opt" onclick="setSize(this,'XL')">XL</div>
+      <div class="size-opt unavailable" title="Out of stock">XXL</div>
+    </div>
+  </div>
+
+  <!-- ══ QUANTITY ══ -->
+  <div class="qty-row fu d4" style="padding: 16px var(--px) 0;">
+    <span class="qty-label">Quantity:</span>
+    <div class="qty-ctrl">
+      <button class="qty-btn" onclick="changeQty(-1)">
+        <i class="fa-solid fa-minus" style="font-size:13px;"></i>
+      </button>
+      <span class="qty-val" id="qtyVal">1</span>
+      <button class="qty-btn" onclick="changeQty(1)">
+        <i class="fa-solid fa-plus" style="font-size:13px;"></i>
+      </button>
+    </div>
+    <span style="font-size:13px; color:var(--text-muted); margin-left:auto;">Max: 10</span>
+  </div>
+
+  <!-- ══ TRUST MINI STRIP ══ -->
+  <div class="trust-mini fu d4">
+    <div class="trust-mini-item">
+      <i class="fa-solid fa-shield-halved"></i>
+      <span>1 Year Warranty</span>
+    </div>
+    <div class="trust-mini-item">
+      <i class="fa-solid fa-rotate-left"></i>
+      <span>7 Days Returns</span>
+    </div>
+    <div class="trust-mini-item">
+      <i class="fa-solid fa-truck-fast"></i>
+      <span>Fast Delivery Across Nigeria</span>
+    </div>
+  </div>
+
+  <!-- ══ PRODUCT TABS ══ -->
+  <div class="product-tabs fu d5">
+
+    <div class="tab-scroll">
+      <div class="product-tab active" onclick="switchTab(this,'desc')">Description</div>
+      <div class="product-tab" onclick="switchTab(this,'specs')">Specifications</div>
+      <div class="product-tab" onclick="switchTab(this,'reviews')">Reviews (320)</div>
+      <div class="product-tab" onclick="switchTab(this,'shipping')">Shipping & Returns</div>
+    </div>
+
+    <div class="tab-content">
+
+      <!-- Description -->
+      <div class="tab-pane active" id="tab-desc">
+        <p class="tab-text">
+          SoundX Pro delivers powerful, immersive sound in a sleek and comfortable design. The advanced active noise cancellation lets you focus on your music while the transparency mode keeps you aware of your surroundings.
+        </p>
+        <p class="tab-text">
+          With 30 hours total playtime and a fast-charge feature that gives you 3 hours of playback from just 15 minutes of charging, you're always ready to go.
+        </p>
+      </div>
+
+      <!-- Specifications -->
+      <div class="tab-pane" id="tab-specs">
+        <table class="spec-table">
+          <tr><td>Brand</td><td>SoundX</td></tr>
+          <tr><td>Model</td><td>SoundX Pro</td></tr>
+          <tr><td>Connectivity</td><td>Bluetooth 5.3</td></tr>
+          <tr><td>Battery Life</td><td>8H (30H with case)</td></tr>
+          <tr><td>Charging</td><td>USB-C, 15min = 3H</td></tr>
+          <tr><td>Water Rating</td><td>IPX5</td></tr>
+          <tr><td>Driver Size</td><td>11mm Dynamic</td></tr>
+          <tr><td>Frequency</td><td>20Hz – 20kHz</td></tr>
+          <tr><td>Weight</td><td>5.4g per earbud</td></tr>
+          <tr><td>Colors</td><td>Black, White, Blue, Gold</td></tr>
+          <tr><td>In the Box</td><td>Earbuds, Charging Case, USB-C Cable, 3 Ear Tips</td></tr>
+        </table>
+      </div>
+
+      <!-- Reviews -->
+      <div class="tab-pane" id="tab-reviews">
+
+        <!-- Summary -->
+        <div class="review-summary">
+          <div class="review-big-score">4.8</div>
+          <div>
+            <div class="stars" style="margin-bottom:4px;">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star-half-stroke"></i>
+            </div>
+            <p style="font-size:12px; color:var(--text-muted);">Based on 320 reviews</p>
+          </div>
+          <div class="review-bars">
+            <div class="review-bar-row"><span>5</span><div class="review-track"><div class="review-fill" style="width:75%"></div></div><span class="count">240</span></div>
+            <div class="review-bar-row"><span>4</span><div class="review-track"><div class="review-fill" style="width:15%"></div></div><span class="count">48</span></div>
+            <div class="review-bar-row"><span>3</span><div class="review-track"><div class="review-fill" style="width:6%"></div></div><span class="count">19</span></div>
+            <div class="review-bar-row"><span>2</span><div class="review-track"><div class="review-fill" style="width:2%"></div></div><span class="count">7</span></div>
+            <div class="review-bar-row"><span>1</span><div class="review-track"><div class="review-fill" style="width:2%"></div></div><span class="count">6</span></div>
+          </div>
+        </div>
+
+        <!-- Review cards -->
+        <div class="review-card">
+          <div class="review-head">
+            <div class="reviewer-info">
+              <div class="reviewer-avatar">EJ</div>
+              <div>
+                <div class="reviewer-name">Emeka Johnson</div>
+                <div class="reviewer-verified">✓ Verified Purchase</div>
+              </div>
+            </div>
+            <span class="review-date">May 18, 2024</span>
+          </div>
+          <div class="review-stars">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+          </div>
+          <p class="review-text">Excellent quality and fits perfectly. The design is unique and premium! Bass is deep and the call quality is crystal clear. Delivered to Lagos in 4 days. Very impressed!</p>
+        </div>
+
+        <div class="review-card">
+          <div class="review-head">
+            <div class="reviewer-info">
+              <div class="reviewer-avatar">AT</div>
+              <div>
+                <div class="reviewer-name">Adaeze Tunde</div>
+                <div class="reviewer-verified">✓ Verified Purchase</div>
+              </div>
+            </div>
+            <span class="review-date">Apr 30, 2024</span>
+          </div>
+          <div class="review-stars">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+          </div>
+          <p class="review-text">Great sound quality, comfortable to wear for hours. The noise cancellation works really well. Only minus is the app setup took a bit. Would still recommend!</p>
+        </div>
+
+        <button class="write-review-btn" onclick="showToast('📝 Review form coming soon!')">
+          ✍️ Write a Review
+        </button>
+      </div>
+
+      <!-- Shipping -->
+      <div class="tab-pane" id="tab-shipping">
+        <p class="tab-text"><strong style="color:var(--text-primary);">Standard Delivery</strong><br>5–7 business days across Nigeria. FREE on orders over ₦20,000.</p>
+        <p class="tab-text"><strong style="color:var(--text-primary);">Express Delivery</strong><br>1–3 business days (Lagos & Abuja). ₦3,500 flat fee.</p>
+        <p class="tab-text"><strong style="color:var(--text-primary);">International Shipping</strong><br>Available to 50+ countries. Rates calculated at checkout.</p>
+        <p class="tab-text"><strong style="color:var(--text-primary);">Returns Policy</strong><br>7-day hassle-free returns. Item must be unused and in original packaging. Refund processed within 3–5 business days.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ YOU MAY ALSO LIKE ══ -->
+  <div class="related-section fu d5">
+    <div class="section-header">
+      <h2 class="section-title">You may also like</h2>
+      <a href="#" class="view-all">View all <i class="fa-solid fa-arrow-right" style="font-size:11px;"></i></a>
+    </div>
+
+    <div class="related-scroll">
+
+      <div class="related-card">
+        <div class="related-img">
+          <span class="related-chip">−20%</span>
+          <!-- 🖼️ IMAGE SLOT -->
+          <i class="fa-solid fa-clock"></i>
+          <button class="related-add" onclick="showToast('🛒 Smart Watch added!')">
+            <i class="fa-solid fa-plus"></i>
+          </button>
+        </div>
+        <div class="related-body">
+          <p class="related-name">Fire-Bolt Smart Watch</p>
+          <div class="related-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i> 4.7</div>
+          <span class="related-price">₦28,000</span>
+          <span class="related-old">₦35,000</span>
+        </div>
+      </div>
+
+      <div class="related-card">
+        <div class="related-img">
+          <span class="related-chip">−18%</span>
+          <!-- 🖼️ IMAGE SLOT -->
+          <i class="fa-solid fa-headphones"></i>
+          <button class="related-add" onclick="showToast('🛒 Headphones added!')">
+            <i class="fa-solid fa-plus"></i>
+          </button>
+        </div>
+        <div class="related-body">
+          <p class="related-name">BassBeat Over-Ear Headphones</p>
+          <div class="related-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i> 4.6</div>
+          <span class="related-price">₦19,500</span>
+          <span class="related-old">₦23,800</span>
+        </div>
+      </div>
+
+      <div class="related-card">
+        <div class="related-img">
+          <span class="related-chip">−15%</span>
+          <!-- 🖼️ IMAGE SLOT -->
+          <i class="fa-solid fa-volume-high"></i>
+          <button class="related-add" onclick="showToast('🛒 Speaker added!')">
+            <i class="fa-solid fa-plus"></i>
+          </button>
+        </div>
+        <div class="related-body">
+          <p class="related-name">BoomBox Mini Speaker</p>
+          <div class="related-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i> 4.9</div>
+          <span class="related-price">₦15,800</span>
+          <span class="related-old">₦18,500</span>
+        </div>
+      </div>
+
+      <div class="related-card">
+        <div class="related-img">
+          <span class="related-chip">−22%</span>
+          <!-- 🖼️ IMAGE SLOT -->
+          <i class="fa-solid fa-battery-full"></i>
+          <button class="related-add" onclick="showToast('🛒 PowerCore added!')">
+            <i class="fa-solid fa-plus"></i>
+          </button>
+        </div>
+        <div class="related-body">
+          <p class="related-name">PowerCore 20,000mAh Fast Charge</p>
+          <div class="related-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i> 4.8</div>
+          <span class="related-price">₦17,200</span>
+          <span class="related-old">₦22,000</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<!-- ══ BOTTOM ACTION BAR ══ -->
+<div class="action-bar">
+  <button class="btn-add-cart" onclick="addToCart()">
+    <i class="fa-solid fa-cart-shopping"></i>
+    Add to Cart
+  </button>
+  <button class="btn-buy-now" onclick="buyNow()">
+    <i class="fa-solid fa-bolt"></i>
+    Buy Now
+  </button>
+</div>
+
+<!-- ══ SHARE SHEET ══ -->
+<div class="sheet-overlay" id="sheetOverlay" onclick="closeShare()"></div>
+<div class="share-sheet" id="shareSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">Share Product</div>
+  <div class="share-icons">
+    <div class="share-icon-item" onclick="showToast('🔗 Link copied!')">
+      <div class="share-icon-circle" style="background:var(--bg-card-2);"><i class="fa-solid fa-link" style="color:var(--gold);"></i></div>
+      <span>Copy Link</span>
+    </div>
+    <div class="share-icon-item" onclick="showToast('💬 Opening WhatsApp…')">
+      <div class="share-icon-circle" style="background:#25D36620;"><i class="fa-brands fa-whatsapp" style="color:#25D366; font-size:26px;"></i></div>
+      <span>WhatsApp</span>
+    </div>
+    <div class="share-icon-item" onclick="showToast('📘 Opening Facebook…')">
+      <div class="share-icon-circle" style="background:#1877F220;"><i class="fa-brands fa-facebook" style="color:#1877F2; font-size:24px;"></i></div>
+      <span>Facebook</span>
+    </div>
+    <div class="share-icon-item" onclick="showToast('✉️ Opening email…')">
+      <div class="share-icon-circle" style="background:var(--bg-card-2);"><i class="fa-regular fa-envelope" style="color:var(--gold);"></i></div>
+      <span>Email</span>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+  /* ── Scroll top-bar ── */
+  const topBar = document.getElementById('topBar');
+  window.addEventListener('scroll', () => {
+    topBar.classList.toggle('scrolled', window.scrollY > 280);
+  });
+
+  /* ── Thumbnail selector ── */
+  function setThumb(el, idx) {
+    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.img-dot').forEach((d,i) => d.classList.toggle('active', i===idx));
+  }
+
+  /* ── Wishlist ── */
+  function toggleWish() {
+    const btn = document.getElementById('wishBtn');
+    btn.classList.toggle('active');
+    const on = btn.classList.contains('active');
+    btn.innerHTML = on
+      ? '<i class="fa-solid fa-heart"></i>'
+      : '<i class="fa-regular fa-heart"></i>';
+    showToast(on ? '❤️ Saved to Wishlist' : '🗑️ Removed from Wishlist');
+  }
+
+  /* ── Color selector ── */
+  function setColorChip(el, name) {
+    document.querySelectorAll('.color-label-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('colorName').textContent = name;
+  }
+
+  /* ── Size selector ── */
+  function setSize(el, name) {
+    if (el.classList.contains('unavailable')) return;
+    document.querySelectorAll('.size-opt').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('sizeName').textContent = name;
+  }
+
+  /* ── Quantity ── */
+  let qty = 1;
+  function changeQty(d) {
+    qty = Math.min(10, Math.max(1, qty + d));
+    document.getElementById('qtyVal').textContent = qty;
+  }
+
+  /* ── Tabs ── */
+  function switchTab(el, id) {
+    document.querySelectorAll('.product-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('tab-' + id).classList.add('active');
+  }
+
+  /* ── Add to cart ── */
+  function addToCart() {
+    const color = document.querySelector('.color-label-chip.active')?.textContent || 'Black';
+    const size  = document.querySelector('.size-opt.active')?.textContent || 'M';
+    showToast(`🛒 ${qty}x SoundX Pro (${color}, ${size}) added!`);
+  }
+
+  /* ── Buy now ── */
+  function buyNow() {
+    showToast('⚡ Redirecting to checkout…');
+    // window.location.href = 'checkout.html';
+  }
+
+  /* ── Share sheet ── */
+  function openShare() {
+    document.getElementById('sheetOverlay').classList.add('open');
+    document.getElementById('shareSheet').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeShare() {
+    document.getElementById('sheetOverlay').classList.remove('open');
+    document.getElementById('shareSheet').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  /* ── Toast ── */
+  function showToast(msg, dur = 2600) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), dur);
+  }
+</script>
+
+<style>
+  #toast {
+    position: fixed; bottom: calc(88px + 12px);
+    left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #1C1C1C; border: 1px solid rgba(245,166,35,0.4);
+    color: #fff; font-size: 13px; font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    padding: 10px 22px; border-radius: 999px;
+    opacity: 0; transition: all .3s ease;
+    z-index: 9999; white-space: nowrap; pointer-events: none;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+
+</body>
+</html>
