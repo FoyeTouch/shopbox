@@ -546,9 +546,100 @@
       background:rgba(239,68,68,0.1);color:var(--danger);
       border:1px solid rgba(239,68,68,0.2);
     }
+  
+    /* ═══════════════ DESKTOP NAVBAR ═══════════════ */
+    .d-nav{display:none;position:sticky;top:0;z-index:500;background:rgba(13,13,13,.97);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.07);}
+    .d-nav-top{display:flex;align-items:center;gap:20px;padding:0 40px;height:68px;}
+    .d-nav-logo img{height:38px;width:auto;}
+    .d-nav-search{flex:1;max-width:500px;display:flex;align-items:center;background:#161616;border:1.5px solid rgba(255,255,255,.07);border-radius:999px;padding:0 6px 0 18px;height:42px;gap:10px;transition:border-color .2s;}
+    .d-nav-search:focus-within{border-color:rgba(245,166,35,.32);box-shadow:0 0 0 3px rgba(245,166,35,.12);}
+    .d-nav-search i{color:#555;font-size:14px;}
+    .d-nav-search input{flex:1;font-size:14px;color:#fff;background:none;border:none;outline:none;font-family:'DM Sans',sans-serif;}
+    .d-nav-search input::placeholder{color:#555;}
+    .d-nav-search-btn{height:32px;padding:0 16px;background:#F5A623;border-radius:999px;color:#000;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;border:none;cursor:pointer;}
+    .d-nav-right{display:flex;align-items:center;gap:10px;margin-left:auto;}
+    .d-nav-icon{width:40px;height:40px;border-radius:50%;background:#161616;border:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-size:17px;color:#A0A0A0;cursor:pointer;transition:all .2s;position:relative;}
+    .d-nav-icon:hover{border-color:rgba(245,166,35,.32);color:#F5A623;}
+    .d-nav-cart-badge{position:absolute;top:-2px;right:-2px;width:18px;height:18px;background:#F5A623;color:#000;font-family:'Syne',sans-serif;font-size:9px;font-weight:800;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #0D0D0D;}
+    .d-nav-login{height:38px;padding:0 20px;background:#F5A623;color:#000;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;border-radius:999px;border:none;cursor:pointer;white-space:nowrap;box-shadow:0 4px 12px rgba(245,166,35,.28);}
+    .d-nav-login:hover{background:#C47F0A;}
+    .d-nav-user{display:flex;align-items:center;gap:8px;padding:6px 14px 6px 8px;background:#161616;border:1px solid rgba(255,255,255,.07);border-radius:999px;cursor:pointer;}
+    .d-nav-user-av{width:28px;height:28px;border-radius:50%;background:rgba(245,166,35,.12);border:1.5px solid rgba(245,166,35,.32);display:flex;align-items:center;justify-content:center;color:#F5A623;font-size:12px;}
+    .d-nav-links{display:flex;align-items:center;border-top:1px solid rgba(255,255,255,.07);background:#161616;}
+    .d-nav-links-inner{display:flex;align-items:center;padding:0 40px;height:42px;overflow-x:auto;scrollbar-width:none;gap:0;}
+    .d-nav-links-inner::-webkit-scrollbar{display:none;}
+    .d-nav-link{padding:0 16px;height:42px;display:flex;align-items:center;font-size:13px;font-weight:600;color:#A0A0A0;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;font-family:'Syne',sans-serif;}
+    .d-nav-link:hover,.d-nav-link.active{color:#F5A623;border-bottom-color:#F5A623;}
+    .d-nav-link i{margin-right:5px;font-size:11px;}
+    .d-nav-sep{width:1px;height:18px;background:rgba(255,255,255,.07);}
+    .d-nav-hot{margin-left:5px;background:#EF4444;color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:4px;font-family:'Syne',sans-serif;}
+
+    /* ═══════════════ DESKTOP LAYOUT ═══════════════ */
+    @media(min-width:768px){
+      .d-nav{display:block;}
+      /* hide mobile elements */
+      .header, .bottom-nav, .bot-nav, .mobile-header, .m-header{display:none!important;}
+      /* page body padding reset */
+      body{padding-bottom:0!important;}
+      /* desktop content wrapper */
+      .desktop-page-wrap{
+        max-width:960px;
+        margin:0 auto;
+        padding:32px 40px 60px;
+      }
+      /* back button bigger */
+      .back-btn{width:44px!important;height:44px!important;font-size:17px!important;}
+      /* cards wider */
+      .page,.page-wrap{max-width:100%!important;}
+    }
+
   </style>
 </head>
 <body>
+
+<!-- ═══ DESKTOP NAVBAR ═══ -->
+<nav class="d-nav" id="dNav">
+  <div class="d-nav-top">
+    <a href="index.html" class="d-nav-logo"><img src="https://res.cloudinary.com/dgelnfkjv/image/upload/v1778969155/file_00000000ecc87246bc708f4b9cbb30d8_xrmwgv.png" alt="Shopbox"/></a>
+    <div class="d-nav-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Search for products, brands, categories…"/>
+      <button class="d-nav-search-btn">Search</button>
+    </div>
+    <div class="d-nav-right">
+      <div class="d-nav-icon" onclick="window.location='shopbox-wishlist.html'" title="Wishlist"><i class="fa-regular fa-heart"></i></div>
+      <div class="d-nav-icon" onclick="window.location='shopbox-cart.html'" title="Cart">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span class="d-nav-cart-badge">0</span>
+      </div>
+      <div id="dNavAuth">
+        <button class="d-nav-login" onclick="window.location='shopbox-login.html'"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login / Sign Up</button>
+      </div>
+    </div>
+  </div>
+  <div class="d-nav-links">
+    <div class="d-nav-links-inner">
+      <div class="d-nav-link" onclick="window.location='index.html'"><i class="fa-solid fa-house"></i> Home</div>
+      <div class="d-nav-sep"></div>
+      <div class="d-nav-link" onclick="window.location='shopbox-search.html'"><i class="fa-solid fa-shirt"></i> Fashion</div>
+      <div class="d-nav-sep"></div>
+      <div class="d-nav-link" onclick="window.location='shopbox-search.html'"><i class="fa-solid fa-headphones"></i> Electronics</div>
+      <div class="d-nav-sep"></div>
+      <div class="d-nav-link" onclick="window.location='shopbox-search.html'"><i class="fa-solid fa-spray-can-sparkles"></i> Beauty</div>
+      <div class="d-nav-sep"></div>
+      <div class="d-nav-link" onclick="window.location='shopbox-search.html'"><i class="fa-solid fa-couch"></i> Home & Living</div>
+      <div class="d-nav-sep"></div>
+      <div class="d-nav-link" onclick="window.location='shopbox-search.html'"><i class="fa-solid fa-dumbbell"></i> Fitness</div>
+      <div class="d-nav-sep"></div>
+      <div class="d-nav-link" onclick="window.location='shopbox-search.html'"><i class="fa-solid fa-shoe-prints"></i> Shoes</div>
+      <div class="d-nav-sep"></div>
+      <div class="d-nav-link" onclick="window.location='shopbox-search.html'"><i class="fa-solid fa-bolt"></i> Flash Deals <span class="d-nav-hot">HOT</span></div>
+      <div class="d-nav-sep"></div>
+      <div class="d-nav-link" onclick="window.location='shopbox-seller-agreement.html'"><i class="fa-solid fa-store"></i> Sell on Shopbox</div>
+    </div>
+  </div>
+</nav>
+
 <div class="page">
 
   <!-- ══ HEADER ══ -->
