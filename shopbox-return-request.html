@@ -464,7 +464,7 @@
 
   <!-- ══ HEADER ══ -->
   <div class="header">
-    <button class="back-btn" onclick="history.back()">
+    <button class="back-btn" onclick="history.length>1?history.back():window.location='index.html'">
       <i class="fa-solid fa-arrow-left"></i>
     </button>
     <span class="header-title">Return Request</span>
@@ -801,7 +801,7 @@
     </div>
   </div>
 
-  <button class="done-btn" onclick="showToast('🏠 Going home…')">
+  <button class="done-btn" onclick="window.location='shopbox-tracking.html'"">
     <i class="fa-solid fa-house"></i> Back to My Orders
   </button>
 </div>

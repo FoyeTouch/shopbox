@@ -613,7 +613,7 @@
 
   <!-- ══ HEADER ══ -->
   <div class="header">
-    <button class="back-btn" onclick="history.back()">
+    <button class="back-btn" onclick="history.length>1?history.back():window.location='index.html'">
       <i class="fa-solid fa-arrow-left"></i>
     </button>
     <div class="header-title">
@@ -625,7 +625,7 @@
   </div>
 
   <!-- ══ PRODUCT MINI ══ -->
-  <div class="product-mini fu d1" onclick="history.back()">
+  <div class="product-mini fu d1" onclick="history.length>1?history.back():window.location='index.html'">
     <div class="product-mini-img">
       <!-- 🖼️ IMAGE SLOT -->
       <i class="fa-solid fa-headphones"></i>

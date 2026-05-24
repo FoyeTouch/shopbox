@@ -435,7 +435,7 @@
 
   <!-- ══ HEADER ══ -->
   <div class="header">
-    <button class="back-btn" onclick="history.back()">
+    <button class="back-btn" onclick="history.length>1?history.back():window.location='index.html'">
       <i class="fa-solid fa-arrow-left"></i>
     </button>
     <div class="header-center">
@@ -719,23 +719,23 @@
 
 <!-- ══ BOTTOM NAV ══ -->
 <nav class="bottom-nav">
-  <div class="nav-item" onclick="showToast('🏠 Home')">
+  <div class="nav-item" onclick="window.location='index.html'"">
     <div class="nav-icon"><i class="fa-solid fa-house"></i></div>
     <span class="nav-label">Home</span>
   </div>
-  <div class="nav-item" onclick="showToast('📂 Categories')">
+  <div class="nav-item" onclick="window.location='shopbox-search.html'"">
     <div class="nav-icon"><i class="fa-solid fa-table-cells-large"></i></div>
     <span class="nav-label">Categories</span>
   </div>
-  <div class="nav-item" onclick="showToast('❤️ Wishlist')">
+  <div class="nav-item" onclick="window.location='shopbox-wishlist.html'"">
     <div class="nav-icon"><i class="fa-regular fa-heart"></i></div>
     <span class="nav-label">Wishlist</span>
   </div>
-  <div class="nav-item" onclick="showToast('📦 Orders')">
+  <div class="nav-item" onclick="window.location='shopbox-tracking.html'"">
     <div class="nav-icon"><i class="fa-solid fa-box"></i></div>
     <span class="nav-label">Orders</span>
   </div>
-  <div class="nav-item" onclick="showToast('👤 Account')">
+  <div class="nav-item" onclick="window.location='shopbox-account.html'"">
     <div class="nav-icon"><i class="fa-regular fa-user"></i></div>
     <span class="nav-label">Account</span>
   </div>

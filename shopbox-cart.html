@@ -671,7 +671,7 @@
 
   <!-- ══ HEADER ══ -->
   <div class="header">
-    <button class="back-btn" onclick="history.back()">
+    <button class="back-btn" onclick="history.length>1?history.back():window.location='index.html'">
       <i class="fa-solid fa-arrow-left"></i>
     </button>
     <div class="header-title">
@@ -801,7 +801,7 @@
     <i class="fa-solid fa-cart-shopping empty-icon"></i>
     <h2 class="empty-title">Your Cart is Empty</h2>
     <p class="empty-sub">Looks like you haven't added anything yet.<br>Find the perfect items for you!</p>
-    <button class="empty-btn" onclick="showToast('🛍️ Opening shop…')">
+    <button class="empty-btn" onclick="window.location='shopbox-search.html'"">
       <i class="fa-solid fa-bag-shopping"></i> Start Shopping
     </button>
     <button class="empty-btn2" onclick="showToast('📂 Opening categories…')">
@@ -946,7 +946,7 @@
     <span class="checkout-total-label">Total Amount</span>
     <span class="checkout-total-amount" id="barTotal">₦69,000</span>
   </div>
-  <button class="checkout-btn" onclick="goCheckout()">
+  <button class="checkout-btn" onclick="window.location='shopbox-checkout.html'">
     <i class="fa-solid fa-lock"></i>
     Proceed to Checkout
     <i class="fa-solid fa-arrow-right"></i>

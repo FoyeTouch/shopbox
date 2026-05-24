@@ -473,8 +473,8 @@
 <header class="m-header">
   <div class="m-top">
     <button class="hamburger" id="menuBtn"><span></span><span></span><span></span></button>
-    <a href="#"><img src="https://res.cloudinary.com/dgelnfkjv/image/upload/v1778969155/file_00000000ecc87246bc708f4b9cbb30d8_xrmwgv.png" alt="Shopbox" style="height:32px;"/></a>
-    <button class="m-cart" onclick="toast('🛒 Opening cart…')">
+    <a href="index.html"><img src="https://res.cloudinary.com/dgelnfkjv/image/upload/v1778969155/file_00000000ecc87246bc708f4b9cbb30d8_xrmwgv.png" alt="Shopbox" style="height:32px;"/></a>
+    <button class="m-cart" onclick="window.location='shopbox-cart.html'"">
       <i class="fa-solid fa-cart-shopping"></i>
       <span class="m-badge" id="mCrt">0</span>
     </button>
@@ -483,7 +483,7 @@
     <div class="m-search">
       <i class="fa-solid fa-magnifying-glass"></i>
       <input type="text" placeholder="Search products, brands and more…"/>
-      <button class="m-search-btn"><i class="fa-solid fa-magnifying-glass" style="color:#000;font-size:13px;"></i></button>
+      <button class="m-search-btn" onclick="window.location='shopbox-search.html'"><i class="fa-solid fa-magnifying-glass" style="color:#000;font-size:13px;"></i></button>
     </div>
   </div>
 </header>
@@ -501,13 +501,13 @@
       <button class="d-search-btn">Search</button>
     </div>
     <div class="d-top-right">
-      <button class="d-icon-btn" onclick="toast('❤️ Wishlist')" title="Wishlist"><i class="fa-regular fa-heart"></i></button>
-      <button class="d-icon-btn" onclick="toast('🛒 Cart')" title="Cart">
+      <button class="d-icon-btn" onclick="window.location='shopbox-wishlist.html'"" title="Wishlist"><i class="fa-regular fa-heart"></i></button>
+      <button class="d-icon-btn" onclick="window.location='shopbox-cart.html'"" title="Cart">
         <i class="fa-solid fa-cart-shopping"></i>
         <span class="d-cart-badge" id="dCrt">0</span>
       </button>
       <div id="dAuth">
-        <button class="d-login-btn" onclick="openAuth('login')"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login / Sign Up</button>
+        <button class="d-login-btn" onclick="window.location='shopbox-login.html'"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login / Sign Up</button>
       </div>
     </div>
   </div>
@@ -532,9 +532,9 @@
       <div class="d-nav-sep"></div>
       <div class="d-nav-link" onclick="setDNav(this)"><i class="fa-solid fa-baby"></i> Kids</div>
       <div class="d-nav-sep"></div>
-      <div class="d-nav-link" onclick="toast('⚡ Flash Deals')"><i class="fa-solid fa-bolt"></i> Flash Deals <span class="d-nav-hot">HOT</span></div>
+      <div class="d-nav-link" onclick="window.location='shopbox-search.html'""><i class="fa-solid fa-bolt"></i> Flash Deals <span class="d-nav-hot">HOT</span></div>
       <div class="d-nav-sep"></div>
-      <div class="d-nav-link" onclick="toast('🏪 Sell on Shopbox')"><i class="fa-solid fa-store"></i> Sell on Shopbox</div>
+      <div class="d-nav-link" onclick="window.location='shopbox-seller-agreement.html'""><i class="fa-solid fa-store"></i> Sell on Shopbox</div>
     </div>
   </div>
 </header>
@@ -554,20 +554,20 @@
   </div>
   <div class="dr-nav">
     <div class="dr-item active"><i class="fa-solid fa-house"></i> Home</div>
-    <div class="dr-item" onclick="toast('📂 Categories')"><i class="fa-solid fa-table-cells-large"></i> Categories</div>
-    <div class="dr-item" onclick="toast('⚡ Flash Deals')"><i class="fa-solid fa-bolt"></i> Flash Deals <span class="dr-badge">HOT</span></div>
-    <div class="dr-item" onclick="toast('❤️ Wishlist')"><i class="fa-solid fa-heart"></i> Wishlist</div>
-    <div class="dr-item" onclick="toast('📦 Orders')"><i class="fa-solid fa-bag-shopping"></i> My Orders</div>
-    <div class="dr-item" onclick="toast('🗺️ Track Order')"><i class="fa-solid fa-truck-fast"></i> Track Order</div>
+    <div class="dr-item" onclick="window.location='shopbox-search.html'""><i class="fa-solid fa-table-cells-large"></i> Categories</div>
+    <div class="dr-item" onclick="window.location='shopbox-search.html'""><i class="fa-solid fa-bolt"></i> Flash Deals <span class="dr-badge">HOT</span></div>
+    <div class="dr-item" onclick="window.location='shopbox-wishlist.html'""><i class="fa-solid fa-heart"></i> Wishlist</div>
+    <div class="dr-item" onclick="window.location='shopbox-tracking.html'""><i class="fa-solid fa-bag-shopping"></i> My Orders</div>
+    <div class="dr-item" onclick="window.location='shopbox-tracking.html'""><i class="fa-solid fa-truck-fast"></i> Track Order</div>
     <div class="dr-div"></div>
-    <div class="dr-item" onclick="toast('🏪 Sell on Shopbox')"><i class="fa-solid fa-store"></i> Sell on Shopbox</div>
-    <div class="dr-item" onclick="toast('🎁 Promo Codes')"><i class="fa-solid fa-tag"></i> Promo Codes</div>
-    <div class="dr-item" onclick="toast('📞 Support')"><i class="fa-solid fa-headset"></i> Support</div>
-    <div class="dr-item" onclick="toast('⚙️ Settings')"><i class="fa-solid fa-gear"></i> Settings</div>
+    <div class="dr-item" onclick="window.location='shopbox-seller-agreement.html'""><i class="fa-solid fa-store"></i> Sell on Shopbox</div>
+    <div class="dr-item" onclick="window.location='shopbox-buyer-terms.html'""><i class="fa-solid fa-tag"></i> Promo Codes</div>
+    <div class="dr-item" onclick="window.location='shopbox-buyer-terms.html'""><i class="fa-solid fa-headset"></i> Support</div>
+    <div class="dr-item" onclick="window.location='shopbox-settings.html'""><i class="fa-solid fa-gear"></i> Settings</div>
   </div>
   <div class="dr-footer" id="drFooter">
-    <button class="dr-btn dr-login" onclick="openAuth('login')"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login</button>
-    <button class="dr-btn dr-signup" onclick="openAuth('signup')"><i class="fa-solid fa-user-plus"></i> Create Account</button>
+    <button class="dr-btn dr-login" onclick="window.location='shopbox-login.html'"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login</button>
+    <button class="dr-btn dr-signup" onclick="window.location='shopbox-login.html'"><i class="fa-solid fa-user-plus"></i> Create Account</button>
     <p style="font-size:10px;color:var(--muted);text-align:center;margin-top:10px;">Shopbox v1.0 · Fast delivery across Nigeria & worldwide</p>
   </div>
 </nav>
@@ -587,7 +587,7 @@
       <div class="slide-tag"><i class="fa-solid fa-bolt"></i> New Arrivals</div>
       <div class="slide-h">Your Style.<br><span class="g">Delivered.</span></div>
       <div class="slide-p">Top trends. Best prices.<br>Fast delivery to Nigeria.</div>
-      <button class="slide-btn" onclick="toast('🛍️ Shop Now!')">Shop Now <i class="fa-solid fa-arrow-right" style="font-size:10px;"></i></button>
+      <button class="slide-btn" onclick="window.location='shopbox-search.html'"">Shop Now <i class="fa-solid fa-arrow-right" style="font-size:10px;"></i></button>
     </div>
     <div class="slide-wm"><img src="https://res.cloudinary.com/dgelnfkjv/image/upload/v1778969156/file_0000000007f472468c49dcc67f2b90e9_qhlhj9.png" alt=""/></div>
   </div>
@@ -600,7 +600,7 @@
       <div class="slide-tag"><i class="fa-solid fa-fire"></i> Trending Now</div>
       <div class="slide-h">New<br><span class="g">Collection.</span></div>
       <div class="slide-p">Exclusive styles.<br>Limited time offers.</div>
-      <button class="slide-btn" onclick="toast('🔥 Explore!')">Explore <i class="fa-solid fa-arrow-right" style="font-size:10px;"></i></button>
+      <button class="slide-btn" onclick="window.location='shopbox-search.html'"">Explore <i class="fa-solid fa-arrow-right" style="font-size:10px;"></i></button>
     </div>
     <div class="slide-wm"><img src="https://res.cloudinary.com/dgelnfkjv/image/upload/v1778969156/file_0000000007f472468c49dcc67f2b90e9_qhlhj9.png" alt=""/></div>
   </div>
@@ -613,7 +613,7 @@
       <div class="slide-tag"><i class="fa-solid fa-tag"></i> Summer Sale</div>
       <div class="slide-h">Up to<br><span class="g">50% Off.</span></div>
       <div class="slide-p">Best deals.<br>Shop before it ends.</div>
-      <button class="slide-btn" onclick="toast('🛒 Grab Deal!')">Grab Deal <i class="fa-solid fa-arrow-right" style="font-size:10px;"></i></button>
+      <button class="slide-btn" onclick="window.location='shopbox-search.html'"">Grab Deal <i class="fa-solid fa-arrow-right" style="font-size:10px;"></i></button>
     </div>
     <div class="slide-wm"><img src="https://res.cloudinary.com/dgelnfkjv/image/upload/v1778969156/file_0000000007f472468c49dcc67f2b90e9_qhlhj9.png" alt=""/></div>
   </div>
@@ -750,10 +750,10 @@
           </div>
         </div>
         <div class="p-grid">
-          <div class="p-card"><div class="p-img"><span class="disc">−25%</span><span class="src src-d">🌍 Import</span><i class="p-img-icon fa-solid fa-clock"></i><button class="wbtn" onclick="wig(this,event)"><i class="fa-regular fa-heart"></i></button></div><div class="p-body"><div class="p-name">Smart Watch Pro</div><div class="p-stars"><div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><span class="rnum">(210)</span></div><div class="p-row"><div><div class="p-now">₦18,500</div><div class="p-old">₦24,700</div></div><button class="abtn" onclick="addC(this,'Smart Watch',event)"><i class="fa-solid fa-plus"></i></button></div></div></div>
-          <div class="p-card"><div class="p-img"><span class="disc">−20%</span><span class="src src-d">🌍 Import</span><i class="p-img-icon fa-solid fa-glasses"></i><button class="wbtn" onclick="wig(this,event)"><i class="fa-regular fa-heart"></i></button></div><div class="p-body"><div class="p-name">Premium Sunglasses</div><div class="p-stars"><div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><span class="rnum">(85)</span></div><div class="p-row"><div><div class="p-now">₦7,200</div><div class="p-old">₦9,000</div></div><button class="abtn" onclick="addC(this,'Sunglasses',event)"><i class="fa-solid fa-plus"></i></button></div></div></div>
-          <div class="p-card"><div class="p-img"><span class="disc">−15%</span><span class="src src-l">📍 Local</span><i class="p-img-icon fa-solid fa-bag-shopping"></i><button class="wbtn" onclick="wig(this,event)"><i class="fa-regular fa-heart"></i></button></div><div class="p-body"><div class="p-name">Leather Backpack</div><div class="p-stars"><div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><span class="rnum">(320)</span></div><div class="p-row"><div><div class="p-now">₦15,300</div><div class="p-old">₦18,000</div></div><button class="abtn" onclick="addC(this,'Backpack',event)"><i class="fa-solid fa-plus"></i></button></div></div></div>
-          <div class="p-card"><div class="p-img"><span class="disc">−30%</span><span class="src src-l">📍 Local</span><i class="p-img-icon fa-solid fa-shoe-prints"></i><button class="wbtn" onclick="wig(this,event)"><i class="fa-regular fa-heart"></i></button></div><div class="p-body"><div class="p-name">Urban Sneakers</div><div class="p-stars"><div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><span class="rnum">(178)</span></div><div class="p-row"><div><div class="p-now">₦16,800</div><div class="p-old">₦24,000</div></div><button class="abtn" onclick="addC(this,'Sneakers',event)"><i class="fa-solid fa-plus"></i></button></div></div></div>
+          <div class="p-card" onclick="window.location='shopbox-product.html'"><div class="p-img"><span class="disc">−25%</span><span class="src src-d">🌍 Import</span><i class="p-img-icon fa-solid fa-clock"></i><button class="wbtn" onclick="wig(this,event)"><i class="fa-regular fa-heart"></i></button></div><div class="p-body"><div class="p-name">Smart Watch Pro</div><div class="p-stars"><div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><span class="rnum">(210)</span></div><div class="p-row"><div><div class="p-now">₦18,500</div><div class="p-old">₦24,700</div></div><button class="abtn" onclick="addC(this,'Smart Watch',event);"><i class="fa-solid fa-plus"></i></button></div></div></div>
+          <div class="p-card" onclick="window.location='shopbox-product.html'"><div class="p-img"><span class="disc">−20%</span><span class="src src-d">🌍 Import</span><i class="p-img-icon fa-solid fa-glasses"></i><button class="wbtn" onclick="wig(this,event)"><i class="fa-regular fa-heart"></i></button></div><div class="p-body"><div class="p-name">Premium Sunglasses</div><div class="p-stars"><div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><span class="rnum">(85)</span></div><div class="p-row"><div><div class="p-now">₦7,200</div><div class="p-old">₦9,000</div></div><button class="abtn" onclick="addC(this,'Sunglasses',event)"><i class="fa-solid fa-plus"></i></button></div></div></div>
+          <div class="p-card" onclick="window.location='shopbox-product.html'"><div class="p-img"><span class="disc">−15%</span><span class="src src-l">📍 Local</span><i class="p-img-icon fa-solid fa-bag-shopping"></i><button class="wbtn" onclick="wig(this,event)"><i class="fa-regular fa-heart"></i></button></div><div class="p-body"><div class="p-name">Leather Backpack</div><div class="p-stars"><div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><span class="rnum">(320)</span></div><div class="p-row"><div><div class="p-now">₦15,300</div><div class="p-old">₦18,000</div></div><button class="abtn" onclick="addC(this,'Backpack',event)"><i class="fa-solid fa-plus"></i></button></div></div></div>
+          <div class="p-card" onclick="window.location='shopbox-product.html'"><div class="p-img"><span class="disc">−30%</span><span class="src src-l">📍 Local</span><i class="p-img-icon fa-solid fa-shoe-prints"></i><button class="wbtn" onclick="wig(this,event)"><i class="fa-regular fa-heart"></i></button></div><div class="p-body"><div class="p-name">Urban Sneakers</div><div class="p-stars"><div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><span class="rnum">(178)</span></div><div class="p-row"><div><div class="p-now">₦16,800</div><div class="p-old">₦24,000</div></div><button class="abtn" onclick="addC(this,'Sneakers',event)"><i class="fa-solid fa-plus"></i></button></div></div></div>
         </div>
       </div>
 
@@ -803,10 +803,10 @@
 <!-- MOBILE BOTTOM NAV -->
 <nav class="bot-nav">
   <div class="bn-it active" onclick="setNav(this)"><div class="bn-icon"><i class="fa-solid fa-house"></i></div><span class="bn-lbl">Home</span></div>
-  <div class="bn-it" onclick="setNav(this);toast('📂 Categories')"><div class="bn-icon"><i class="fa-solid fa-table-cells-large"></i></div><span class="bn-lbl">Categories</span></div>
-  <div class="bn-it" onclick="setNav(this);toast('❤️ Wishlist')"><div class="bn-icon"><i class="fa-regular fa-heart"></i></div><span class="bn-lbl">Wishlist</span></div>
-  <div class="bn-it" onclick="setNav(this);toast('📦 Orders')"><div class="bn-icon"><i class="fa-solid fa-box"></i></div><span class="bn-lbl">Orders</span></div>
-  <div class="bn-it" onclick="setNav(this);openAuth('login')"><div class="bn-icon"><i class="fa-regular fa-user"></i></div><span class="bn-lbl">Account</span></div>
+  <div class="bn-it" onclick="setNav(this);window.location='shopbox-search.html'""><div class="bn-icon"><i class="fa-solid fa-table-cells-large"></i></div><span class="bn-lbl">Categories</span></div>
+  <div class="bn-it" onclick="setNav(this);window.location='shopbox-wishlist.html'""><div class="bn-icon"><i class="fa-regular fa-heart"></i></div><span class="bn-lbl">Wishlist</span></div>
+  <div class="bn-it" onclick="setNav(this);window.location='shopbox-tracking.html'""><div class="bn-icon"><i class="fa-solid fa-box"></i></div><span class="bn-lbl">Orders</span></div>
+  <div class="bn-it" onclick="setNav(this);window.location='shopbox-account.html'""><div class="bn-icon"><i class="fa-regular fa-user"></i></div><span class="bn-lbl">Account</span></div>
 </nav>
 
 <!-- AUTH MODAL -->
@@ -886,8 +886,8 @@
     await sb.auth.signOut();
     document.getElementById('drName').textContent='Hello, Guest 👋';
     document.getElementById('drSub').textContent='Sign in to access your account';
-    document.getElementById('drFooter').innerHTML=`<button class="dr-btn dr-login" onclick="openAuth('login')"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login</button><button class="dr-btn dr-signup" onclick="openAuth('signup')"><i class="fa-solid fa-user-plus"></i> Create Account</button>`;
-    document.getElementById('dAuth').innerHTML=`<button class="d-login-btn" onclick="openAuth('login')"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login / Sign Up</button>`;
+    document.getElementById('drFooter').innerHTML=`<button class="dr-btn dr-login" onclick="window.location='shopbox-login.html'"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login</button><button class="dr-btn dr-signup" onclick="window.location='shopbox-login.html'"><i class="fa-solid fa-user-plus"></i> Create Account</button>`;
+    document.getElementById('dAuth').innerHTML=`<button class="d-login-btn" onclick="window.location='shopbox-login.html'"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login / Sign Up</button>`;
     toast('👋 Logged out!');closeDrawer();
   }
 

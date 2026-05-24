@@ -534,7 +534,7 @@
 
   <!-- ══ HEADER ══ -->
   <div class="header">
-    <button class="back-btn" onclick="history.back()">
+    <button class="back-btn" onclick="history.length>1?history.back():window.location='index.html'">
       <i class="fa-solid fa-arrow-left"></i>
     </button>
     <div class="header-title">
@@ -569,15 +569,15 @@
 
     <!-- Action buttons -->
     <div class="action-btns fu d4">
-      <button class="btn-shop" onclick="showToast('🛍️ Opening shop…')">
+      <button class="btn-shop" onclick="window.location='shopbox-search.html'"">
         <i class="fa-solid fa-bag-shopping"></i>
         Start Shopping
       </button>
-      <button class="btn-categories" onclick="showToast('📂 Opening categories…')">
+      <button class="btn-categories" onclick="window.location='shopbox-search.html'"">
         <i class="fa-solid fa-table-cells-large"></i>
         Browse Categories
       </button>
-      <button class="btn-wishlist" onclick="showToast('❤️ Opening wishlist…')">
+      <button class="btn-wishlist" onclick="window.location='shopbox-wishlist.html'"">
         <i class="fa-regular fa-heart"></i>
         View My Wishlist (4 items)
       </button>
@@ -601,7 +601,7 @@
   <div class="deals-section fu d5">
     <div class="deals-header">
       <h2 class="deals-title">Deals For You</h2>
-      <a href="#" class="view-all">View all <i class="fa-solid fa-arrow-right" style="font-size:11px;"></i></a>
+      <a href="shopbox-search.html" class="view-all">View all <i class="fa-solid fa-arrow-right" style="font-size:11px;"></i></a>
     </div>
 
     <div class="deals-scroll">
@@ -763,15 +763,15 @@
 
 <!-- ══ BOTTOM NAV ══ -->
 <nav class="bottom-nav">
-  <div class="nav-item" onclick="showToast('🏠 Home')">
+  <div class="nav-item" onclick="window.location='index.html'"">
     <div class="nav-icon"><i class="fa-solid fa-house"></i></div>
     <span class="nav-label">Home</span>
   </div>
-  <div class="nav-item" onclick="showToast('📂 Categories')">
+  <div class="nav-item" onclick="window.location='shopbox-search.html'"">
     <div class="nav-icon"><i class="fa-solid fa-table-cells-large"></i></div>
     <span class="nav-label">Categories</span>
   </div>
-  <div class="nav-item" onclick="showToast('❤️ Wishlist')">
+  <div class="nav-item" onclick="window.location='shopbox-wishlist.html'"">
     <div class="nav-icon"><i class="fa-regular fa-heart"></i></div>
     <span class="nav-label">Wishlist</span>
   </div>
@@ -779,7 +779,7 @@
     <div class="nav-icon"><i class="fa-solid fa-cart-shopping"></i></div>
     <span class="nav-label">Cart</span>
   </div>
-  <div class="nav-item" onclick="showToast('👤 Account')">
+  <div class="nav-item" onclick="window.location='shopbox-account.html'"">
     <div class="nav-icon"><i class="fa-regular fa-user"></i></div>
     <span class="nav-label">Account</span>
   </div>

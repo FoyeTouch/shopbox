@@ -681,7 +681,7 @@
 
   <!-- ══ HEADER ══ -->
   <div class="header">
-    <button class="back-btn" onclick="history.back()">
+    <button class="back-btn" onclick="history.length>1?history.back():window.location='index.html'">
       <i class="fa-solid fa-arrow-left"></i>
     </button>
     <div class="header-logo">
@@ -1148,11 +1148,7 @@
     const btn = document.querySelector('.pay-btn');
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing…';
     btn.style.opacity = '0.85';
-    setTimeout(() => {
-      showToast('✅ Payment successful! Redirecting…');
-      btn.innerHTML = '<i class="fa-solid fa-check"></i> Payment Complete!';
-      // window.location.href = 'order-success.html';
-    }, 2200);
+    , 2200);
   }
 
   /* ── Toast ── */

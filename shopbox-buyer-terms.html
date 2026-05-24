@@ -433,7 +433,7 @@
 
   <!-- ══ HEADER ══ -->
   <div class="header">
-    <button class="back-btn" onclick="history.back()">
+    <button class="back-btn" onclick="history.length>1?history.back():window.location='index.html'">
       <i class="fa-solid fa-arrow-left"></i>
     </button>
     <div class="header-logo">
@@ -790,7 +790,7 @@
   <div class="success-icon"><i class="fa-solid fa-shield-halved"></i></div>
   <h2 class="success-title">All Set! 🎉</h2>
   <p class="success-sub">You've accepted the Shopbox Buyer Terms. Your account is now fully active. Happy shopping!</p>
-  <button class="continue-btn" onclick="showToast('🛍️ Welcome to Shopbox!')">
+  <button class="continue-btn" onclick="window.location='index.html'"">
     <i class="fa-solid fa-bag-shopping"></i> Start Shopping
   </button>
 </div>
