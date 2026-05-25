@@ -417,7 +417,7 @@
   </div>
 
   <!-- ══ PROFILE MINI ══ -->
-  <div class="profile-mini fu d1" onclick="showToast('👤 Edit Profile')">
+  <div class="profile-mini fu d1" onclick="window.location='shopbox-account.html'">
     <div class="mini-avatar">
       <!-- 🖼️ IMAGE SLOT <img src="profile.jpg" /> -->
       <i class="fa-solid fa-user"></i>
@@ -437,7 +437,7 @@
     <div class="section-label">Account</div>
     <div class="settings-card">
 
-      <div class="settings-item" onclick="showToast('👤 Profile Information')">
+      <div class="settings-item" onclick="window.location='shopbox-account.html'">
         <div class="settings-icon" style="background:var(--gold-muted);">
           <i class="fa-regular fa-user" style="color:var(--gold);"></i>
         </div>
@@ -450,7 +450,7 @@
         </div>
       </div>
 
-      <div class="settings-item" onclick="showToast('🔒 Change Password')">
+      <div class="settings-item" onclick="window.location='shopbox-settings.html'">
         <div class="settings-icon" style="background:rgba(99,102,241,0.1);">
           <i class="fa-solid fa-lock" style="color:#818CF8;"></i>
         </div>
@@ -463,7 +463,7 @@
         </div>
       </div>
 
-      <div class="settings-item" onclick="showToast('📍 Manage Addresses')">
+      <div class="settings-item" onclick="window.location='shopbox-account.html'">
         <div class="settings-icon" style="background:rgba(34,197,94,0.1);">
           <i class="fa-solid fa-location-dot" style="color:var(--success);"></i>
         </div>
@@ -477,7 +477,7 @@
         </div>
       </div>
 
-      <div class="settings-item" onclick="showToast('💳 Payment Methods')">
+      <div class="settings-item" onclick="window.location='shopbox-account.html'">
         <div class="settings-icon" style="background:rgba(251,191,36,0.1);">
           <i class="fa-solid fa-credit-card" style="color:#FBBF24;"></i>
         </div>
@@ -633,7 +633,7 @@
     <div class="section-label">Privacy & Security</div>
     <div class="settings-card">
 
-      <div class="settings-item" onclick="showToast('🔒 Two-Factor Authentication')">
+      <div class="settings-item" onclick="window.location='shopbox-settings.html'">
         <div class="settings-icon" style="background:rgba(34,197,94,0.1);">
           <i class="fa-solid fa-shield-halved" style="color:var(--success);"></i>
         </div>
@@ -661,7 +661,7 @@
         </div>
       </div>
 
-      <div class="settings-item" onclick="showToast('📜 Privacy Policy')">
+      <div class="settings-item" onclick="window.location='shopbox-buyer-terms.html'">
         <div class="settings-icon" style="background:rgba(99,102,241,0.1);">
           <i class="fa-solid fa-file-shield" style="color:#818CF8;"></i>
         </div>
@@ -674,7 +674,7 @@
         </div>
       </div>
 
-      <div class="settings-item" onclick="showToast('📋 Terms of Service')">
+      <div class="settings-item" onclick="window.location='shopbox-buyer-terms.html'">
         <div class="settings-icon" style="background:rgba(156,163,175,0.1);">
           <i class="fa-solid fa-file-lines" style="color:#9CA3AF;"></i>
         </div>
@@ -695,7 +695,7 @@
     <div class="section-label">Support</div>
     <div class="settings-card">
 
-      <div class="settings-item" onclick="showToast('📞 Contacting support…')">
+      <div class="settings-item" onclick="window.location='shopbox-buyer-terms.html'">
         <div class="settings-icon" style="background:rgba(34,197,94,0.1);">
           <i class="fa-solid fa-headset" style="color:var(--success);"></i>
         </div>
@@ -721,7 +721,7 @@
         </div>
       </div>
 
-      <div class="settings-item" onclick="showToast('🔄 Checking for updates…')">
+      <div class="settings-item" onclick="window.location='shopbox-tracking.html'">
         <div class="settings-icon" style="background:rgba(99,102,241,0.1);">
           <i class="fa-solid fa-rotate" style="color:#818CF8;"></i>
         </div>
@@ -913,12 +913,12 @@
   /* ══ Danger zone ══ */
   function confirmLogout() {
     if (confirm('Are you sure you want to log out?')) {
-      showToast('👋 Logged out successfully!');
+      window.location='index.html';
     }
   }
   function confirmDelete() {
     if (confirm('⚠️ This will permanently delete your account and all data. Are you sure?')) {
-      showToast('🗑️ Account deletion request submitted');
+      window.location='index.html';
     }
   }
 
