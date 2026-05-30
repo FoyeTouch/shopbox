@@ -944,5 +944,42 @@
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const {createClient} = supabase;
+const _sbS = createClient(
+  'https://muyyqqgubkfklqczqbgm.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11eXlxcWd1Ymtma2xxY3pxYmdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5MTgyMDksImV4cCI6MjA5NDQ5NDIwOX0.YQs_H8iMPwEr2pSVbGOwOS4S5Q0aQaBwfxnQy1achdk'
+);
+
+async function loadSettingsUser(){
+  const{data:{session}}=await _sbS.auth.getSession();
+  if(session){
+    const u=session.user;
+    const name=u.user_metadata?.full_name||u.email.split('@')[0];
+    const nameEl=document.querySelector('.mini-name');
+    const emailEl=document.querySelector('.mini-email');
+    if(nameEl)nameEl.textContent=name;
+    if(emailEl)emailEl.textContent=u.email;
+  }
+}
+
+async function confirmLogout(){
+  if(confirm('Are you sure you want to log out?')){
+    await _sbS.auth.signOut();
+    window.location='index.html';
+  }
+}
+
+async function confirmDelete(){
+  if(confirm('⚠️ This will permanently delete your account. Are you sure?')){
+    showToast('🗑️ Account deletion request submitted');
+  }
+}
+
+loadSettingsUser();
+</script>
+
 </body>
 </html>

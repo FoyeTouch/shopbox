@@ -618,8 +618,8 @@
       </button>
     </div>
     <div class="profile-info">
-      <div class="profile-name">John Doe</div>
-      <div class="profile-email">johndoe@email.com</div>
+      <div class="profile-name"><span class="user-display-name">Guest</span></div>
+      <div class="profile-email"><span class="user-display-email">-</span></div>
       <div class="profile-badges">
         <span class="profile-badge badge-verified">
           <i class="fa-solid fa-circle-check" style="font-size:10px;"></i> Verified
@@ -951,7 +951,7 @@
   </div>
 
   <!-- ══ LOGOUT ══ -->
-  <button class="logout-btn fu d6" onclick="confirmLogout()">
+  <button class="logout-btn fu d6" onclick="doLogout()">
     <i class="fa-solid fa-arrow-right-from-bracket"></i>
     Log Out
   </button>
@@ -998,7 +998,8 @@
 
   /* ── Logout confirm ── */
   function confirmLogout() {
-    if (confirm('Are you sure you want to log out?')) {
+    // logout handled by doLogout()
+function confirmLogout(){
       showToast('👋 Logged out successfully!');
       // window.location.href = 'login.html';
     }
@@ -1025,6 +1026,54 @@
   }
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const {createClient} = supabase;
+const sb = createClient(
+  'https://muyyqqgubkfklqczqbgm.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11eXlxcWd1Ymtma2xxY3pxYmdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5MTgyMDksImV4cCI6MjA5NDQ5NDIwOX0.YQs_H8iMPwEr2pSVbGOwOS4S5Q0aQaBwfxnQy1achdk'
+);
+
+async function loadUser(){
+  const { data: { session } } = await sb.auth.getSession();
+  if(!session){
+    window.location = 'index.html';
+    return;
+  }
+  const u = session.user;
+  const name = u.user_metadata?.full_name || u.email.split('@')[0];
+  const email = u.email;
+
+  // Update all name/email displays on page
+  document.querySelectorAll('.user-display-name').forEach(el => el.textContent = name);
+  document.querySelectorAll('.user-display-email').forEach(el => el.textContent = email);
+  document.querySelectorAll('.user-display-initial').forEach(el => el.textContent = name.charAt(0).toUpperCase());
+
+  // Fill edit profile fields if they exist
+  const nameInput = document.getElementById('profileName');
+  const emailInput = document.getElementById('profileEmail');
+  if(nameInput) nameInput.value = name;
+  if(emailInput) emailInput.value = email;
+}
+
+async function updateProfile(){
+  const name = document.getElementById('profileName')?.value.trim();
+  if(!name){alert('Please enter your name');return;}
+  const { error } = await sb.auth.updateUser({ data: { full_name: name } });
+  if(error){ alert('Error: ' + error.message); return; }
+  showToast('✅ Profile updated successfully!');
+  loadUser();
+}
+
+async function doLogout(){
+  await sb.auth.signOut();
+  window.location = 'index.html';
+}
+
+loadUser();
+</script>
 
 </body>
 </html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shopbox — Verify Email</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;background:#0D0D0D;color:#fff;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px;}
+    .card{background:#161616;border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:40px 32px;max-width:420px;width:100%;text-align:center;}
+    .logo{height:36px;margin:0 auto 28px;}
+    .icon{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 20px;}
+    .icon-ok{background:rgba(34,197,94,.12);border:2px solid rgba(34,197,94,.3);color:#22C55E;}
+    .icon-err{background:rgba(239,68,68,.12);border:2px solid rgba(239,68,68,.3);color:#EF4444;}
+    .icon-spin{background:rgba(245,166,35,.12);border:2px solid rgba(245,166,35,.3);color:#F5A623;}
+    h1{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:8px;}
+    p{font-size:14px;color:#A0A0A0;line-height:1.6;margin-bottom:24px;}
+    .btn{display:block;width:100%;height:52px;background:#F5A623;color:#000;font-family:'Syne',sans-serif;font-size:16px;font-weight:800;border-radius:999px;border:none;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;}
+    .btn:hover{background:#C47F0A;}
+    .btn-out{background:transparent;color:#F5A623;border:1.5px solid rgba(245,166,35,.32);}
+    #status{display:none;}
+    #loading{display:block;}
+  </style>
+</head>
+<body>
+<div class="card">
+  <img src="https://res.cloudinary.com/dgelnfkjv/image/upload/v1778969155/file_00000000ecc87246bc708f4b9cbb30d8_xrmwgv.png" alt="Shopbox" class="logo"/>
+
+  <!-- Loading state -->
+  <div id="loading">
+    <div class="icon icon-spin"><i class="fa-solid fa-spinner fa-spin"></i></div>
+    <h1>Verifying your email…</h1>
+    <p>Please wait while we confirm your account.</p>
+  </div>
+
+  <!-- Success state -->
+  <div id="successState" style="display:none;">
+    <div class="icon icon-ok"><i class="fa-solid fa-circle-check"></i></div>
+    <h1>Email Verified! 🎉</h1>
+    <p>Your Shopbox account has been confirmed. You can now log in and start shopping!</p>
+    <a href="index.html" class="btn"><i class="fa-solid fa-bag-shopping"></i> Start Shopping</a>
+    <a href="shopbox-account.html" class="btn btn-out"><i class="fa-regular fa-user"></i> Go to My Account</a>
+  </div>
+
+  <!-- Error state -->
+  <div id="errorState" style="display:none;">
+    <div class="icon icon-err"><i class="fa-solid fa-circle-xmark"></i></div>
+    <h1>Link Expired</h1>
+    <p>This verification link has expired or already been used. Please sign in or request a new verification email.</p>
+    <a href="index.html" class="btn"><i class="fa-solid fa-house"></i> Go to Homepage</a>
+  </div>
+</div>
+
+<script>
+  const {createClient} = supabase;
+  const sb = createClient(
+    'https://muyyqqgubkfklqczqbgm.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11eXlxcWd1Ymtma2xxY3pxYmdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5MTgyMDksImV4cCI6MjA5NDQ5NDIwOX0.YQs_H8iMPwEr2pSVbGOwOS4S5Q0aQaBwfxnQy1achdk'
+  );
+
+  async function handleVerification(){
+    // Supabase puts token in URL hash or query params
+    const hash = window.location.hash;
+    const params = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(hash.replace('#',''));
+
+    const token = hashParams.get('access_token') || params.get('access_token');
+    const type = hashParams.get('type') || params.get('type');
+    const refreshToken = hashParams.get('refresh_token') || params.get('refresh_token');
+
+    try {
+      if(token && type === 'signup'){
+        // Set the session from the token
+        const { data, error } = await sb.auth.setSession({
+          access_token: token,
+          refresh_token: refreshToken || ''
+        });
+        if(error) throw error;
+        // Success!
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('successState').style.display = 'block';
+      } else {
+        // Check if user is already verified/logged in
+        const { data: { session } } = await sb.auth.getSession();
+        if(session){
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('successState').style.display = 'block';
+        } else {
+          throw new Error('No token found');
+        }
+      }
+    } catch(e) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('errorState').style.display = 'block';
+    }
+  }
+
+  handleVerification();
+</script>
+</body>
+</html>

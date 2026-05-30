@@ -852,7 +852,7 @@
   ══════════════════════════════════════ -->
   <div class="panel" id="panel2">
     <div class="panel-title">Verify Your Phone</div>
-    <div class="panel-sub">We sent a 6-digit code to <strong style="color:var(--text-primary);">+234 801 234 5678</strong>. Enter it below to verify your identity.</div>
+    <div class="panel-sub">We sent a 6-digit code to <strong style="color:var(--text-primary);" id="otpPhoneDisplay">your phone number</strong>. Enter it below to verify your identity.</div>
 
     <div style="text-align:center; margin-bottom:8px;">
       <i class="fa-solid fa-mobile-screen" style="font-size:48px; color:var(--gold); opacity:.6;"></i>
@@ -907,14 +907,14 @@
         <label class="field-label">Account Number <span class="field-required">*</span></label>
         <div class="field-box">
           <i class="fa-solid fa-credit-card"></i>
-          <input type="text" placeholder="0123456789" maxlength="10" />
+          <input type="text" id="accountNumberField" placeholder="0123456789" maxlength="10" oninput="lookupAccount(this.value)" />
         </div>
       </div>
       <div class="field-group" style="margin-bottom:0;">
         <label class="field-label">Account Name (auto-filled)</label>
         <div class="field-box" style="background:rgba(34,197,94,0.05); border-color:rgba(34,197,94,0.2);">
           <i class="fa-solid fa-user-check" style="color:var(--success);"></i>
-          <input type="text" value="JOHN DOE" readonly style="color:var(--success); font-weight:600;" />
+          <input type="text" id="accountNameField" placeholder="Auto-filled after account number" readonly style="color:var(--success); font-weight:600;" />
         </div>
       </div>
     </div>
@@ -1417,6 +1417,42 @@
       });
     }
   </script>
+
+
+<script>
+// Update phone display when moving to step 2
+const origNext = typeof nextPanel === 'function' ? nextPanel : null;
+function updatePhoneDisplay(){
+  const phone = document.getElementById('phone')?.value;
+  if(phone && document.getElementById('otpPhoneDisplay')){
+    document.getElementById('otpPhoneDisplay').textContent = phone;
+  }
+}
+
+// Fake account lookup (replace with real bank API later)
+function lookupAccount(val){
+  const nameField = document.getElementById('accountNameField');
+  if(!nameField) return;
+  if(val.length === 10){
+    nameField.value = 'Verifying…';
+    setTimeout(()=>{
+      // In production: call Paystack Resolve Account API
+      nameField.value = 'Account verified ✓';
+      nameField.style.color = 'var(--success)';
+    }, 1200);
+  } else {
+    nameField.value = '';
+  }
+}
+
+// Intercept next panel to update phone
+document.addEventListener('DOMContentLoaded', ()=>{
+  const nextBtn = document.getElementById('nextBtn');
+  if(nextBtn){
+    nextBtn.addEventListener('click', updatePhoneDisplay, true);
+  }
+});
+</script>
 
 </body>
 </html>
