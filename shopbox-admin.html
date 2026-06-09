@@ -597,6 +597,177 @@
 </head>
 <body>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(async function checkAdminAccess(){
+  const ADMIN_EMAIL = 'foyegig@gmail.com';
+  const {createClient} = supabase;
+  const sb = createClient(
+    'https://muyyqqgubkfklqczqbgm.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11eXlxcWd1Ymtma2xxY3pxYmdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5MTgyMDksImV4cCI6MjA5NDQ5NDIwOX0.YQs_H8iMPwEr2pSVbGOwOS4S5Q0aQaBwfxnQy1achdk'
+  );
+
+  // Show loading overlay while checking
+  document.body.insertAdjacentHTML('afterbegin', `
+    <div id="adminGate" style="position:fixed;inset:0;background:#0D0D0D;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+      <img src="https://res.cloudinary.com/dgelnfkjv/image/upload/v1778969155/file_00000000ecc87246bc708f4b9cbb30d8_xrmwgv.png" style="height:40px;opacity:.6;"/>
+      <div style="font-family:'Syne',sans-serif;font-size:14px;color:#A0A0A0;">Checking access...</div>
+      <i class="fa-solid fa-spinner fa-spin" style="color:#F5A623;font-size:24px;"></i>
+    </div>
+  `);
+
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+
+    if(!session){
+      // Not logged in — show login prompt
+      document.getElementById('adminGate').innerHTML = `
+        <img src="https://res.cloudinary.com/dgelnfkjv/image/upload/v1778969155/file_00000000ecc87246bc708f4b9cbb30d8_xrmwgv.png" style="height:40px;margin-bottom:8px;"/>
+        <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#fff;margin-bottom:8px;">Admin Access Only</div>
+        <div style="font-size:13px;color:#A0A0A0;margin-bottom:24px;text-align:center;">You must be logged in as admin to access this page.</div>
+        <div style="width:300px;">
+          <div style="display:flex;align-items:center;background:#161616;border:1.5px solid rgba(255,255,255,.07);border-radius:999px;padding:0 6px 0 16px;height:44px;gap:10px;margin-bottom:10px;">
+            <i class="fa-regular fa-envelope" style="color:#555;font-size:14px;"></i>
+            <input id="adminEmail" type="email" placeholder="Admin email" style="flex:1;font-size:14px;color:#fff;background:none;border:none;outline:none;font-family:'DM Sans',sans-serif;"/>
+          </div>
+          <div style="display:flex;align-items:center;background:#161616;border:1.5px solid rgba(255,255,255,.07);border-radius:999px;padding:0 6px 0 16px;height:44px;gap:10px;margin-bottom:16px;">
+            <i class="fa-solid fa-lock" style="color:#555;font-size:14px;"></i>
+            <input id="adminPw" type="password" placeholder="Password" style="flex:1;font-size:14px;color:#fff;background:none;border:none;outline:none;font-family:'DM Sans',sans-serif;"/>
+          </div>
+          <button onclick="adminLogin()" style="width:100%;height:48px;background:#F5A623;color:#000;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;border-radius:999px;border:none;cursor:pointer;">
+            <i class="fa-solid fa-lock"></i> Login to Admin Panel
+          </button>
+          <div id="adminLoginErr" style="color:#EF4444;font-size:12px;text-align:center;margin-top:10px;display:none;"></div>
+        </div>
+      `;
+      document.getElementById('adminGate').style.background = '#0D0D0D';
+      return;
+    }
+
+    // Logged in — check if admin email
+    if(session.user.email !== ADMIN_EMAIL){
+      document.getElementById('adminGate').innerHTML = `
+        <img src="https://res.cloudinary.com/dgelnfkjv/image/upload/v1778969155/file_00000000ecc87246bc708f4b9cbb30d8_xrmwgv.png" style="height:40px;margin-bottom:8px;"/>
+        <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#EF4444;margin-bottom:8px;">Access Denied</div>
+        <div style="font-size:13px;color:#A0A0A0;margin-bottom:24px;">You do not have permission to access this page.</div>
+        <a href="index.html" style="height:44px;padding:0 24px;background:#F5A623;color:#000;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;border-radius:999px;display:flex;align-items:center;gap:8px;text-decoration:none;">
+          <i class="fa-solid fa-house"></i> Go to Homepage
+        </a>
+      `;
+      return;
+    }
+
+    // Admin confirmed — remove gate, load seller applications
+    document.getElementById('adminGate').remove();
+    loadSellerApplications();
+
+  } catch(e){
+    window.location = 'index.html';
+  }
+})();
+
+async function adminLogin(){
+  const email = document.getElementById('adminEmail')?.value.trim();
+  const pw = document.getElementById('adminPw')?.value;
+  const errEl = document.getElementById('adminLoginErr');
+  if(!email || !pw){ errEl.textContent='Please fill in all fields'; errEl.style.display='block'; return; }
+
+  const ADMIN_EMAIL = 'foyegig@gmail.com';
+  if(email !== ADMIN_EMAIL){ errEl.textContent='You are not authorized as admin'; errEl.style.display='block'; return; }
+
+  const {createClient} = supabase;
+  const sb = createClient(
+    'https://muyyqqgubkfklqczqbgm.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11eXlxcWd1Ymtma2xxY3pxYmdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5MTgyMDksImV4cCI6MjA5NDQ5NDIwOX0.YQs_H8iMPwEr1pSVbGOwOS4S5Q0aQaBwfxnQy1achdk'
+  );
+
+  const btn = document.querySelector('#adminGate button');
+  if(btn){ btn.textContent='Signing in...'; btn.disabled=true; }
+
+  const { error } = await sb.auth.signInWithPassword({ email, password: pw });
+  if(error){
+    errEl.textContent = error.message === 'Invalid login credentials' ? 'Wrong email or password' : error.message;
+    errEl.style.display='block';
+    if(btn){ btn.innerHTML='<i class="fa-solid fa-lock"></i> Login to Admin Panel'; btn.disabled=false; }
+    return;
+  }
+  // Reload page to trigger admin check again
+  window.location.reload();
+}
+
+async function loadSellerApplications(){
+  try {
+    const {createClient} = supabase;
+    const sb = createClient(
+      'https://muyyqqgubkfklqczqbgm.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11eXlxcWd1Ymtma2xxY3pxYmdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5MTgyMDksImV4cCI6MjA5NDQ5NDIwOX0.YQs_H8iMPwEr2pSVbGOwOS4S5Q0aQaBwfxnQy1achdk'
+    );
+
+    const { data, error } = await sb
+      .from('seller_applications')
+      .select('*')
+      .order('submitted_at', { ascending: false });
+
+    if(error || !data) return;
+
+    // Find seller applications container in admin page
+    const container = document.getElementById('sellerAppsList') || document.querySelector('.seller-apps');
+    if(!container) return;
+
+    if(data.length === 0){
+      container.innerHTML = '<div style="text-align:center;padding:40px;color:#555;">No seller applications yet.</div>';
+      return;
+    }
+
+    container.innerHTML = data.map(app => `
+      <div style="background:#1C1C1C;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;">${app.first_name} ${app.last_name}</div>
+            <div style="font-size:12px;color:#A0A0A0;">${app.email} · ${app.phone}</div>
+          </div>
+          <span style="background:${app.status==='pending'?'rgba(245,166,35,.15)':'rgba(34,197,94,.15)'};color:${app.status==='pending'?'#F5A623':'#22C55E'};font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;font-family:'Syne',sans-serif;">${app.status.toUpperCase()}</span>
+        </div>
+        <div style="font-size:12px;color:#A0A0A0;margin-bottom:10px;">
+          <strong style="color:#fff;">${app.business_name}</strong> · ${app.business_category} · ${app.state}
+        </div>
+        <div style="font-size:12px;color:#A0A0A0;margin-bottom:12px;">
+          Bank: ${app.bank_name} · ${app.account_number} · ${app.account_name}
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="approveApp('${app.id}')" style="flex:1;height:36px;background:#22C55E;color:#000;border:none;border-radius:8px;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;cursor:pointer;">✅ Approve</button>
+          <button onclick="rejectApp('${app.id}')" style="flex:1;height:36px;background:rgba(239,68,68,.15);color:#EF4444;border:1px solid rgba(239,68,68,.25);border-radius:8px;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;cursor:pointer;">❌ Reject</button>
+          ${app.id_upload_url ? `<a href="${app.id_upload_url}" target="_blank" style="flex:1;height:36px;background:rgba(245,166,35,.12);color:#F5A623;border:1px solid rgba(245,166,35,.25);border-radius:8px;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;text-decoration:none;">👁 View ID</a>` : ''}
+        </div>
+      </div>
+    `).join('');
+
+    // Update notification badge
+    const pendingCount = data.filter(a => a.status === 'pending').length;
+    const badge = document.querySelector('.notif-badge, .seller-badge');
+    if(badge && pendingCount > 0) badge.textContent = pendingCount;
+
+  } catch(e){ console.log('Load apps error:', e); }
+}
+
+async function approveApp(id){
+  const {createClient} = supabase;
+  const sb = createClient('https://muyyqqgubkfklqczqbgm.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11eXlxcWd1Ymtma2xxY3pxYmdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5MTgyMDksImV4cCI6MjA5NDQ5NDIwOX0.YQs_H8iMPwEr2pSVbGOwOS4S5Q0aQaBwfxnQy1achdk');
+  await sb.from('seller_applications').update({status:'approved'}).eq('id',id);
+  alert('✅ Seller approved!');
+  loadSellerApplications();
+}
+
+async function rejectApp(id){
+  const {createClient} = supabase;
+  const sb = createClient('https://muyyqqgubkfklqczqbgm.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11eXlxcWd1Ymtma2xxY3pxYmdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5MTgyMDksImV4cCI6MjA5NDQ5NDIwOX0.YQs_H8iMPwEr2pSVbGOwOS4S5Q0aQaBwfxnQy1achdk');
+  await sb.from('seller_applications').update({status:'rejected'}).eq('id',id);
+  alert('❌ Seller rejected.');
+  loadSellerApplications();
+}
+</script>
+
+
 <!-- ═══ DESKTOP NAVBAR ═══ -->
 <nav class="d-nav" id="dNav">
   <div class="d-nav-top">
