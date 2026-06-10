@@ -110,12 +110,12 @@
     /* ══════════════════════════════
        HERO SLIDER — 16:9 mobile, fixed height desktop
     ══════════════════════════════ */
-    .hero{position:relative;width:100%;padding-top:56.25%;background:#000;overflow:hidden;}
+    .hero{position:relative;width:100%;padding-top:56.25%;background:#0D0D0D;overflow:hidden;}
     /* Slides fill hero exactly */
     .slide{position:absolute;inset:0;opacity:0;transition:opacity .8s ease;pointer-events:none;}
     .slide.active{opacity:1;pointer-events:all;}
-    .slide img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;}
-    .slide video.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;}
+    .slide img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;}
+    .slide video.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;}
     /* gradient left side only */
     .slide-grad{position:absolute;inset:0;background:linear-gradient(to right,rgba(0,0,0,.78) 0%,rgba(0,0,0,.48) 38%,rgba(0,0,0,.08) 62%,transparent 100%);}
     /* text on left, max 50% width so model face always clear */
@@ -321,13 +321,13 @@
       .d-header{display:block;}
       .s-arr{display:flex;}
       .hero{
-        padding-top:0;
-        /* Use 16:9 of available width — no cutting, full banner shows */
-        aspect-ratio:16/9;
-        height:auto;
-        max-height:600px;
-        min-height:360px;
+        padding-top:0 !important;
         width:100%;
+        /* Strict 16:9 — matches banner dimensions exactly */
+        aspect-ratio:16/9;
+        height:auto !important;
+        max-height:none;
+        min-height:0;
       }
       .wrap{padding:24px 40px 60px;}
       .inner{display:flex;gap:24px;align-items:flex-start;}
@@ -733,16 +733,28 @@
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11eXlxcWd1Ymtma2xxY3pxYmdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5MTgyMDksImV4cCI6MjA5NDQ5NDIwOX0.YQs_H8iMPwEr2pSVbGOwOS4S5Q0aQaBwfxnQy1achdk'
   );
 
-  sb.auth.onAuthStateChange((_,sess)=>{
+  sb.auth.onAuthStateChange((event, sess)=>{
     if(!sess?.user)return;
     const u=sess.user;
     const name=u.user_metadata?.full_name||u.email.split('@')[0];
-    document.getElementById('drName').textContent=`Hello, ${name} 👋`;
-    document.getElementById('drSub').textContent=u.email;
-    document.getElementById('drFooter').innerHTML=`<button onclick="doLogout()" style="width:100%;height:44px;border-radius:999px;background:rgba(239,68,68,.1);border:1.5px solid rgba(239,68,68,.2);color:#EF4444;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out</button>`;
-    document.getElementById('dAuth').innerHTML=`<div class="d-user-pill" onclick="doLogout()"><div class="d-user-av"><i class="fa-solid fa-user"></i></div><span style="font-size:13px;font-weight:600;">${name}</span></div>`;
-    closeAuth();
-    toast(`✅ Welcome back, ${name}!`);
+
+    // Update drawer
+    const drName=document.getElementById('drName');
+    const drSub=document.getElementById('drSub');
+    const drFooter=document.getElementById('drFooter');
+    const dAuth=document.getElementById('dAuth');
+    if(drName) drName.textContent=`Hello, ${name} 👋`;
+    if(drSub) drSub.textContent=u.email;
+    if(drFooter) drFooter.innerHTML=`<button onclick="doLogout()" style="width:100%;height:44px;border-radius:999px;background:rgba(239,68,68,.1);border:1.5px solid rgba(239,68,68,.2);color:#EF4444;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out</button>`;
+    if(dAuth) dAuth.innerHTML=`<div class="d-user-pill" onclick="doLogout()"><div class="d-user-av"><i class="fa-solid fa-user"></i></div><span style="font-size:13px;font-weight:600;">${name}</span></div>`;
+
+    // Only redirect on actual sign-in event, not on page load session restore
+    if(event === 'SIGNED_IN'){
+      closeAuth();
+      toast(`✅ Welcome back, ${name}!`);
+      // Short delay so toast shows before redirect
+      setTimeout(()=>{ window.location='shopbox-account.html'; }, 1200);
+    }
   });
 
   async function doLogin(){

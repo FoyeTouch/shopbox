@@ -684,7 +684,7 @@
       <i class="fa-solid fa-store"></i> Partner With Us
     </div>
     <h1 class="hero-title">Sell on <span>Shopbox</span><br>Reach More Buyers</h1>
-    <p class="hero-sub">Join thousands of sellers reaching customers across Nigeria and beyond. Read and agree to our partnership terms to get started.</p>
+    <p class="hero-sub">Join thousands of sellers reaching customers across Nigeria and beyond. <a href="shopbox-buyer-terms.html" target="_blank" target="_blank" style="color:var(--gold);font-weight:600;text-decoration:underline;">Read our seller rules</a> before getting started.</p>
 
     <div class="benefits-strip">
       <div class="benefit-chip"><i class="fa-solid fa-percent"></i> Commission-based only</div>
@@ -1245,10 +1245,17 @@
     if (n === 1) {
       const fields = ['fname','lname','email','phone','bizname','bizcat','state','bizdesc'];
       for (const f of fields) {
-        if (!document.getElementById(f).value.trim()) {
-          showToast('⚠️ Please fill all required fields!');
+        const el = document.getElementById(f);
+        if (!el || !el.value.trim()) {
+          showToast('⚠️ Please fill in: ' + f.replace('biz','business ').replace('fname','first name').replace('lname','last name'));
+          el && el.focus();
           return false;
         }
+      }
+      // ID upload — warn but don't block (seller can upload later)
+      if(typeof idUploadUrl === 'undefined' || !idUploadUrl){
+        // Allow to continue with a warning
+        showToast('⚠️ Tip: Upload your ID for faster approval');
       }
     }
     if (n === 3) {
@@ -1274,10 +1281,31 @@
   }
 
   /* ══ Submit ══ */
-  function submitApplication() {
+  async function submitApplication() {
     const btn = document.getElementById('nextBtn');
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting…';
     btn.disabled = true;
+
+    // Collect seller data
+    const sellerData = {
+      fname: document.getElementById('fname')?.value || '',
+      lname: document.getElementById('lname')?.value || '',
+      email: document.getElementById('email')?.value || '',
+      phone: document.getElementById('phone')?.value || '',
+      bizname: document.getElementById('bizname')?.value || '',
+      bizcat: document.getElementById('bizcat')?.value || '',
+      state: document.getElementById('state')?.value || '',
+      bizdesc: document.getElementById('bizdesc')?.value || '',
+      bankName: document.getElementById('bankSelect')?.value || '',
+      accountNumber: document.getElementById('accountNumberField')?.value || '',
+      accountName: document.getElementById('accountNameField')?.value || '',
+    };
+
+    // Save to Supabase
+    try {
+      await notifyAdmin(sellerData);
+    } catch(e){ console.log('Supabase save:', e); }
+
     setTimeout(() => {
       document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
       document.getElementById('navBtns').style.display = 'none';
