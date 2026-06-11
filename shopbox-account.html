@@ -1,1034 +1,252 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Shopbox — My Account</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Account — Shopbox</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    :root {
-      --gold:          #F5A623;
-      --gold-bright:   #FFB930;
-      --gold-dark:     #C47F0A;
-      --gold-muted:    rgba(245,166,35,0.12);
-      --gold-glow:     rgba(245,166,35,0.28);
-      --bg-base:       #0D0D0D;
-      --bg-card:       #161616;
-      --bg-card-2:     #1C1C1C;
-      --border:        rgba(255,255,255,0.07);
-      --border-gold:   rgba(245,166,35,0.32);
-      --text-primary:  #FFFFFF;
-      --text-secondary:#A0A0A0;
-      --text-muted:    #555555;
-      --success:       #22C55E;
-      --danger:        #EF4444;
-      --font-display:  'Syne', sans-serif;
-      --font-body:     'DM Sans', sans-serif;
-      --px:            16px;
-      --radius-sm:     8px;
-      --radius-md:     12px;
-      --radius-lg:     16px;
-      --radius-pill:   999px;
-      --nav-h:         68px;
-    }
+    :root{--gold:#F5A623;--gold-dark:#C47F0A;--gold-muted:rgba(245,166,35,.12);--gold-glow:rgba(245,166,35,.28);--bg:#0D0D0D;--card:#161616;--card2:#1C1C1C;--border:rgba(255,255,255,.07);--border-g:rgba(245,166,35,.32);--txt:#fff;--txt2:#A0A0A0;--muted:#555;--ok:#22C55E;--err:#EF4444;--fd:'Syne',sans-serif;--fb:'DM Sans',sans-serif;--r12:12px;--r16:16px;--pill:999px;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:var(--fb);background:var(--bg);color:var(--txt);min-height:100dvh;-webkit-font-smoothing:antialiased;}
+    a{text-decoration:none;color:inherit;}
+    button{cursor:pointer;border:none;background:none;font-family:inherit;color:inherit;}
+    input,textarea,select{font-family:inherit;outline:none;border:none;background:none;color:var(--txt);}
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { -webkit-tap-highlight-color: transparent; }
-    body {
-      font-family: var(--font-body);
-      background: var(--bg-base);
-      color: var(--text-primary);
-      min-height: 100dvh;
-      -webkit-font-smoothing: antialiased;
-      padding-bottom: calc(var(--nav-h) + 16px);
-    }
-    button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; }
-    a { text-decoration: none; color: inherit; }
-    .page { max-width: 480px; margin: 0 auto; }
+    /* HEADER */
+    .header{position:sticky;top:0;z-index:100;background:rgba(13,13,13,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:56px;}
+    .back-btn{width:38px;height:38px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--txt2);}
+    .header-title{font-family:var(--fd);font-size:16px;font-weight:700;}
+    .header-right{width:38px;}
 
-    @keyframes fadeUp { from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);} }
-    .fu{animation:fadeUp .35s ease both;}
-    .d1{animation-delay:.04s;}.d2{animation-delay:.08s;}.d3{animation-delay:.12s;}
-    .d4{animation-delay:.16s;}.d5{animation-delay:.20s;}.d6{animation-delay:.24s;}
+    /* CONTENT */
+    .page{padding:16px 16px 90px;max-width:600px;margin:0 auto;}
 
-    /* ══════════════════════════════════════
-       HEADER
-    ══════════════════════════════════════ */
-    .header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px var(--px);
-      background: rgba(13,13,13,0.97);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      position: sticky; top: 0; z-index: 50;
-    }
-    .header-title {
-      font-family: var(--font-display);
-      font-size: 18px; font-weight: 800;
-    }
-    .icon-btn {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px; color: var(--text-secondary);
-      transition: all .2s;
-    }
-    .icon-btn:active { border-color: var(--border-gold); color: var(--gold); }
+    /* AVATAR */
+    .avatar-section{display:flex;flex-direction:column;align-items:center;padding:24px 0 20px;gap:12px;}
+    .avatar-wrap{position:relative;width:90px;height:90px;}
+    .avatar-img{width:90px;height:90px;border-radius:50%;background:var(--gold-muted);border:3px solid var(--border-g);display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--gold);overflow:hidden;}
+    .avatar-img img{width:100%;height:100%;object-fit:cover;}
+    .avatar-edit{position:absolute;bottom:0;right:0;width:28px;height:28px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;color:#000;cursor:pointer;border:2px solid var(--bg);}
+    .user-name-display{font-family:var(--fd);font-size:20px;font-weight:800;}
+    .user-email-display{font-size:13px;color:var(--txt2);}
+    .verified-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);color:var(--ok);font-size:11px;font-weight:600;padding:3px 9px;border-radius:var(--pill);margin-top:4px;}
 
-    /* ══════════════════════════════════════
-       PROFILE HERO
-    ══════════════════════════════════════ */
-    .profile-hero {
-      position: relative;
-      padding: 28px var(--px) 24px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      overflow: hidden;
-    }
-    /* Background glow */
-    .profile-hero::before {
-      content: '';
-      position: absolute;
-      top: -40px; left: -40px;
-      width: 200px; height: 200px;
-      background: radial-gradient(circle, rgba(245,166,35,0.1) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
+    /* SECTION CARDS */
+    .section-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r16);overflow:hidden;margin-bottom:14px;}
+    .section-title{padding:14px 16px;border-bottom:1px solid var(--border);font-family:var(--fd);font-size:13px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.05em;display:flex;align-items:center;gap:8px;}
+    .section-title i{color:var(--gold);}
 
-    /* Avatar */
-    .avatar-wrap {
-      position: relative; flex-shrink: 0;
-    }
-    .avatar {
-      width: 80px; height: 80px;
-      border-radius: 50%;
-      background: var(--gold-muted);
-      border: 3px solid var(--gold);
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
-      box-shadow: 0 0 24px var(--gold-glow);
-    }
-    .avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .avatar i { font-size: 36px; color: var(--gold); }
+    /* FORM */
+    .f-group{padding:14px 16px;border-bottom:1px solid var(--border);}
+    .f-group:last-child{border-bottom:none;}
+    .f-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;}
+    .f-box{display:flex;align-items:center;background:var(--card2);border:1.5px solid var(--border);border-radius:var(--r12);padding:0 14px;height:48px;gap:10px;transition:border-color .2s;}
+    .f-box:focus-within{border-color:var(--border-g);}
+    .f-box i{color:var(--muted);font-size:14px;flex-shrink:0;}
+    .f-box input,.f-box select{flex:1;font-size:14px;}
+    .f-box input::placeholder{color:var(--muted);}
+    .f-textarea{width:100%;background:var(--card2);border:1.5px solid var(--border);border-radius:var(--r12);padding:12px 14px;font-size:14px;resize:vertical;min-height:80px;transition:border-color .2s;}
+    .f-textarea:focus{border-color:var(--border-g);outline:none;}
 
-    /* Edit avatar button */
-    .avatar-edit {
-      position: absolute;
-      bottom: 0; right: 0;
-      width: 26px; height: 26px;
-      border-radius: 50%;
-      background: var(--gold);
-      color: #000;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px;
-      border: 2px solid var(--bg-base);
-      transition: transform .2s;
-    }
-    .avatar-edit:active { transform: scale(0.9); }
+    /* SAVE BTN */
+    .save-btn{width:100%;height:48px;background:var(--gold);color:#000;font-family:var(--fd);font-size:15px;font-weight:800;border-radius:var(--pill);display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;cursor:pointer;}
+    .save-btn:active{background:var(--gold-dark);}
 
-    /* User info */
-    .profile-info { flex: 1; min-width: 0; }
-    .profile-name {
-      font-family: var(--font-display);
-      font-size: 20px; font-weight: 800;
-      margin-bottom: 3px;
-    }
-    .profile-email {
-      font-size: 13px; color: var(--text-secondary);
-      margin-bottom: 8px;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .profile-badges { display: flex; gap: 6px; flex-wrap: wrap; }
-    .profile-badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 11px; font-weight: 700;
-      font-family: var(--font-display);
-      padding: 4px 10px;
-      border-radius: var(--radius-pill);
-    }
-    .badge-verified {
-      background: rgba(34,197,94,0.12);
-      border: 1px solid rgba(34,197,94,0.3);
-      color: var(--success);
-    }
-    .badge-member {
-      background: var(--gold-muted);
-      border: 1px solid var(--border-gold);
-      color: var(--gold);
-    }
+    /* MENU ITEMS */
+    .menu-item{display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .2s;text-decoration:none;}
+    .menu-item:last-child{border-bottom:none;}
+    .menu-item:hover{background:var(--gold-muted);}
+    .menu-icon{width:36px;height:36px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--gold);flex-shrink:0;}
+    .menu-label{flex:1;font-size:14px;font-weight:500;}
+    .menu-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+    .menu-arrow{color:var(--muted);font-size:12px;}
 
-    /* ══════════════════════════════════════
-       STATS ROW
-    ══════════════════════════════════════ */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1px;
-      margin: 0 var(--px) 20px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-    }
-    .stat-item {
-      background: var(--bg-card);
-      padding: 14px 8px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
-      transition: background .2s;
-    }
-    .stat-item:active { background: var(--bg-card-2); }
-    .stat-value {
-      font-family: var(--font-display);
-      font-size: 18px; font-weight: 800;
-      color: var(--gold);
-    }
-    .stat-label {
-      font-size: 10px; font-weight: 600;
-      color: var(--text-muted);
-      text-align: center;
-      font-family: var(--font-display);
-    }
+    /* ADDRESS CARD */
+    .addr-card{background:var(--card2);border:1px solid var(--border);border-radius:var(--r12);padding:12px 14px;margin-bottom:10px;position:relative;}
+    .addr-card.default{border-color:var(--border-g);}
+    .addr-default-badge{position:absolute;top:10px;right:10px;background:var(--gold-muted);color:var(--gold);font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;font-family:var(--fd);}
+    .addr-name{font-weight:600;font-size:14px;margin-bottom:3px;}
+    .addr-text{font-size:13px;color:var(--txt2);line-height:1.5;}
 
-    /* ══════════════════════════════════════
-       LOYALTY / REWARDS CARD
-    ══════════════════════════════════════ */
-    .loyalty-card {
-      margin: 0 var(--px) 20px;
-      background: linear-gradient(135deg, #1a1200 0%, #111 100%);
-      border: 1.5px solid var(--border-gold);
-      border-radius: var(--radius-lg);
-      padding: 18px;
-      position: relative;
-      overflow: hidden;
-    }
-    .loyalty-card::before {
-      content: '';
-      position: absolute;
-      top: -30px; right: -30px;
-      width: 120px; height: 120px;
-      background: radial-gradient(circle, rgba(245,166,35,0.12) 0%, transparent 70%);
-      border-radius: 50%;
-    }
-    .loyalty-top {
-      display: flex; align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-    .loyalty-title {
-      font-family: var(--font-display);
-      font-size: 14px; font-weight: 700;
-      color: var(--gold);
-      display: flex; align-items: center; gap: 6px;
-    }
-    .loyalty-tier {
-      font-size: 11px; font-weight: 700;
-      background: var(--gold);
-      color: #000;
-      padding: 3px 10px;
-      border-radius: var(--radius-pill);
-      font-family: var(--font-display);
-    }
-    .loyalty-points {
-      font-family: var(--font-display);
-      font-size: 28px; font-weight: 800;
-      color: var(--text-primary);
-      margin-bottom: 4px;
-    }
-    .loyalty-points span { font-size: 14px; color: var(--text-secondary); font-weight: 400; }
-    .loyalty-sub {
-      font-size: 12px; color: var(--text-secondary);
-      margin-bottom: 14px;
-    }
-    /* Progress to next tier */
-    .loyalty-progress-label {
-      display: flex; justify-content: space-between;
-      font-size: 11px; color: var(--text-muted);
-      margin-bottom: 6px;
-    }
-    .loyalty-track {
-      height: 6px;
-      background: var(--bg-card-2);
-      border-radius: 99px; overflow: hidden;
-    }
-    .loyalty-fill {
-      height: 100%;
-      width: 68%;
-      background: linear-gradient(90deg, var(--gold-dark), var(--gold-bright));
-      border-radius: 99px;
-    }
+    /* PAYMENT CARD */
+    .pay-card{background:linear-gradient(135deg,#1a1a1a,#0f0f0f);border:1px solid var(--border);border-radius:var(--r12);padding:16px;margin-bottom:10px;position:relative;overflow:hidden;}
+    .pay-card::before{content:'';position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:rgba(245,166,35,.05);border-radius:50%;}
+    .pay-network{position:absolute;top:14px;right:14px;font-size:22px;color:var(--gold);opacity:.7;}
+    .pay-number{font-family:var(--fd);font-size:15px;font-weight:700;letter-spacing:2px;margin-bottom:4px;}
+    .pay-name{font-size:12px;color:var(--txt2);}
+    .pay-expiry{font-size:11px;color:var(--muted);}
 
-    /* ══════════════════════════════════════
-       SECTION GROUPS
-    ══════════════════════════════════════ */
-    .menu-section { margin: 0 var(--px) 14px; }
-    .menu-section-label {
-      font-size: 11px; font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      font-family: var(--font-display);
-      margin-bottom: 8px;
-      padding-left: 2px;
-    }
+    /* BOTTOM NAV */
+    .bot-nav{position:fixed;bottom:0;left:0;right:0;height:68px;background:rgba(18,18,18,.97);border-top:1px solid var(--border);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:space-around;z-index:100;}
+    .bn-it{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;padding:8px 4px 4px;cursor:pointer;text-decoration:none;}
+    .bn-icon{font-size:20px;color:var(--muted);}
+    .bn-it.active .bn-icon{color:var(--gold);}
+    .bn-lbl{font-family:var(--fd);font-size:10px;font-weight:600;color:var(--muted);}
+    .bn-it.active .bn-lbl{color:var(--gold);}
 
-    .menu-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-    }
+    /* TOAST */
+    #toast{position:fixed;bottom:calc(68px + 12px);left:50%;transform:translateX(-50%) translateY(20px);background:#1C1C1C;border:1px solid rgba(245,166,35,.4);color:#fff;font-size:13px;padding:10px 22px;border-radius:var(--pill);opacity:0;transition:all .3s;z-index:9999;pointer-events:none;white-space:nowrap;}
+    #toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
 
-    .menu-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-      transition: background .2s;
-      position: relative;
-    }
-    .menu-item:last-child { border-bottom: none; }
-    .menu-item:active { background: var(--bg-card-2); }
+    /* MODAL */
+    .modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);z-index:400;opacity:0;pointer-events:none;transition:opacity .3s;}
+    .modal-ov.open{opacity:1;pointer-events:all;}
+    .modal{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-radius:24px 24px 0 0;padding:20px 20px 40px;z-index:401;transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);max-height:90vh;overflow-y:auto;}
+    .modal.open{transform:translateY(0);}
+    .modal-handle{width:40px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 16px;}
+    .modal-title{font-family:var(--fd);font-size:18px;font-weight:800;margin-bottom:4px;}
+    .modal-sub{font-size:13px;color:var(--txt2);margin-bottom:18px;}
 
-    .menu-icon {
-      width: 38px; height: 38px;
-      border-radius: var(--radius-sm);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px;
-      flex-shrink: 0;
-    }
+    /* LOADING */
+    .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;gap:12px;}
+    .loading i{color:var(--gold);font-size:32px;}
+    .loading p{color:var(--muted);font-size:14px;}
 
-    .menu-text { flex: 1; min-width: 0; }
-    .menu-title {
-      font-size: 14px; font-weight: 600;
-      margin-bottom: 2px;
-    }
-    .menu-sub {
-      font-size: 12px; color: var(--text-muted);
-    }
-
-    .menu-right {
-      display: flex; align-items: center; gap: 8px;
-      flex-shrink: 0;
-    }
-    .menu-arrow { color: var(--text-muted); font-size: 12px; }
-    .menu-badge {
-      font-family: var(--font-display);
-      font-size: 11px; font-weight: 800;
-      background: var(--gold);
-      color: #000;
-      padding: 2px 8px;
-      border-radius: var(--radius-pill);
-    }
-    .menu-badge.red { background: var(--danger); color: #fff; }
-    .menu-badge.green { background: var(--success); color: #fff; }
-
-    /* Toggle switch */
-    .toggle-switch {
-      width: 44px; height: 24px;
-      border-radius: 99px;
-      background: var(--bg-card-2);
-      border: 1px solid var(--border);
-      position: relative;
-      cursor: pointer;
-      transition: background .25s;
-      flex-shrink: 0;
-    }
-    .toggle-switch.on { background: var(--gold); border-color: var(--gold); }
-    .toggle-knob {
-      position: absolute;
-      top: 2px; left: 2px;
-      width: 18px; height: 18px;
-      border-radius: 50%;
-      background: #fff;
-      transition: transform .25s;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-    }
-    .toggle-switch.on .toggle-knob { transform: translateX(20px); }
-
-    /* ══════════════════════════════════════
-       RECENT ORDERS STRIP
-    ══════════════════════════════════════ */
-    .orders-strip {
-      margin: 0 var(--px) 14px;
-    }
-    .orders-strip-head {
-      display: flex; align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-    .orders-strip-title {
-      font-family: var(--font-display);
-      font-size: 15px; font-weight: 700;
-    }
-    .orders-strip-link {
-      font-size: 13px; color: var(--gold); font-weight: 600;
-    }
-
-    .order-mini {
-      display: flex; gap: 12px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 12px 14px;
-      margin-bottom: 8px;
-      cursor: pointer;
-      transition: border-color .2s;
-      align-items: center;
-    }
-    .order-mini:active { border-color: var(--border-gold); }
-    .order-mini-img {
-      width: 48px; height: 48px;
-      border-radius: var(--radius-md);
-      background: var(--bg-card-2);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px; color: var(--text-muted); opacity: .4;
-      flex-shrink: 0;
-    }
-    .order-mini-info { flex: 1; min-width: 0; }
-    .order-mini-id {
-      font-family: var(--font-display);
-      font-size: 13px; font-weight: 700;
-      margin-bottom: 2px;
-    }
-    .order-mini-date { font-size: 11px; color: var(--text-muted); }
-    .order-mini-right { text-align: right; flex-shrink: 0; }
-    .order-mini-price {
-      font-family: var(--font-display);
-      font-size: 14px; font-weight: 800;
-      color: var(--gold);
-      margin-bottom: 4px;
-    }
-    .order-mini-status {
-      font-size: 10px; font-weight: 700;
-      font-family: var(--font-display);
-      padding: 2px 8px;
-      border-radius: var(--radius-pill);
-    }
-    .status-shipped   { background: var(--gold-muted); color: var(--gold); border: 1px solid var(--border-gold); }
-    .status-delivered { background: rgba(34,197,94,0.1); color: var(--success); border: 1px solid rgba(34,197,94,0.25); }
-    .status-processing{ background: rgba(99,102,241,0.1); color: #818CF8; border: 1px solid rgba(99,102,241,0.25); }
-
-    /* ══════════════════════════════════════
-       LOGOUT BUTTON
-    ══════════════════════════════════════ */
-    .logout-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      width: calc(100% - 32px);
-      margin: 0 var(--px) 14px;
-      height: 52px;
-      background: rgba(239,68,68,0.08);
-      border: 1.5px solid rgba(239,68,68,0.2);
-      border-radius: var(--radius-pill);
-      color: var(--danger);
-      font-family: var(--font-display);
-      font-size: 15px; font-weight: 700;
-      transition: all .2s;
-    }
-    .logout-btn:active {
-      background: rgba(239,68,68,0.15);
-      transform: scale(0.97);
-    }
-
-    /* Version */
-    .version-text {
-      text-align: center;
-      font-size: 11px;
-      color: var(--text-muted);
-      padding-bottom: 20px;
-      opacity: .5;
-    }
-
-    /* ══════════════════════════════════════
-       BOTTOM NAV
-    ══════════════════════════════════════ */
-    .bottom-nav {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      height: var(--nav-h);
-      background: rgba(18,18,18,0.97);
-      border-top: 1px solid var(--border);
-      backdrop-filter: blur(16px);
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      z-index: 100;
-      max-width: 480px;
-      margin: 0 auto;
-      padding-bottom: env(safe-area-inset-bottom,0px);
-    }
-    .nav-item {
-      display: flex; flex-direction: column;
-      align-items: center; gap: 4px;
-      flex: 1; padding: 8px 4px 4px;
-      cursor: pointer; position: relative;
-    }
-    .nav-item:active { opacity: .7; }
-    .nav-icon { font-size: 20px; color: var(--text-muted); transition: color .2s; }
-    .nav-item.active .nav-icon { color: var(--gold); }
-    .nav-label {
-      font-family: var(--font-display);
-      font-size: 10px; font-weight: 600;
-      color: var(--text-muted); transition: color .2s;
-    }
-    .nav-item.active .nav-label { color: var(--gold); }
-    .nav-item.active::after {
-      content: ''; position: absolute;
-      top: 4px; width: 4px; height: 4px;
-      background: var(--gold); border-radius: 50%;
-    }
-
-  
-    /* ═══════════════ DESKTOP NAVBAR ═══════════════ */
-    .d-nav{display:none;position:sticky;top:0;z-index:500;background:rgba(13,13,13,.97);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.07);}
-    .d-nav-top{display:flex;align-items:center;gap:20px;padding:0 40px;height:68px;}
-    .d-nav-logo img{height:38px;width:auto;}
-    .d-nav-search{flex:1;max-width:500px;display:flex;align-items:center;background:#161616;border:1.5px solid rgba(255,255,255,.07);border-radius:999px;padding:0 6px 0 18px;height:42px;gap:10px;transition:border-color .2s;}
-    .d-nav-search:focus-within{border-color:rgba(245,166,35,.32);box-shadow:0 0 0 3px rgba(245,166,35,.12);}
-    .d-nav-search i{color:#555;font-size:14px;}
-    .d-nav-search input{flex:1;font-size:14px;color:#fff;background:none;border:none;outline:none;font-family:'DM Sans',sans-serif;}
-    .d-nav-search input::placeholder{color:#555;}
-    .d-nav-search-btn{height:32px;padding:0 16px;background:#F5A623;border-radius:999px;color:#000;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;border:none;cursor:pointer;}
-    .d-nav-right{display:flex;align-items:center;gap:10px;margin-left:auto;}
-    .d-nav-icon{width:40px;height:40px;border-radius:50%;background:#161616;border:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-size:17px;color:#A0A0A0;cursor:pointer;transition:all .2s;position:relative;}
-    .d-nav-icon:hover{border-color:rgba(245,166,35,.32);color:#F5A623;}
-    .d-nav-cart-badge{position:absolute;top:-2px;right:-2px;width:18px;height:18px;background:#F5A623;color:#000;font-family:'Syne',sans-serif;font-size:9px;font-weight:800;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #0D0D0D;}
-    .d-nav-login{height:38px;padding:0 20px;background:#F5A623;color:#000;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;border-radius:999px;border:none;cursor:pointer;white-space:nowrap;box-shadow:0 4px 12px rgba(245,166,35,.28);}
-    .d-nav-login:hover{background:#C47F0A;}
-    .d-nav-user{display:flex;align-items:center;gap:8px;padding:6px 14px 6px 8px;background:#161616;border:1px solid rgba(255,255,255,.07);border-radius:999px;cursor:pointer;}
-    .d-nav-user-av{width:28px;height:28px;border-radius:50%;background:rgba(245,166,35,.12);border:1.5px solid rgba(245,166,35,.32);display:flex;align-items:center;justify-content:center;color:#F5A623;font-size:12px;}
-    .d-nav-links{display:flex;align-items:center;border-top:1px solid rgba(255,255,255,.07);background:#161616;}
-    .d-nav-links-inner{display:flex;align-items:center;padding:0 40px;height:42px;overflow-x:auto;scrollbar-width:none;gap:0;}
-    .d-nav-links-inner::-webkit-scrollbar{display:none;}
-    .d-nav-link{padding:0 16px;height:42px;display:flex;align-items:center;font-size:13px;font-weight:600;color:#A0A0A0;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;font-family:'Syne',sans-serif;}
-    .d-nav-link:hover,.d-nav-link.active{color:#F5A623;border-bottom-color:#F5A623;}
-    .d-nav-link i{margin-right:5px;font-size:11px;}
-    .d-nav-sep{width:1px;height:18px;background:rgba(255,255,255,.07);}
-    .d-nav-hot{margin-left:5px;background:#EF4444;color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:4px;font-family:'Syne',sans-serif;}
-
-    /* ═══════════════ DESKTOP LAYOUT ═══════════════ */
     @media(min-width:768px){
-      .d-nav{display:block;}
-      /* hide mobile elements */
-      .header, .bottom-nav, .bot-nav, .mobile-header, .m-header{display:none!important;}
-      /* page body padding reset */
-      body{padding-bottom:0!important;}
-      /* desktop content wrapper */
-      .desktop-page-wrap{
-        max-width:960px;
-        margin:0 auto;
-        padding:32px 40px 60px;
-      }
-      /* back button bigger */
-      .back-btn{width:44px!important;height:44px!important;font-size:17px!important;}
-      /* cards wider */
-      .page,.page-wrap{max-width:100%!important;}
+      .bot-nav{display:none;}
+      .header{padding:0 40px;}
+      .page{padding:32px 40px 60px;max-width:700px;}
+      #toast{bottom:20px;}
     }
-
   </style>
 </head>
 <body>
 
-<!-- ═══ DESKTOP NAVBAR ═══ -->
-<nav class="d-nav" id="dNav">
-  <div class="d-nav-top">
-    <a href="index.html" class="d-nav-logo"><img src="https://res.cloudinary.com/dgelnfkjv/image/upload/v1778969155/file_00000000ecc87246bc708f4b9cbb30d8_xrmwgv.png" alt="Shopbox"/></a>
-    <div class="d-nav-search">
-      <i class="fa-solid fa-magnifying-glass"></i>
-      <input type="text" placeholder="Search for products, brands, categories…"/>
-      <button class="d-nav-search-btn">Search</button>
-    </div>
-    <div class="d-nav-right">
-      <div class="d-nav-icon" onclick="window.location='shopbox-wishlist.html'" title="Wishlist"><i class="fa-regular fa-heart"></i></div>
-      <div class="d-nav-icon" onclick="window.location='shopbox-cart.html'" title="Cart">
-        <i class="fa-solid fa-cart-shopping"></i>
-        <span class="d-nav-cart-badge">0</span>
-      </div>
-      <div id="dNavAuth">
-        <button class="d-nav-login" onclick="window.location='shopbox-login.html'"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login / Sign Up</button>
-      </div>
-    </div>
+<header class="header">
+  <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+  <div class="header-title">My Account</div>
+  <div class="header-right"></div>
+</header>
+
+<div class="page" id="pageContent">
+  <div class="loading">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+    <p>Loading your account…</p>
   </div>
-  <div class="d-nav-links">
-    <div class="d-nav-links-inner">
-      <div class="d-nav-link" onclick="window.location='index.html'"><i class="fa-solid fa-house"></i> Home</div>
-      <div class="d-nav-sep"></div>
-      <div class="d-nav-link" onclick="window.location='shopbox-search.html'"><i class="fa-solid fa-shirt"></i> Fashion</div>
-      <div class="d-nav-sep"></div>
-      <div class="d-nav-link" onclick="window.location='shopbox-search.html'"><i class="fa-solid fa-headphones"></i> Electronics</div>
-      <div class="d-nav-sep"></div>
-      <div class="d-nav-link" onclick="window.location='shopbox-search.html'"><i class="fa-solid fa-spray-can-sparkles"></i> Beauty</div>
-      <div class="d-nav-sep"></div>
-      <div class="d-nav-link" onclick="window.location='shopbox-search.html'"><i class="fa-solid fa-couch"></i> Home & Living</div>
-      <div class="d-nav-sep"></div>
-      <div class="d-nav-link" onclick="window.location='shopbox-search.html'"><i class="fa-solid fa-dumbbell"></i> Fitness</div>
-      <div class="d-nav-sep"></div>
-      <div class="d-nav-link" onclick="window.location='shopbox-search.html'"><i class="fa-solid fa-shoe-prints"></i> Shoes</div>
-      <div class="d-nav-sep"></div>
-      <div class="d-nav-link" onclick="window.location='shopbox-search.html'"><i class="fa-solid fa-bolt"></i> Flash Deals <span class="d-nav-hot">HOT</span></div>
-      <div class="d-nav-sep"></div>
-      <div class="d-nav-link" onclick="window.location='shopbox-seller-agreement.html'"><i class="fa-solid fa-store"></i> Sell on Shopbox</div>
-    </div>
-  </div>
+</div>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="bot-nav">
+  <a href="index.html" class="bn-it"><div class="bn-icon"><i class="fa-solid fa-house"></i></div><span class="bn-lbl">Home</span></a>
+  <a href="shopbox-search.html" class="bn-it"><div class="bn-icon"><i class="fa-solid fa-table-cells-large"></i></div><span class="bn-lbl">Categories</span></a>
+  <a href="shopbox-wishlist.html" class="bn-it"><div class="bn-icon"><i class="fa-regular fa-heart"></i></div><span class="bn-lbl">Wishlist</span></a>
+  <a href="shopbox-tracking.html" class="bn-it"><div class="bn-icon"><i class="fa-solid fa-box"></i></div><span class="bn-lbl">Orders</span></a>
+  <a href="shopbox-account.html" class="bn-it active"><div class="bn-icon"><i class="fa-regular fa-user"></i></div><span class="bn-lbl">Account</span></a>
 </nav>
 
-<div class="page">
+<!-- MODALS -->
+<div class="modal-ov" id="modalOv" onclick="closeModal()"></div>
 
-  <!-- ══ HEADER ══ -->
-  <div class="header">
-    <span class="header-title">My Account</span>
-    <div style="display:flex;gap:8px;">
-      <button class="icon-btn" onclick="showToast('🔔 Notifications opened!')">
-        <i class="fa-regular fa-bell"></i>
-      </button>
-      <button class="icon-btn" onclick="showToast('⚙️ Settings opened!')">
-        <i class="fa-solid fa-gear"></i>
-      </button>
+<!-- Edit Profile Modal -->
+<div class="modal" id="editProfileModal">
+  <div class="modal-handle"></div>
+  <div class="modal-title">Edit Profile</div>
+  <div class="modal-sub">Update your personal information</div>
+  <div class="f-group" style="padding:0;margin-bottom:12px;">
+    <div class="f-label">Full Name</div>
+    <div class="f-box"><i class="fa-regular fa-user"></i><input type="text" id="editName" placeholder="Your full name"/></div>
+  </div>
+  <div class="f-group" style="padding:0;margin-bottom:12px;">
+    <div class="f-label">Phone Number</div>
+    <div class="f-box"><i class="fa-solid fa-phone"></i><input type="tel" id="editPhone" placeholder="+234 801 234 5678"/></div>
+  </div>
+  <div class="f-group" style="padding:0;margin-bottom:16px;">
+    <div class="f-label">Date of Birth</div>
+    <div class="f-box"><i class="fa-solid fa-calendar"></i><input type="date" id="editDob"/></div>
+  </div>
+  <button class="save-btn" onclick="saveProfile()"><i class="fa-solid fa-check"></i> Save Changes</button>
+</div>
+
+<!-- Add Address Modal -->
+<div class="modal" id="addAddressModal">
+  <div class="modal-handle"></div>
+  <div class="modal-title">Add Address</div>
+  <div class="modal-sub">Where should we deliver your orders?</div>
+  <div style="margin-bottom:12px;">
+    <div class="f-label" style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;">Full Name</div>
+    <div class="f-box"><i class="fa-regular fa-user"></i><input type="text" id="addrName" placeholder="Receiver name"/></div>
+  </div>
+  <div style="margin-bottom:12px;">
+    <div class="f-label" style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;">Phone</div>
+    <div class="f-box"><i class="fa-solid fa-phone"></i><input type="tel" id="addrPhone" placeholder="+234 801 234 5678"/></div>
+  </div>
+  <div style="margin-bottom:12px;">
+    <div class="f-label" style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;">Street Address</div>
+    <textarea class="f-textarea" id="addrStreet" placeholder="House number, street name, area…"></textarea>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+    <div>
+      <div class="f-label" style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;">City</div>
+      <div class="f-box"><input type="text" id="addrCity" placeholder="City"/></div>
+    </div>
+    <div>
+      <div class="f-label" style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;">State</div>
+      <div class="f-box">
+        <select id="addrState">
+          <option value="">Select state</option>
+          <option>Lagos</option><option>Abuja (FCT)</option><option>Rivers</option>
+          <option>Kano</option><option>Oyo</option><option>Delta</option>
+          <option>Anambra</option><option>Enugu</option><option>Imo</option>
+          <option>Abia</option><option>Kaduna</option><option>Ogun</option>
+          <option>Edo</option><option>Akwa Ibom</option><option>Bayelsa</option>
+          <option>Cross River</option><option>Benue</option><option>Plateau</option>
+        </select>
+      </div>
     </div>
   </div>
+  <button class="save-btn" onclick="saveAddress()"><i class="fa-solid fa-location-dot"></i> Save Address</button>
+</div>
 
-  <!-- ══ PROFILE HERO ══ -->
-  <div class="profile-hero fu d1">
-    <div class="avatar-wrap">
-      <div class="avatar">
-        <!--
-          🖼️ IMAGE SLOT — User profile photo
-          <img src="profile.jpg" alt="John Doe" />
-        -->
-        <i class="fa-solid fa-user"></i>
-      </div>
-      <button class="avatar-edit" onclick="showToast('📷 Upload profile photo')">
-        <i class="fa-solid fa-camera"></i>
-      </button>
+<!-- Add Card Modal -->
+<div class="modal" id="addCardModal">
+  <div class="modal-handle"></div>
+  <div class="modal-title">Add Payment Card</div>
+  <div class="modal-sub">Your card details are saved securely</div>
+  <div style="margin-bottom:12px;">
+    <div class="f-label" style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;">Card Number</div>
+    <div class="f-box"><i class="fa-solid fa-credit-card"></i><input type="text" id="cardNum" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)"/></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+    <div>
+      <div class="f-label" style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;">Expiry Date</div>
+      <div class="f-box"><input type="text" id="cardExp" placeholder="MM/YY" maxlength="5" oninput="formatExpiry(this)"/></div>
     </div>
-    <div class="profile-info">
-      <div class="profile-name"><span class="user-display-name">Guest</span></div>
-      <div class="profile-email"><span class="user-display-email">-</span></div>
-      <div class="profile-badges">
-        <span class="profile-badge badge-verified">
-          <i class="fa-solid fa-circle-check" style="font-size:10px;"></i> Verified
-        </span>
-        <span class="profile-badge badge-member">
-          <i class="fa-solid fa-crown" style="font-size:10px;"></i> Gold Member
-        </span>
-      </div>
+    <div>
+      <div class="f-label" style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;">CVV</div>
+      <div class="f-box"><i class="fa-solid fa-lock"></i><input type="password" id="cardCvv" placeholder="123" maxlength="4"/></div>
     </div>
   </div>
-
-  <!-- ══ STATS ROW ══ -->
-  <div class="stats-row fu d2">
-    <div class="stat-item" onclick="window.location='shopbox-tracking.html'">
-      <span class="stat-value">12</span>
-      <span class="stat-label">Orders</span>
-    </div>
-    <div class="stat-item" onclick="window.location='shopbox-wishlist.html'">
-      <span class="stat-value">4</span>
-      <span class="stat-label">Wishlist</span>
-    </div>
-    <div class="stat-item" onclick="window.location='shopbox-reviews.html'">
-      <span class="stat-value">8</span>
-      <span class="stat-label">Reviews</span>
-    </div>
-    <div class="stat-item" onclick="showToast('🎁 My Points')">
-      <span class="stat-value">340</span>
-      <span class="stat-label">Points</span>
-    </div>
+  <div style="margin-bottom:16px;">
+    <div class="f-label" style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;">Name on Card</div>
+    <div class="f-box"><i class="fa-regular fa-user"></i><input type="text" id="cardName" placeholder="As it appears on card"/></div>
   </div>
-
-  <!-- ══ LOYALTY CARD ══ -->
-  <div class="loyalty-card fu d3">
-    <div class="loyalty-top">
-      <div class="loyalty-title">
-        <i class="fa-solid fa-crown"></i> Shopbox Rewards
-      </div>
-      <span class="loyalty-tier">Gold Tier</span>
-    </div>
-    <div class="loyalty-points">340 <span>points</span></div>
-    <div class="loyalty-sub">160 points more to reach Platinum Tier 🏆</div>
-    <div class="loyalty-progress-label">
-      <span>Gold (340 pts)</span>
-      <span>Platinum (500 pts)</span>
-    </div>
-    <div class="loyalty-track">
-      <div class="loyalty-fill"></div>
-    </div>
+  <div style="background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:10px;padding:10px 12px;margin-bottom:16px;font-size:12px;color:var(--txt2);">
+    <i class="fa-solid fa-shield-halved" style="color:var(--gold);margin-right:6px;"></i> Card details saved locally for checkout convenience.
   </div>
+  <button class="save-btn" onclick="saveCard()"><i class="fa-solid fa-plus"></i> Add Card</button>
+</div>
 
-  <!-- ══ RECENT ORDERS ══ -->
-  <div class="orders-strip fu d3">
-    <div class="orders-strip-head">
-      <span class="orders-strip-title">Recent Orders</span>
-      <a href="index.html" class="orders-strip-link" onclick="showToast('📦 All orders')">View All</a>
-    </div>
-
-    <div class="order-mini" onclick="showToast('📦 Opening order #SBX-784512…')">
-      <div class="order-mini-img"><i class="fa-solid fa-shirt"></i></div>
-      <div class="order-mini-info">
-        <div class="order-mini-id">#SBX-784512</div>
-        <div class="order-mini-date">May 20, 2024 · 3 items</div>
-      </div>
-      <div class="order-mini-right">
-        <div class="order-mini-price">₦64,000</div>
-        <span class="order-mini-status status-shipped">Shipped</span>
-      </div>
-    </div>
-
-    <div class="order-mini" onclick="showToast('📦 Opening order #SBX-651203…')">
-      <div class="order-mini-img"><i class="fa-solid fa-headphones"></i></div>
-      <div class="order-mini-info">
-        <div class="order-mini-id">#SBX-651203</div>
-        <div class="order-mini-date">Apr 12, 2024 · 1 item</div>
-      </div>
-      <div class="order-mini-right">
-        <div class="order-mini-price">₦24,500</div>
-        <span class="order-mini-status status-delivered">Delivered</span>
-      </div>
-    </div>
-
-    <div class="order-mini" onclick="showToast('📦 Opening order #SBX-520887…')">
-      <div class="order-mini-img"><i class="fa-solid fa-shoe-prints"></i></div>
-      <div class="order-mini-info">
-        <div class="order-mini-id">#SBX-520887</div>
-        <div class="order-mini-date">Mar 5, 2024 · 2 items</div>
-      </div>
-      <div class="order-mini-right">
-        <div class="order-mini-price">₦39,300</div>
-        <span class="order-mini-status status-delivered">Delivered</span>
-      </div>
-    </div>
-
+<!-- Change Password Modal -->
+<div class="modal" id="changePasswordModal">
+  <div class="modal-handle"></div>
+  <div class="modal-title">Change Password</div>
+  <div class="modal-sub">Choose a strong password</div>
+  <div style="margin-bottom:12px;">
+    <div class="f-label" style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;">New Password</div>
+    <div class="f-box"><i class="fa-solid fa-lock"></i><input type="password" id="newPw" placeholder="Min 6 characters"/></div>
   </div>
-
-  <!-- ══ MY ACCOUNT ══ -->
-  <div class="menu-section fu d3">
-    <div class="menu-section-label">My Account</div>
-    <div class="menu-card">
-
-      <div class="menu-item" onclick="window.location='shopbox-account.html'">
-        <div class="menu-icon" style="background:var(--gold-muted);">
-          <i class="fa-regular fa-user" style="color:var(--gold);"></i>
-        </div>
-        <div class="menu-text">
-          <div class="menu-title">Profile Information</div>
-          <div class="menu-sub">Edit name, email, phone</div>
-        </div>
-        <div class="menu-right">
-          <i class="fa-solid fa-chevron-right menu-arrow"></i>
-        </div>
-      </div>
-
-      <div class="menu-item" onclick="showToast('📍 My Addresses')">
-        <div class="menu-icon" style="background:rgba(34,197,94,0.1);">
-          <i class="fa-solid fa-location-dot" style="color:var(--success);"></i>
-        </div>
-        <div class="menu-text">
-          <div class="menu-title">Manage Addresses</div>
-          <div class="menu-sub">2 saved addresses</div>
-        </div>
-        <div class="menu-right">
-          <span class="menu-badge green">2</span>
-          <i class="fa-solid fa-chevron-right menu-arrow"></i>
-        </div>
-      </div>
-
-      <div class="menu-item" onclick="window.location='shopbox-account.html'">
-        <div class="menu-icon" style="background:rgba(99,102,241,0.1);">
-          <i class="fa-solid fa-credit-card" style="color:#818CF8;"></i>
-        </div>
-        <div class="menu-text">
-          <div class="menu-title">Payment Methods</div>
-          <div class="menu-sub">Cards &amp; bank accounts</div>
-        </div>
-        <div class="menu-right">
-          <i class="fa-solid fa-chevron-right menu-arrow"></i>
-        </div>
-      </div>
-
-      <div class="menu-item" onclick="window.location='shopbox-wishlist.html'"">
-        <div class="menu-icon" style="background:rgba(239,68,68,0.1);">
-          <i class="fa-regular fa-heart" style="color:var(--danger);"></i>
-        </div>
-        <div class="menu-text">
-          <div class="menu-title">Wishlist</div>
-          <div class="menu-sub">4 saved items</div>
-        </div>
-        <div class="menu-right">
-          <span class="menu-badge red">4</span>
-          <i class="fa-solid fa-chevron-right menu-arrow"></i>
-        </div>
-      </div>
-
-    </div>
+  <div style="margin-bottom:16px;">
+    <div class="f-label" style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;">Confirm Password</div>
+    <div class="f-box"><i class="fa-solid fa-lock"></i><input type="password" id="confirmPw" placeholder="Repeat password"/></div>
   </div>
+  <button class="save-btn" onclick="changePassword()"><i class="fa-solid fa-key"></i> Update Password</button>
+</div>
 
-  <!-- ══ ORDERS & RETURNS ══ -->
-  <div class="menu-section fu d4">
-    <div class="menu-section-label">Orders & Returns</div>
-    <div class="menu-card">
-
-      <div class="menu-item" onclick="window.location='shopbox-tracking.html'">
-        <div class="menu-icon" style="background:var(--gold-muted);">
-          <i class="fa-solid fa-box" style="color:var(--gold);"></i>
-        </div>
-        <div class="menu-text">
-          <div class="menu-title">My Orders</div>
-          <div class="menu-sub">Track and manage orders</div>
-        </div>
-        <div class="menu-right">
-          <span class="menu-badge">12</span>
-          <i class="fa-solid fa-chevron-right menu-arrow"></i>
-        </div>
-      </div>
-
-      <div class="menu-item" onclick="showToast('🔄 Returns & Refunds')">
-        <div class="menu-icon" style="background:rgba(251,191,36,0.1);">
-          <i class="fa-solid fa-rotate-left" style="color:#FBBF24;"></i>
-        </div>
-        <div class="menu-text">
-          <div class="menu-title">Returns &amp; Refunds</div>
-          <div class="menu-sub">7-day easy returns</div>
-        </div>
-        <div class="menu-right">
-          <i class="fa-solid fa-chevron-right menu-arrow"></i>
-        </div>
-      </div>
-
-      <div class="menu-item" onclick="window.location='shopbox-tracking.html'"">
-        <div class="menu-icon" style="background:rgba(34,197,94,0.1);">
-          <i class="fa-solid fa-map-location-dot" style="color:var(--success);"></i>
-        </div>
-        <div class="menu-text">
-          <div class="menu-title">Track Order</div>
-          <div class="menu-sub">Live order tracking</div>
-        </div>
-        <div class="menu-right">
-          <i class="fa-solid fa-chevron-right menu-arrow"></i>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ══ PREFERENCES ══ -->
-  <div class="menu-section fu d4">
-    <div class="menu-section-label">Preferences</div>
-    <div class="menu-card">
-
-      <div class="menu-item">
-        <div class="menu-icon" style="background:rgba(99,102,241,0.1);">
-          <i class="fa-regular fa-bell" style="color:#818CF8;"></i>
-        </div>
-        <div class="menu-text">
-          <div class="menu-title">Notification Settings</div>
-          <div class="menu-sub">Orders, deals, updates</div>
-        </div>
-        <div class="menu-right">
-          <div class="toggle-switch on" id="notifToggle" onclick="toggleSwitch(this)">
-            <div class="toggle-knob"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="menu-item" onclick="showToast('🌍 Language: English')">
-        <div class="menu-icon" style="background:rgba(245,166,35,0.1);">
-          <i class="fa-solid fa-globe" style="color:var(--gold);"></i>
-        </div>
-        <div class="menu-text">
-          <div class="menu-title">Language</div>
-          <div class="menu-sub">English</div>
-        </div>
-        <div class="menu-right">
-          <i class="fa-solid fa-chevron-right menu-arrow"></i>
-        </div>
-      </div>
-
-      <div class="menu-item" onclick="showToast('₦ Currency: NGN')">
-        <div class="menu-icon" style="background:rgba(34,197,94,0.1);">
-          <i class="fa-solid fa-naira-sign" style="color:var(--success);"></i>
-        </div>
-        <div class="menu-text">
-          <div class="menu-title">Currency</div>
-          <div class="menu-sub">NGN (₦)</div>
-        </div>
-        <div class="menu-right">
-          <i class="fa-solid fa-chevron-right menu-arrow"></i>
-        </div>
-      </div>
-
-      <div class="menu-item">
-        <div class="menu-icon" style="background:rgba(156,163,175,0.1);">
-          <i class="fa-solid fa-moon" style="color:#9CA3AF;"></i>
-        </div>
-        <div class="menu-text">
-          <div class="menu-title">Dark Mode</div>
-          <div class="menu-sub">Always on for Shopbox</div>
-        </div>
-        <div class="menu-right">
-          <div class="toggle-switch on" style="pointer-events:none; opacity:.6;">
-            <div class="toggle-knob"></div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ══ SUPPORT ══ -->
-  <div class="menu-section fu d5">
-    <div class="menu-section-label">Support</div>
-    <div class="menu-card">
-
-      <div class="menu-item" onclick="showToast('📞 Calling support…')">
-        <div class="menu-icon" style="background:rgba(34,197,94,0.1);">
-          <i class="fa-solid fa-headset" style="color:var(--success);"></i>
-        </div>
-        <div class="menu-text">
-          <div class="menu-title">Help &amp; Support</div>
-          <div class="menu-sub">24/7 customer service</div>
-        </div>
-        <div class="menu-right">
-          <i class="fa-solid fa-chevron-right menu-arrow"></i>
-        </div>
-      </div>
-
-      <div class="menu-item" onclick="showToast('💬 Opening live chat…')">
-        <div class="menu-icon" style="background:rgba(245,166,35,0.1);">
-          <i class="fa-regular fa-comment-dots" style="color:var(--gold);"></i>
-        </div>
-        <div class="menu-text">
-          <div class="menu-title">Live Chat</div>
-          <div class="menu-sub">Chat with us now</div>
-        </div>
-        <div class="menu-right">
-          <span class="menu-badge green">Online</span>
-          <i class="fa-solid fa-chevron-right menu-arrow"></i>
-        </div>
-      </div>
-
-      <div class="menu-item" onclick="showToast('⭐ Rate Shopbox')">
-        <div class="menu-icon" style="background:rgba(251,191,36,0.1);">
-          <i class="fa-solid fa-star" style="color:#FBBF24;"></i>
-        </div>
-        <div class="menu-text">
-          <div class="menu-title">Rate Shopbox</div>
-          <div class="menu-sub">Tell us what you think</div>
-        </div>
-        <div class="menu-right">
-          <i class="fa-solid fa-chevron-right menu-arrow"></i>
-        </div>
-      </div>
-
-      <div class="menu-item" onclick="window.location='shopbox-buyer-terms.html'">
-        <div class="menu-icon" style="background:rgba(156,163,175,0.1);">
-          <i class="fa-solid fa-shield-halved" style="color:#9CA3AF;"></i>
-        </div>
-        <div class="menu-text">
-          <div class="menu-title">Privacy &amp; Security</div>
-          <div class="menu-sub">Terms, Privacy Policy</div>
-        </div>
-        <div class="menu-right">
-          <i class="fa-solid fa-chevron-right menu-arrow"></i>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ══ LOGOUT ══ -->
-  <button class="logout-btn fu d6" onclick="doLogout()">
-    <i class="fa-solid fa-arrow-right-from-bracket"></i>
-    Log Out
-  </button>
-
-  <!-- Version -->
-  <p class="version-text fu d6">Shopbox v1.0.0 · Made with ❤️ for Nigeria</p>
-
-</div><!-- /page -->
-
-<!-- ══ BOTTOM NAV ══ -->
-<nav class="bottom-nav">
-  <div class="nav-item" onclick="window.location='index.html'"">
-    <div class="nav-icon"><i class="fa-solid fa-house"></i></div>
-    <span class="nav-label">Home</span>
-  </div>
-  <div class="nav-item" onclick="window.location='shopbox-search.html'"">
-    <div class="nav-icon"><i class="fa-solid fa-table-cells-large"></i></div>
-    <span class="nav-label">Categories</span>
-  </div>
-  <div class="nav-item" onclick="window.location='shopbox-wishlist.html'"">
-    <div class="nav-icon"><i class="fa-regular fa-heart"></i></div>
-    <span class="nav-label">Wishlist</span>
-  </div>
-  <div class="nav-item" onclick="window.location='shopbox-tracking.html'"">
-    <div class="nav-icon"><i class="fa-solid fa-box"></i></div>
-    <span class="nav-label">Orders</span>
-  </div>
-  <div class="nav-item active">
-    <div class="nav-icon"><i class="fa-regular fa-user"></i></div>
-    <span class="nav-label">Account</span>
-  </div>
-</nav>
-
-<!-- Toast -->
 <div id="toast"></div>
 
-<script>
-  /* ── Toggle switch ── */
-  function toggleSwitch(el) {
-    el.classList.toggle('on');
-    const isOn = el.classList.contains('on');
-    showToast(isOn ? '🔔 Notifications enabled' : '🔕 Notifications disabled');
-  }
-
-  /* ── Logout confirm ── */
-  function confirmLogout() {
-    // logout handled by doLogout()
-function confirmLogout(){
-      showToast('👋 Logged out successfully!');
-      // window.location.href = 'login.html';
-    }
-  }
-
-  /* ── Toast ── */
-  function showToast(msg, dur = 2600) {
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), dur);
-  }
-</script>
-
-<style>
-  #toast {
-    position: fixed; bottom: calc(68px + 12px);
-    left: 50%; transform: translateX(-50%) translateY(20px);
-    background: #1C1C1C; border: 1px solid rgba(245,166,35,0.4);
-    color: #fff; font-size: 13px; font-weight: 500;
-    font-family: 'DM Sans', sans-serif;
-    padding: 10px 22px; border-radius: 999px;
-    opacity: 0; transition: all .3s ease;
-    z-index: 9999; white-space: nowrap; pointer-events: none;
-  }
-  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-</style>
-
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const {createClient} = supabase;
 const sb = createClient(
@@ -1036,44 +254,313 @@ const sb = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11eXlxcWd1Ymtma2xxY3pxYmdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5MTgyMDksImV4cCI6MjA5NDQ5NDIwOX0.YQs_H8iMPwEr2pSVbGOwOS4S5Q0aQaBwfxnQy1achdk'
 );
 
-async function loadUser(){
-  const { data: { session } } = await sb.auth.getSession();
+let currentUser = null;
+let userAddresses = JSON.parse(localStorage.getItem('sb_addresses') || '[]');
+let userCards = JSON.parse(localStorage.getItem('sb_cards') || '[]');
+
+async function init(){
+  const {data:{session}} = await sb.auth.getSession();
   if(!session){
     window.location = 'index.html';
     return;
   }
-  const u = session.user;
-  const name = u.user_metadata?.full_name || u.email.split('@')[0];
-  const email = u.email;
-
-  // Update all name/email displays on page
-  document.querySelectorAll('.user-display-name').forEach(el => el.textContent = name);
-  document.querySelectorAll('.user-display-email').forEach(el => el.textContent = email);
-  document.querySelectorAll('.user-display-initial').forEach(el => el.textContent = name.charAt(0).toUpperCase());
-
-  // Fill edit profile fields if they exist
-  const nameInput = document.getElementById('profileName');
-  const emailInput = document.getElementById('profileEmail');
-  if(nameInput) nameInput.value = name;
-  if(emailInput) emailInput.value = email;
+  currentUser = session.user;
+  renderPage();
 }
 
-async function updateProfile(){
-  const name = document.getElementById('profileName')?.value.trim();
-  if(!name){alert('Please enter your name');return;}
-  const { error } = await sb.auth.updateUser({ data: { full_name: name } });
-  if(error){ alert('Error: ' + error.message); return; }
-  showToast('✅ Profile updated successfully!');
-  loadUser();
+function renderPage(){
+  const u = currentUser;
+  const meta = u.user_metadata || {};
+  const name = meta.full_name || u.email.split('@')[0];
+  const phone = meta.phone || '';
+  const avatarUrl = meta.avatar_url || '';
+  const isAdmin = u.email === 'foyegig@gmail.com';
+
+  document.getElementById('pageContent').innerHTML = `
+    <!-- AVATAR -->
+    <div class="avatar-section">
+      <div class="avatar-wrap">
+        <div class="avatar-img" id="avatarDisplay">
+          ${avatarUrl ? `<img src="${avatarUrl}" alt="Profile"/>` : `<i class="fa-solid fa-user"></i>`}
+        </div>
+        <div class="avatar-edit" onclick="changeAvatar()"><i class="fa-solid fa-camera"></i></div>
+      </div>
+      <div class="user-name-display">${name}</div>
+      <div class="user-email-display">${u.email}</div>
+      <div class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Account</div>
+      ${isAdmin ? `<a href="shopbox-admin.html" style="margin-top:8px;display:inline-flex;align-items:center;gap:6px;background:rgba(245,166,35,.15);border:1px solid rgba(245,166,35,.3);color:var(--gold);padding:6px 16px;border-radius:999px;font-size:13px;font-weight:700;font-family:'Syne',sans-serif;"><i class="fa-solid fa-shield-halved"></i> Go to Admin Panel</a>` : ''}
+    </div>
+
+    <!-- PROFILE -->
+    <div class="section-card">
+      <div class="section-title"><i class="fa-regular fa-user"></i> Profile Information</div>
+      <div class="menu-item" onclick="openModal('editProfileModal')">
+        <div class="menu-icon"><i class="fa-solid fa-pen"></i></div>
+        <div><div class="menu-label">Edit Profile</div><div class="menu-sub">${name} · ${phone || 'Add phone number'}</div></div>
+        <i class="fa-solid fa-chevron-right menu-arrow"></i>
+      </div>
+      <div class="menu-item" onclick="openModal('changePasswordModal')">
+        <div class="menu-icon"><i class="fa-solid fa-lock"></i></div>
+        <div><div class="menu-label">Change Password</div><div class="menu-sub">Update your login password</div></div>
+        <i class="fa-solid fa-chevron-right menu-arrow"></i>
+      </div>
+    </div>
+
+    <!-- ADDRESSES -->
+    <div class="section-card">
+      <div class="section-title"><i class="fa-solid fa-location-dot"></i> Delivery Addresses</div>
+      <div id="addressList">
+        ${userAddresses.length === 0 ? `<div style="padding:20px 16px;text-align:center;color:var(--muted);font-size:14px;">No saved addresses yet</div>` :
+          userAddresses.map((a,i) => `
+            <div style="padding:14px 16px;border-bottom:1px solid var(--border);">
+              <div style="display:flex;align-items:start;justify-content:space-between;gap:8px;">
+                <div>
+                  ${i===0 ? `<span style="background:var(--gold-muted);color:var(--gold);font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;font-family:'Syne',sans-serif;display:inline-block;margin-bottom:5px;">Default</span><br/>` : ''}
+                  <div style="font-weight:600;font-size:14px;">${a.name}</div>
+                  <div style="font-size:13px;color:var(--txt2);line-height:1.5;">${a.street}, ${a.city}, ${a.state}</div>
+                  <div style="font-size:12px;color:var(--muted);">${a.phone}</div>
+                </div>
+                <button onclick="deleteAddress(${i})" style="color:var(--err);font-size:13px;flex-shrink:0;padding:4px;"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </div>
+          `).join('')
+        }
+      </div>
+      <div class="menu-item" onclick="openModal('addAddressModal')">
+        <div class="menu-icon" style="background:rgba(245,166,35,.12);"><i class="fa-solid fa-plus" style="color:var(--gold);"></i></div>
+        <div class="menu-label">Add New Address</div>
+        <i class="fa-solid fa-chevron-right menu-arrow"></i>
+      </div>
+    </div>
+
+    <!-- PAYMENT CARDS -->
+    <div class="section-card">
+      <div class="section-title"><i class="fa-solid fa-credit-card"></i> Payment Methods</div>
+      <div id="cardList">
+        ${userCards.length === 0 ? `<div style="padding:20px 16px;text-align:center;color:var(--muted);font-size:14px;">No saved cards yet</div>` :
+          userCards.map((card,i) => `
+            <div style="padding:14px 16px;border-bottom:1px solid var(--border);">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <div style="width:40px;height:28px;background:var(--card2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--gold);">
+                    <i class="fa-brands fa-${card.num.startsWith('4') ? 'cc-visa' : card.num.startsWith('5') ? 'cc-mastercard' : 'credit-card'}"></i>
+                  </div>
+                  <div>
+                    <div style="font-weight:600;font-size:14px;">•••• •••• •••• ${card.num.slice(-4)}</div>
+                    <div style="font-size:12px;color:var(--muted);">${card.name} · Exp ${card.exp}</div>
+                  </div>
+                </div>
+                <button onclick="deleteCard(${i})" style="color:var(--err);font-size:13px;padding:4px;"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </div>
+          `).join('')
+        }
+      </div>
+      <div class="menu-item" onclick="openModal('addCardModal')">
+        <div class="menu-icon" style="background:rgba(245,166,35,.12);"><i class="fa-solid fa-plus" style="color:var(--gold);"></i></div>
+        <div class="menu-label">Add New Card</div>
+        <i class="fa-solid fa-chevron-right menu-arrow"></i>
+      </div>
+    </div>
+
+    <!-- ACTIVITY -->
+    <div class="section-card">
+      <div class="section-title"><i class="fa-solid fa-clock-rotate-left"></i> My Activity</div>
+      <a href="shopbox-tracking.html" class="menu-item">
+        <div class="menu-icon"><i class="fa-solid fa-box"></i></div>
+        <div><div class="menu-label">My Orders</div><div class="menu-sub">Track & manage orders</div></div>
+        <i class="fa-solid fa-chevron-right menu-arrow"></i>
+      </a>
+      <a href="shopbox-wishlist.html" class="menu-item">
+        <div class="menu-icon"><i class="fa-solid fa-heart"></i></div>
+        <div><div class="menu-label">Wishlist</div><div class="menu-sub">Items you saved</div></div>
+        <i class="fa-solid fa-chevron-right menu-arrow"></i>
+      </a>
+      <a href="shopbox-reviews.html" class="menu-item">
+        <div class="menu-icon"><i class="fa-solid fa-star"></i></div>
+        <div><div class="menu-label">My Reviews</div><div class="menu-sub">Products you reviewed</div></div>
+        <i class="fa-solid fa-chevron-right menu-arrow"></i>
+      </a>
+      <a href="shopbox-notifications.html" class="menu-item">
+        <div class="menu-icon"><i class="fa-solid fa-bell"></i></div>
+        <div><div class="menu-label">Notifications</div><div class="menu-sub">Alerts & updates</div></div>
+        <i class="fa-solid fa-chevron-right menu-arrow"></i>
+      </a>
+    </div>
+
+    <!-- SELLER -->
+    <div class="section-card">
+      <div class="section-title"><i class="fa-solid fa-store"></i> Seller</div>
+      <a href="shopbox-seller-agreement.html" class="menu-item">
+        <div class="menu-icon"><i class="fa-solid fa-shop"></i></div>
+        <div><div class="menu-label">Become a Seller</div><div class="menu-sub">Start selling on Shopbox</div></div>
+        <i class="fa-solid fa-chevron-right menu-arrow"></i>
+      </a>
+      <a href="shopbox-seller-dashboard.html" class="menu-item">
+        <div class="menu-icon"><i class="fa-solid fa-chart-line"></i></div>
+        <div><div class="menu-label">Seller Dashboard</div><div class="menu-sub">Manage your store</div></div>
+        <i class="fa-solid fa-chevron-right menu-arrow"></i>
+      </a>
+    </div>
+
+    <!-- SUPPORT -->
+    <div class="section-card">
+      <div class="section-title"><i class="fa-solid fa-circle-question"></i> Support & Legal</div>
+      <a href="shopbox-return-request.html" class="menu-item">
+        <div class="menu-icon"><i class="fa-solid fa-rotate-left"></i></div>
+        <div><div class="menu-label">Return Request</div><div class="menu-sub">Return or exchange an item</div></div>
+        <i class="fa-solid fa-chevron-right menu-arrow"></i>
+      </a>
+      <a href="shopbox-buyer-terms.html" class="menu-item">
+        <div class="menu-icon"><i class="fa-solid fa-file-contract"></i></div>
+        <div><div class="menu-label">Terms & Privacy</div><div class="menu-sub">Buyer protection policy</div></div>
+        <i class="fa-solid fa-chevron-right menu-arrow"></i>
+      </a>
+      <a href="shopbox-settings.html" class="menu-item">
+        <div class="menu-icon"><i class="fa-solid fa-gear"></i></div>
+        <div><div class="menu-label">Settings</div><div class="menu-sub">App preferences</div></div>
+        <i class="fa-solid fa-chevron-right menu-arrow"></i>
+      </a>
+    </div>
+
+    <!-- LOGOUT -->
+    <button onclick="doLogout()" style="width:100%;height:52px;background:rgba(239,68,68,.1);border:1.5px solid rgba(239,68,68,.2);color:#EF4444;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:4px;cursor:pointer;">
+      <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+    </button>
+
+    <div style="height:20px;"></div>
+  `;
+
+  // Pre-fill edit form
+  document.getElementById('editName').value = name;
+  document.getElementById('editPhone').value = phone;
 }
 
+/* ══ PROFILE ══ */
+async function saveProfile(){
+  const name = document.getElementById('editName').value.trim();
+  const phone = document.getElementById('editPhone').value.trim();
+  const dob = document.getElementById('editDob').value;
+  if(!name){ toast('⚠️ Please enter your name'); return; }
+  const {error} = await sb.auth.updateUser({data:{full_name:name, phone, dob}});
+  if(error){ toast('❌ Error: '+error.message); return; }
+  const {data:{session}} = await sb.auth.getSession();
+  currentUser = session.user;
+  closeModal();
+  renderPage();
+  toast('✅ Profile updated!');
+}
+
+/* ══ PASSWORD ══ */
+async function changePassword(){
+  const pw = document.getElementById('newPw').value;
+  const confirm = document.getElementById('confirmPw').value;
+  if(!pw || pw.length < 6){ toast('⚠️ Password must be at least 6 characters'); return; }
+  if(pw !== confirm){ toast('⚠️ Passwords do not match'); return; }
+  const {error} = await sb.auth.updateUser({password: pw});
+  if(error){ toast('❌ Error: '+error.message); return; }
+  closeModal();
+  toast('✅ Password changed successfully!');
+}
+
+/* ══ ADDRESS ══ */
+function saveAddress(){
+  const name = document.getElementById('addrName').value.trim();
+  const phone = document.getElementById('addrPhone').value.trim();
+  const street = document.getElementById('addrStreet').value.trim();
+  const city = document.getElementById('addrCity').value.trim();
+  const state = document.getElementById('addrState').value;
+  if(!name||!phone||!street||!city||!state){ toast('⚠️ Please fill all address fields'); return; }
+  userAddresses.push({name,phone,street,city,state});
+  localStorage.setItem('sb_addresses', JSON.stringify(userAddresses));
+  closeModal();
+  renderPage();
+  toast('✅ Address saved!');
+}
+
+function deleteAddress(i){
+  userAddresses.splice(i,1);
+  localStorage.setItem('sb_addresses', JSON.stringify(userAddresses));
+  renderPage();
+  toast('🗑️ Address removed');
+}
+
+/* ══ CARDS ══ */
+function formatCard(el){
+  let v = el.value.replace(/\D/g,'');
+  v = v.match(/.{1,4}/g)?.join(' ') || v;
+  el.value = v;
+}
+function formatExpiry(el){
+  let v = el.value.replace(/\D/g,'');
+  if(v.length>=2) v = v.slice(0,2)+'/'+v.slice(2);
+  el.value = v;
+}
+function saveCard(){
+  const num = document.getElementById('cardNum').value.replace(/\s/g,'');
+  const exp = document.getElementById('cardExp').value;
+  const cvv = document.getElementById('cardCvv').value;
+  const name = document.getElementById('cardName').value.trim();
+  if(num.length < 13){ toast('⚠️ Please enter a valid card number'); return; }
+  if(!exp || !cvv || !name){ toast('⚠️ Please fill all card fields'); return; }
+  userCards.push({num,exp,cvv,name});
+  localStorage.setItem('sb_cards', JSON.stringify(userCards));
+  closeModal();
+  renderPage();
+  toast('✅ Card saved!');
+}
+function deleteCard(i){
+  userCards.splice(i,1);
+  localStorage.setItem('sb_cards', JSON.stringify(userCards));
+  renderPage();
+  toast('🗑️ Card removed');
+}
+
+/* ══ AVATAR ══ */
+function changeAvatar(){
+  if(typeof cloudinary !== 'undefined'){
+    cloudinary.openUploadWidget({
+      cloudName:'dgelnfkjv',uploadPreset:'shopbox_uploads',
+      sources:['local','camera'],maxFiles:1,
+      clientAllowedFormats:['jpg','jpeg','png','webp'],
+      cropping:true,croppingAspectRatio:1,
+    }, async (err, result) => {
+      if(!err && result?.event==='success'){
+        const url = result.info.secure_url;
+        await sb.auth.updateUser({data:{avatar_url:url}});
+        const {data:{session}} = await sb.auth.getSession();
+        currentUser = session.user;
+        renderPage();
+        toast('✅ Profile photo updated!');
+      }
+    });
+  } else {
+    toast('📷 Image upload coming soon!');
+  }
+}
+
+/* ══ LOGOUT ══ */
 async function doLogout(){
   await sb.auth.signOut();
   window.location = 'index.html';
 }
 
-loadUser();
-</script>
+/* ══ MODAL ══ */
+function openModal(id){
+  document.getElementById('modalOv').classList.add('open');
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  document.getElementById('modalOv').classList.remove('open');
+  document.querySelectorAll('.modal').forEach(m=>m.classList.remove('open'));
+  document.body.style.overflow='';
+}
 
+/* ══ TOAST ══ */
+function toast(msg,dur=2600){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),dur);}
+
+init();
+</script>
 </body>
 </html>
