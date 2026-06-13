@@ -956,5 +956,50 @@
   #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 </style>
 
+
+<script>
+// Product availability toggle
+// Stores availability state in localStorage
+function toggleAvailability(productId, btn){
+  const key = 'product_avail_' + productId;
+  const current = localStorage.getItem(key) !== 'unavailable';
+  const newState = current ? 'unavailable' : 'available';
+  localStorage.setItem(key, newState);
+
+  const card = btn.closest('.product-card-item') || btn.closest('[data-product-id]');
+  if(newState === 'unavailable'){
+    btn.innerHTML = '<i class="fa-solid fa-eye"></i> Make Available';
+    btn.style.background = 'rgba(34,197,94,.12)';
+    btn.style.color = '#22C55E';
+    btn.style.borderColor = 'rgba(34,197,94,.25)';
+    if(card){
+      card.style.opacity = '0.5';
+      // Add unavailable badge
+      const existing = card.querySelector('.unavail-badge');
+      if(!existing){
+        const badge = document.createElement('div');
+        badge.className = 'unavail-badge';
+        badge.style.cssText = 'position:absolute;top:8px;left:8px;background:rgba(239,68,68,.9);color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:99px;font-family:"Syne",sans-serif;z-index:2;';
+        badge.textContent = 'UNAVAILABLE';
+        card.style.position = 'relative';
+        card.appendChild(badge);
+      }
+    }
+    showToast('🔴 Product marked as unavailable');
+  } else {
+    btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Make Unavailable';
+    btn.style.background = 'rgba(239,68,68,.1)';
+    btn.style.color = '#EF4444';
+    btn.style.borderColor = 'rgba(239,68,68,.2)';
+    if(card){
+      card.style.opacity = '1';
+      const badge = card.querySelector('.unavail-badge');
+      if(badge) badge.remove();
+    }
+    showToast('🟢 Product is now available');
+  }
+}
+</script>
+
 </body>
 </html>

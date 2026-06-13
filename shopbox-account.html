@@ -116,7 +116,7 @@
 <body>
 
 <header class="header">
-  <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+  <a href="index.html" class="back-btn" onclick="window.location='index.html';return false;"><i class="fa-solid fa-arrow-left"></i></a>
   <div class="header-title">My Account</div>
   <div class="header-right"></div>
 </header>
@@ -248,6 +248,20 @@
 <div id="toast"></div>
 
 <script>
+const NIGERIA_STATES = {"Abia": ["Aba", "Umuahia", "Ohafia", "Arochukwu", "Bende", "Isuikwuato", "Osisioma"], "Adamawa": ["Yola", "Mubi", "Jimeta", "Ganye", "Numan", "Hong", "Michika"], "Akwa Ibom": ["Uyo", "Eket", "Ikot Ekpene", "Oron", "Abak", "Ikot Abasi", "Etinan"], "Anambra": ["Awka", "Onitsha", "Nnewi", "Ekwulobia", "Aguata", "Ihiala", "Ogbaru"], "Bauchi": ["Bauchi", "Azare", "Misau", "Katagum", "Ningi", "Dass", "Toro"], "Bayelsa": ["Yenagoa", "Brass", "Nembe", "Ogbia", "Sagbama", "Ekeremor", "Kolokuma"], "Benue": ["Makurdi", "Gboko", "Otukpo", "Katsina-Ala", "Vandeikya", "Ado", "Buruku"], "Borno": ["Maiduguri", "Biu", "Bama", "Gwoza", "Konduga", "Dikwa", "Monguno"], "Cross River": ["Calabar", "Ikom", "Ogoja", "Obudu", "Abi", "Akpabuyo", "Biase"], "Delta": ["Asaba", "Warri", "Sapele", "Ughelli", "Agbor", "Abraka", "Ozoro"], "Ebonyi": ["Abakaliki", "Afikpo", "Onueke", "Ezza", "Ishielu", "Ikwo", "Ohaukwu"], "Edo": ["Benin City", "Auchi", "Ekpoma", "Uromi", "Igarra", "Sabongida-Ora", "Illushi"], "Ekiti": ["Ado-Ekiti", "Ikere", "Oye", "Ijero", "Efon", "Ikole", "Emure"], "Enugu": ["Enugu", "Nsukka", "Agbani", "Oji River", "Udi", "Awgu", "Igbo-Eze"], "Gombe": ["Gombe", "Kaltungo", "Billiri", "Nafada", "Bajoga", "Deba", "Kumo"], "Imo": ["Owerri", "Orlu", "Okigwe", "Mbaise", "Oguta", "Mbaitoli", "Isu"], "Jigawa": ["Dutse", "Hadejia", "Gumel", "Kazaure", "Birnin Kudu", "Ringim", "Kafin Hausa"], "Kaduna": ["Kaduna", "Zaria", "Kafanchan", "Zonkwa", "Kagoro", "Ikara", "Lere"], "Kano": ["Kano", "Wudil", "Gaya", "Bichi", "Rano", "Tudun Wada", "Danbatta"], "Katsina": ["Katsina", "Daura", "Funtua", "Mani", "Malumfashi", "Rimi", "Bindawa"], "Kebbi": ["Birnin Kebbi", "Argungu", "Yauri", "Zuru", "Koko", "Bagudo", "Jega"], "Kogi": ["Lokoja", "Okene", "Kabba", "Idah", "Ankpa", "Ogaminana", "Anyigba"], "Kwara": ["Ilorin", "Offa", "Omu-Aran", "Jebba", "Pategi", "Lafiagi", "Share"], "Lagos": ["Lagos Island", "Lagos Mainland", "Ikeja", "Alimosho", "Badagry", "Epe", "Ikorodu", "Surulere", "Eti-Osa", "Apapa", "Agege", "Ifako-Ijaiye", "Kosofe", "Mushin", "Ojo", "Shomolu"], "Nasarawa": ["Lafia", "Keffi", "Akwanga", "Nasarawa", "Doma", "Obi", "Awe"], "Niger": ["Minna", "Bida", "Suleja", "Kontagora", "Lapai", "Agaie", "Mokwa"], "Ogun": ["Abeokuta", "Sagamu", "Ijebu-Ode", "Ilaro", "Ota", "Ifo", "Ayetoro"], "Ondo": ["Akure", "Ondo", "Owo", "Okitipupa", "Ikare", "Ile-Oluji", "Ore"], "Osun": ["Osogbo", "Ile-Ife", "Ilesa", "Ede", "Iwo", "Ikirun", "Inisa"], "Oyo": ["Ibadan", "Ogbomoso", "Oyo", "Iseyin", "Saki", "Igbo-Ora", "Eruwa"], "Plateau": ["Jos", "Bukuru", "Shendam", "Pankshin", "Barkin Ladi", "Mangu", "Wase"], "Rivers": ["Port Harcourt", "Obio-Akpor", "Bonny", "Eleme", "Tai", "Okrika", "Ahoada"], "Sokoto": ["Sokoto", "Bodinga", "Dange-Shuni", "Gwadabawa", "Illela", "Kware", "Rabah"], "Taraba": ["Jalingo", "Wukari", "Bali", "Gashaka", "Zing", "Sardauna", "Takum"], "Yobe": ["Damaturu", "Potiskum", "Nguru", "Gashua", "Geidam", "Bade", "Yunusari"], "Zamfara": ["Gusau", "Kaura Namoda", "Talata Mafara", "Anka", "Maru", "Bakura", "Bungudu"], "Abuja (FCT)": ["Abuja", "Gwagwalada", "Kuje", "Bwari", "Abaji", "Kwali"]};
+
+function onStateChange(stateEl, townElId){
+  const state = stateEl.value;
+  const townEl = document.getElementById(townElId);
+  if(!townEl) return;
+  townEl.innerHTML = '<option value="">Select town/LGA</option>';
+  if(state && NIGERIA_STATES[state]){
+    NIGERIA_STATES[state].forEach(t => {
+      townEl.innerHTML += `<option value="${t}">${t}</option>`;
+    });
+  }
+}
+
 const {createClient} = supabase;
 const sb = createClient(
   'https://muyyqqgubkfklqczqbgm.supabase.co',
@@ -468,9 +482,10 @@ function saveAddress(){
   const name = document.getElementById('addrName').value.trim();
   const phone = document.getElementById('addrPhone').value.trim();
   const street = document.getElementById('addrStreet').value.trim();
-  const city = document.getElementById('addrCity').value.trim();
+  const city = document.getElementById('addrTown')?.value || document.getElementById('addrCity')?.value || '';
   const state = document.getElementById('addrState').value;
   if(!name||!phone||!street||!city||!state){ toast('⚠️ Please fill all address fields'); return; }
+  const town = city;
   userAddresses.push({name,phone,street,city,state});
   localStorage.setItem('sb_addresses', JSON.stringify(userAddresses));
   closeModal();
@@ -535,7 +550,27 @@ function changeAvatar(){
       }
     });
   } else {
-    toast('📷 Image upload coming soon!');
+    // Load Cloudinary widget script dynamically
+    const script = document.createElement('script');
+    script.src = 'https://upload-widget.cloudinary.com/global/all.js';
+    script.onload = () => {
+      cloudinary.openUploadWidget({
+        cloudName:'dgelnfkjv', uploadPreset:'shopbox_uploads',
+        sources:['local','camera'], maxFiles:1,
+        clientAllowedFormats:['jpg','jpeg','png','webp'],
+        cropping:true, croppingAspectRatio:1,
+      }, async (err, result) => {
+        if(!err && result?.event==='success'){
+          const url = result.info.secure_url;
+          await sb.auth.updateUser({data:{avatar_url:url}});
+          const {data:{session}} = await sb.auth.getSession();
+          currentUser = session.user;
+          renderPage();
+          toast('✅ Profile photo updated!');
+        }
+      });
+    };
+    document.head.appendChild(script);
   }
 }
 
@@ -560,7 +595,23 @@ function closeModal(){
 /* ══ TOAST ══ */
 function toast(msg,dur=2600){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),dur);}
 
+
+  // Check if user is an approved seller
+  async function checkSellerStatus(){
+    if(!currentUser) return;
+    const {data} = await sb.from('seller_applications')
+      .select('status')
+      .eq('email', currentUser.email)
+      .single();
+    if(data?.status === 'approved'){
+      // Show seller dashboard link prominently
+      const sellerSection = document.querySelector('.seller-section-approved');
+      if(sellerSection) sellerSection.style.display = 'block';
+    }
+  }
+
 init();
+
 </script>
 </body>
 </html>

@@ -750,6 +750,10 @@
 
     // Only redirect on actual sign-in event, not on page load session restore
     if(event === 'SIGNED_IN'){
+      // Only redirect on fresh login, not on page reload/restore
+      const freshLogin = sessionStorage.getItem('fresh_login');
+      if(!freshLogin){ return; } // page reload — don't redirect
+      sessionStorage.removeItem('fresh_login');
       closeAuth();
       toast(`✅ Welcome back, ${name}!`);
       // Short delay so toast shows before redirect
@@ -757,14 +761,33 @@
     }
   });
 
+
+  // Silent session restore on page load — update UI only, no toast/redirect
+  (async ()=>{
+    const {data:{session}} = await sb.auth.getSession();
+    if(session?.user){
+      const u = session.user;
+      const name = u.user_metadata?.full_name || u.email.split('@')[0];
+      const drName=document.getElementById('drName');
+      const drSub=document.getElementById('drSub');
+      const drFooter=document.getElementById('drFooter');
+      const dAuth=document.getElementById('dAuth');
+      if(drName) drName.textContent=`Hello, ${name} 👋`;
+      if(drSub) drSub.textContent=u.email;
+      if(drFooter) drFooter.innerHTML=`<button onclick="doLogout()" style="width:100%;height:44px;border-radius:999px;background:rgba(239,68,68,.1);border:1.5px solid rgba(239,68,68,.2);color:#EF4444;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out</button>`;
+      if(dAuth) dAuth.innerHTML=`<div class="d-user-pill" onclick="window.location='shopbox-account.html'" style="display:flex;align-items:center;gap:8px;padding:6px 14px 6px 8px;background:var(--card);border:1px solid var(--border-g);border-radius:var(--pill);cursor:pointer;"><div class="d-user-av"><i class="fa-solid fa-user"></i></div><span style="font-size:13px;font-weight:600;">${name}</span></div>`;
+    }
+  })();
+
   async function doLogin(){
     const e=document.getElementById('lEmail').value.trim(),p=document.getElementById('lPw').value;
     const btn=document.getElementById('lBtn');
     if(!e||!p){showErr('Please fill in all fields');return;}
     btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Signing in…';btn.disabled=true;
+    sessionStorage.setItem('fresh_login','1');
     const{error}=await sb.auth.signInWithPassword({email:e,password:p});
     btn.innerHTML='<i class="fa-solid fa-arrow-right-to-bracket"></i> Login';btn.disabled=false;
-    if(error)showErr(error.message==='Invalid login credentials'?'Wrong email or password.':error.message);
+    if(error){ sessionStorage.removeItem('fresh_login'); showErr(error.message==='Invalid login credentials'?'Wrong email or password.':error.message); }
   }
 
   async function doSignup(){
