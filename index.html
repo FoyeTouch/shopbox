@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="shared-auth.js"></script>
   <style>
     :root{
       --gold:#F5A623;--gold-dark:#C47F0A;--gold-bright:#FFB930;
@@ -784,10 +785,18 @@
     const btn=document.getElementById('lBtn');
     if(!e||!p){showErr('Please fill in all fields');return;}
     btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Signing in…';btn.disabled=true;
-    sessionStorage.setItem('fresh_login','1');
-    const{error}=await sb.auth.signInWithPassword({email:e,password:p});
+    const{data, error}=await sb.auth.signInWithPassword({email:e,password:p});
     btn.innerHTML='<i class="fa-solid fa-arrow-right-to-bracket"></i> Login';btn.disabled=false;
-    if(error){ sessionStorage.removeItem('fresh_login'); showErr(error.message==='Invalid login credentials'?'Wrong email or password.':error.message); }
+    if(error){ showErr(error.message==='Invalid login credentials'?'Wrong email or password.':error.message); return; }
+    // Login success — update navbar then redirect
+    if(data?.session){
+      const name = data.session.user.user_metadata?.full_name || data.session.user.email.split('@')[0];
+      const redirectTo = sessionStorage.getItem('redirect_after_login') || 'shopbox-account.html';
+      sessionStorage.removeItem('redirect_after_login');
+      closeAuth();
+      toast('✅ Welcome back, ' + name + '!');
+      setTimeout(()=>{ window.location = redirectTo; }, 1000);
+    }
   }
 
   async function doSignup(){

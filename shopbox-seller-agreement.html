@@ -1186,20 +1186,14 @@
   const totalPanels = 4;
 
   function nextPanel() {
-    // Validate bank details on step 2
-    if(currentPanel === 1){
-      const bank = document.getElementById('bankSelect')?.value;
-      const accNum = document.getElementById('accountNumberField')?.value;
-      const accName = document.getElementById('accountNameField')?.value?.trim();
-      if(!bank){ showToast('⚠️ Please select your bank'); return; }
-      if(!accNum || accNum.length < 10){ showToast('⚠️ Please enter a valid 10-digit account number'); return; }
-      if(!accName){ showToast('⚠️ Please enter your account name'); return; }
-    }
-    if (!validatePanel(currentPanel)) return;
+    // Last panel = submit
     if (currentPanel === totalPanels) {
       submitApplication();
       return;
     }
+    // Validate current panel first
+    if (!validatePanel(currentPanel)) return;
+    // Move to next
     currentPanel++;
     showPanel(currentPanel);
   }
@@ -1232,7 +1226,7 @@
     // Next button text
     const nextBtn = document.getElementById('nextBtn');
     if (n === totalPanels) {
-      nextBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Application';
+      nextBtn.innerHTML = '<i class="fa-solid fa-store"></i> Start Selling on Shopbox!';
     } else {
       nextBtn.innerHTML = 'Continue <i class="fa-solid fa-arrow-right"></i>';
     }
@@ -1258,6 +1252,14 @@
         showToast('⚠️ Tip: Upload your ID for faster approval');
       }
     }
+    if (n === 2) {
+      const bank = document.getElementById('bankSelect')?.value;
+      const accNum = document.getElementById('accountNumberField')?.value;
+      const accName = document.getElementById('accountNameField')?.value?.trim();
+      if(!bank){ showToast('⚠️ Please select your bank'); return false; }
+      if(!accNum || String(accNum).length < 10){ showToast('⚠️ Please enter a valid 10-digit account number'); return false; }
+      if(!accName){ showToast('⚠️ Please enter your account name'); return false; }
+    }
     if (n === 3) {
       const checks = ['a1','a2','a3','a4','a5'];
       for (const c of checks) {
@@ -1282,6 +1284,18 @@
 
   /* ══ Submit ══ */
   async function submitApplication() {
+    // Check if user is logged in before submitting
+    if(typeof supabase !== 'undefined'){
+      const {createClient} = supabase;
+      const _sb = createClient('https://muyyqqgubkfklqczqbgm.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11eXlxcWd1Ymtma2xxY3pxYmdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5MTgyMDksImV4cCI6MjA5NDQ5NDIwOX0.YQs_H8iMPwEr2pSVbGOwOS4S5Q0aQaBwfxnQy1achdk');
+      const {data:{session}} = await _sb.auth.getSession();
+      if(!session){
+        showToast('⚠️ Please login or create an account first to apply as a seller!');
+        setTimeout(()=>{ window.location='index.html'; }, 2000);
+        return;
+      }
+    }
+
     const btn = document.getElementById('nextBtn');
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting…';
     btn.disabled = true;
@@ -1468,6 +1482,7 @@
 
   <!-- Cloudinary Upload Widget -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="shared-auth.js"></script>
   <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
   <script>
     var idUploadUrl = '';
