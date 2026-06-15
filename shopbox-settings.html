@@ -1,986 +1,272 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Shopbox — Settings</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Settings — Shopbox</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="shared-auth.js"></script>
   <style>
-    :root {
-      --gold:          #F5A623;
-      --gold-bright:   #FFB930;
-      --gold-dark:     #C47F0A;
-      --gold-muted:    rgba(245,166,35,0.12);
-      --gold-glow:     rgba(245,166,35,0.28);
-      --bg-base:       #0D0D0D;
-      --bg-card:       #161616;
-      --bg-card-2:     #1C1C1C;
-      --border:        rgba(255,255,255,0.07);
-      --border-gold:   rgba(245,166,35,0.32);
-      --text-primary:  #FFFFFF;
-      --text-secondary:#A0A0A0;
-      --text-muted:    #555555;
-      --success:       #22C55E;
-      --danger:        #EF4444;
-      --font-display:  'Syne', sans-serif;
-      --font-body:     'DM Sans', sans-serif;
-      --px:            16px;
-      --radius-sm:     8px;
-      --radius-md:     12px;
-      --radius-lg:     16px;
-      --radius-pill:   999px;
-      --nav-h:         68px;
-    }
+    :root{--gold:#F5A623;--gold-dark:#C47F0A;--gold-muted:rgba(245,166,35,.12);--bg:#0D0D0D;--card:#161616;--card2:#1C1C1C;--border:rgba(255,255,255,.07);--border-g:rgba(245,166,35,.32);--txt:#fff;--txt2:#A0A0A0;--muted:#555;--ok:#22C55E;--err:#EF4444;--fd:'Syne',sans-serif;--fb:'DM Sans',sans-serif;--r12:12px;--r16:16px;--pill:999px;}
+    body.light-mode{--bg:#F5F5F5;--card:#FFFFFF;--card2:#F0F0F0;--border:rgba(0,0,0,.08);--txt:#111;--txt2:#555;--muted:#999;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:var(--fb);background:var(--bg);color:var(--txt);min-height:100dvh;transition:background .3s,color .3s;}
+    a{text-decoration:none;color:inherit;}
+    button{cursor:pointer;border:none;background:none;font-family:inherit;color:inherit;}
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { -webkit-tap-highlight-color: transparent; }
-    body {
-      font-family: var(--font-body);
-      background: var(--bg-base);
-      color: var(--text-primary);
-      min-height: 100dvh;
-      -webkit-font-smoothing: antialiased;
-      padding-bottom: calc(var(--nav-h) + 16px);
-    }
-    button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; }
-    a { text-decoration: none; color: inherit; }
-    .page { max-width: 480px; margin: 0 auto; }
+    .header{position:sticky;top:0;z-index:100;background:var(--bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;height:56px;gap:12px;}
+    .back-btn{width:38px;height:38px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--txt2);}
+    .header-title{font-family:var(--fd);font-size:16px;font-weight:700;}
 
-    @keyframes fadeUp { from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);} }
-    .fu{animation:fadeUp .35s ease both;}
-    .d1{animation-delay:.04s;}.d2{animation-delay:.08s;}.d3{animation-delay:.12s;}
-    .d4{animation-delay:.16s;}.d5{animation-delay:.20s;}.d6{animation-delay:.24s;}
+    .page{padding:16px 16px 90px;max-width:600px;margin:0 auto;}
 
-    /* ══════════════════════════════════════
-       HEADER
-    ══════════════════════════════════════ */
-    .header {
-      display: flex; align-items: center;
-      justify-content: space-between;
-      padding: 14px var(--px);
-      background: rgba(13,13,13,0.97);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      position: sticky; top: 0; z-index: 50;
-    }
-    .back-btn {
-      width: 40px; height: 40px; border-radius: 50%;
-      background: var(--bg-card); border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px; transition: border-color .2s;
-    }
-    .back-btn:active { border-color: var(--border-gold); }
-    .header-title {
-      font-family: var(--font-display);
-      font-size: 18px; font-weight: 800;
-    }
-    .header-space { width: 40px; }
+    .sec-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding:0 4px;margin:20px 0 8px;}
+    .sec-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r16);overflow:hidden;margin-bottom:6px;}
 
-    /* ══════════════════════════════════════
-       PROFILE MINI CARD
-    ══════════════════════════════════════ */
-    .profile-mini {
-      margin: 16px var(--px);
-      background: linear-gradient(135deg, #1a1200 0%, var(--bg-card) 100%);
-      border: 1.5px solid var(--border-gold);
-      border-radius: var(--radius-lg);
-      padding: 16px;
-      display: flex; align-items: center; gap: 14px;
-      cursor: pointer; transition: border-color .2s;
-      position: relative; overflow: hidden;
-    }
-    .profile-mini::before {
-      content: '';
-      position: absolute; top: -20px; right: -20px;
-      width: 100px; height: 100px;
-      background: radial-gradient(circle, rgba(245,166,35,0.1) 0%, transparent 70%);
-      border-radius: 50%; pointer-events: none;
-    }
-    .profile-mini:active { border-color: var(--gold); }
-    .mini-avatar {
-      width: 54px; height: 54px; border-radius: 50%;
-      background: var(--gold-muted);
-      border: 2px solid var(--gold);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 22px; color: var(--gold); flex-shrink: 0;
-      box-shadow: 0 0 16px var(--gold-glow);
-      overflow: hidden;
-    }
-    .mini-avatar img { width:100%; height:100%; object-fit:cover; }
-    .mini-info { flex: 1; min-width: 0; }
-    .mini-name {
-      font-family: var(--font-display);
-      font-size: 16px; font-weight: 800; margin-bottom: 2px;
-    }
-    .mini-email { font-size: 12px; color: var(--text-secondary); margin-bottom: 5px; }
-    .mini-edit {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 11px; font-weight: 700;
-      color: var(--gold); font-family: var(--font-display);
-    }
-    .mini-arrow { color: var(--text-muted); font-size: 14px; }
+    .row{display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .2s;}
+    .row:last-child{border-bottom:none;}
+    .row:hover{background:var(--gold-muted);}
+    .row-icon{width:36px;height:36px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--gold);flex-shrink:0;}
+    .row-label{flex:1;font-size:14px;font-weight:500;}
+    .row-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+    .row-arrow{color:var(--muted);font-size:12px;}
 
-    /* ══════════════════════════════════════
-       SECTION GROUPS
-    ══════════════════════════════════════ */
-    .settings-section { margin: 0 var(--px) 14px; }
-    .section-label {
-      font-size: 11px; font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase; letter-spacing: .08em;
-      font-family: var(--font-display);
-      margin-bottom: 8px; padding-left: 2px;
-    }
-    .settings-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-    }
+    /* Toggle switch */
+    .toggle{position:relative;width:46px;height:26px;flex-shrink:0;}
+    .toggle input{opacity:0;width:0;height:0;position:absolute;}
+    .toggle-slider{position:absolute;inset:0;background:var(--card2);border:1px solid var(--border);border-radius:99px;transition:.3s;cursor:pointer;}
+    .toggle-slider:before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:var(--muted);border-radius:50%;transition:.3s;}
+    .toggle input:checked + .toggle-slider{background:var(--gold);border-color:var(--gold);}
+    .toggle input:checked + .toggle-slider:before{transform:translateX(20px);background:#000;}
 
-    /* ══════════════════════════════════════
-       SETTINGS ITEM
-    ══════════════════════════════════════ */
-    .settings-item {
-      display: flex; align-items: center; gap: 14px;
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer; transition: background .2s;
-      position: relative;
-    }
-    .settings-item:last-child { border-bottom: none; }
-    .settings-item:active { background: var(--bg-card-2); }
+    /* Danger zone */
+    .danger-btn{width:100%;height:50px;border-radius:var(--r16);background:rgba(239,68,68,.08);border:1.5px solid rgba(239,68,68,.2);color:#EF4444;font-family:var(--fd);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;cursor:pointer;}
 
-    .settings-icon {
-      width: 38px; height: 38px; border-radius: var(--radius-sm);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px; flex-shrink: 0;
-    }
-    .settings-text { flex: 1; min-width: 0; }
-    .settings-title { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
-    .settings-sub { font-size: 12px; color: var(--text-muted); }
-    .settings-right {
-      display: flex; align-items: center; gap: 8px; flex-shrink: 0;
-    }
-    .settings-value {
-      font-size: 13px; color: var(--text-secondary); font-weight: 500;
-    }
-    .settings-arrow { color: var(--text-muted); font-size: 12px; }
+    .bot-nav{position:fixed;bottom:0;left:0;right:0;height:68px;background:rgba(18,18,18,.97);border-top:1px solid var(--border);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:space-around;z-index:100;}
+    .bn-it{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;padding:8px 4px 4px;text-decoration:none;}
+    .bn-icon{font-size:20px;color:var(--muted);}
+    .bn-it.active .bn-icon{color:var(--gold);}
+    .bn-lbl{font-family:var(--fd);font-size:10px;font-weight:600;color:var(--muted);}
+    .bn-it.active .bn-lbl{color:var(--gold);}
 
-    /* ══════════════════════════════════════
-       TOGGLE SWITCH
-    ══════════════════════════════════════ */
-    .toggle {
-      width: 46px; height: 26px; border-radius: 99px;
-      background: var(--bg-card-2); border: 1px solid var(--border);
-      position: relative; cursor: pointer;
-      transition: background .25s, border-color .25s;
-      flex-shrink: 0;
-    }
-    .toggle.on { background: var(--gold); border-color: var(--gold); }
-    .toggle-knob {
-      position: absolute; top: 3px; left: 3px;
-      width: 18px; height: 18px; border-radius: 50%;
-      background: #fff; transition: transform .25s;
-      box-shadow: 0 1px 4px rgba(0,0,0,.3);
-    }
-    .toggle.on .toggle-knob { transform: translateX(20px); }
+    #toast{position:fixed;bottom:calc(68px + 12px);left:50%;transform:translateX(-50%) translateY(20px);background:#1C1C1C;border:1px solid rgba(245,166,35,.4);color:#fff;font-size:13px;padding:10px 22px;border-radius:var(--pill);opacity:0;transition:all .3s;z-index:9999;pointer-events:none;white-space:nowrap;}
+    #toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
 
-    /* ══════════════════════════════════════
-       LANGUAGE / CURRENCY SELECTOR SHEET
-    ══════════════════════════════════════ */
-    .sheet-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.65);
-      backdrop-filter: blur(4px);
-      z-index: 200; opacity: 0; pointer-events: none;
-      transition: opacity .3s;
-    }
-    .sheet-overlay.open { opacity: 1; pointer-events: all; }
-
-    .bottom-sheet {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      max-width: 480px; margin: 0 auto;
-      background: var(--bg-card);
-      border-radius: 24px 24px 0 0;
-      border-top: 1px solid var(--border);
-      padding: 20px var(--px) 40px;
-      z-index: 201;
-      transform: translateY(100%);
-      transition: transform .35s cubic-bezier(.4,0,.2,1);
-      max-height: 80vh; overflow-y: auto;
-    }
-    .bottom-sheet.open { transform: translateY(0); }
-    .sheet-handle {
-      width: 40px; height: 4px;
-      background: var(--border); border-radius: 99px;
-      margin: 0 auto 20px;
-    }
-    .sheet-title {
-      font-family: var(--font-display);
-      font-size: 17px; font-weight: 800; margin-bottom: 16px;
-    }
-
-    /* Sheet search */
-    .sheet-search {
-      display: flex; align-items: center; gap: 10px;
-      background: var(--bg-card-2); border: 1.5px solid var(--border);
-      border-radius: var(--radius-pill); padding: 0 14px; height: 44px;
-      margin-bottom: 14px; transition: border-color .2s;
-    }
-    .sheet-search:focus-within { border-color: var(--border-gold); }
-    .sheet-search i { color: var(--text-muted); font-size: 14px; }
-    .sheet-search input {
-      flex: 1; background: none; border: none; outline: none;
-      font-family: var(--font-body); font-size: 14px; color: var(--text-primary);
-    }
-    .sheet-search input::placeholder { color: var(--text-muted); }
-
-    /* Sheet option */
-    .sheet-option {
-      display: flex; align-items: center; gap: 12px;
-      padding: 13px 12px; border-radius: var(--radius-md);
-      cursor: pointer; transition: background .2s; margin-bottom: 2px;
-    }
-    .sheet-option:active { background: var(--bg-card-2); }
-    .sheet-option.selected { background: var(--gold-muted); }
-    .sheet-option-flag { font-size: 22px; }
-    .sheet-option-text { flex: 1; font-size: 14px; font-weight: 500; }
-    .sheet-option-check { color: var(--gold); font-size: 14px; }
-
-    /* ══════════════════════════════════════
-       DANGER ZONE
-    ══════════════════════════════════════ */
-    .danger-section { margin: 0 var(--px) 14px; }
-    .danger-card {
-      background: rgba(239,68,68,0.05);
-      border: 1px solid rgba(239,68,68,0.15);
-      border-radius: var(--radius-lg); overflow: hidden;
-    }
-    .danger-item {
-      display: flex; align-items: center; gap: 14px;
-      padding: 14px 16px;
-      border-bottom: 1px solid rgba(239,68,68,0.1);
-      cursor: pointer; transition: background .2s;
-    }
-    .danger-item:last-child { border-bottom: none; }
-    .danger-item:active { background: rgba(239,68,68,0.1); }
-    .danger-icon {
-      width: 38px; height: 38px; border-radius: var(--radius-sm);
-      background: rgba(239,68,68,0.1);
-      display: flex; align-items: center; justify-content: center;
-      color: var(--danger); font-size: 16px; flex-shrink: 0;
-    }
-    .danger-title { font-size: 14px; font-weight: 600; color: var(--danger); }
-    .danger-sub { font-size: 12px; color: rgba(239,68,68,0.6); margin-top: 2px; }
-
-    /* App info */
-    .app-info {
-      text-align: center; padding: 20px var(--px);
-      opacity: .45;
-    }
-    .app-info-logo {
-      font-family: var(--font-display);
-      font-size: 18px; font-weight: 800; margin-bottom: 4px;
-    }
-    .app-info-logo span { color: var(--gold); }
-    .app-info-version { font-size: 11px; color: var(--text-muted); }
-
-    /* ══════════════════════════════════════
-       BOTTOM NAV
-    ══════════════════════════════════════ */
-    .bottom-nav {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      height: var(--nav-h);
-      background: rgba(18,18,18,0.97);
-      border-top: 1px solid var(--border);
-      backdrop-filter: blur(16px);
-      display: flex; align-items: center; justify-content: space-around;
-      z-index: 100; max-width: 480px; margin: 0 auto;
-      padding-bottom: env(safe-area-inset-bottom,0px);
-    }
-    .nav-item {
-      display: flex; flex-direction: column;
-      align-items: center; gap: 4px; flex: 1;
-      padding: 8px 4px 4px; cursor: pointer;
-    }
-    .nav-item:active { opacity: .7; }
-    .nav-icon { font-size: 20px; color: var(--text-muted); }
-    .nav-item.active .nav-icon { color: var(--gold); }
-    .nav-label { font-family: var(--font-display); font-size: 10px; font-weight: 600; color: var(--text-muted); }
-    .nav-item.active .nav-label { color: var(--gold); }
-  
-    /* ═══════════════ DESKTOP NAVBAR ═══════════════ */
-    .d-nav{display:none;position:sticky;top:0;z-index:500;background:rgba(13,13,13,.97);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.07);}
+    /* Desktop nav injected by shared-auth */
+    .d-header{display:none;position:sticky;top:0;z-index:200;background:rgba(13,13,13,.97);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);}
     .d-nav-top{display:flex;align-items:center;gap:20px;padding:0 40px;height:68px;}
-    .d-nav-logo img{height:38px;width:auto;}
-    .d-nav-search{flex:1;max-width:500px;display:flex;align-items:center;background:#161616;border:1.5px solid rgba(255,255,255,.07);border-radius:999px;padding:0 6px 0 18px;height:42px;gap:10px;transition:border-color .2s;}
-    .d-nav-search:focus-within{border-color:rgba(245,166,35,.32);box-shadow:0 0 0 3px rgba(245,166,35,.12);}
-    .d-nav-search i{color:#555;font-size:14px;}
-    .d-nav-search input{flex:1;font-size:14px;color:#fff;background:none;border:none;outline:none;font-family:'DM Sans',sans-serif;}
-    .d-nav-search input::placeholder{color:#555;}
-    .d-nav-search-btn{height:32px;padding:0 16px;background:#F5A623;border-radius:999px;color:#000;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;border:none;cursor:pointer;}
+    .d-logo img{height:38px;}
     .d-nav-right{display:flex;align-items:center;gap:10px;margin-left:auto;}
-    .d-nav-icon{width:40px;height:40px;border-radius:50%;background:#161616;border:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-size:17px;color:#A0A0A0;cursor:pointer;transition:all .2s;position:relative;}
-    .d-nav-icon:hover{border-color:rgba(245,166,35,.32);color:#F5A623;}
-    .d-nav-cart-badge{position:absolute;top:-2px;right:-2px;width:18px;height:18px;background:#F5A623;color:#000;font-family:'Syne',sans-serif;font-size:9px;font-weight:800;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #0D0D0D;}
-    .d-nav-login{height:38px;padding:0 20px;background:#F5A623;color:#000;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;border-radius:999px;border:none;cursor:pointer;white-space:nowrap;box-shadow:0 4px 12px rgba(245,166,35,.28);}
-    .d-nav-login:hover{background:#C47F0A;}
-    .d-nav-user{display:flex;align-items:center;gap:8px;padding:6px 14px 6px 8px;background:#161616;border:1px solid rgba(255,255,255,.07);border-radius:999px;cursor:pointer;}
-    .d-nav-user-av{width:28px;height:28px;border-radius:50%;background:rgba(245,166,35,.12);border:1.5px solid rgba(245,166,35,.32);display:flex;align-items:center;justify-content:center;color:#F5A623;font-size:12px;}
-    .d-nav-links{display:flex;align-items:center;border-top:1px solid rgba(255,255,255,.07);background:#161616;}
-    .d-nav-links-inner{display:flex;align-items:center;padding:0 40px;height:42px;overflow-x:auto;scrollbar-width:none;gap:0;}
-    .d-nav-links-inner::-webkit-scrollbar{display:none;}
-    .d-nav-link{padding:0 16px;height:42px;display:flex;align-items:center;font-size:13px;font-weight:600;color:#A0A0A0;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;font-family:'Syne',sans-serif;}
-    .d-nav-link:hover,.d-nav-link.active{color:#F5A623;border-bottom-color:#F5A623;}
-    .d-nav-link i{margin-right:5px;font-size:11px;}
-    .d-nav-sep{width:1px;height:18px;background:rgba(255,255,255,.07);}
-    .d-nav-hot{margin-left:5px;background:#EF4444;color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:4px;font-family:'Syne',sans-serif;}
-
-    /* ═══════════════ DESKTOP LAYOUT ═══════════════ */
-    @media(min-width:768px){
-      .d-nav{display:block;}
-      /* hide mobile elements */
-      .header, .bottom-nav, .bot-nav, .mobile-header, .m-header{display:none!important;}
-      /* page body padding reset */
-      body{padding-bottom:0!important;}
-      /* desktop content wrapper */
-      .desktop-page-wrap{
-        max-width:960px;
-        margin:0 auto;
-        padding:32px 40px 60px;
-      }
-      /* back button bigger */
-      .back-btn{width:44px!important;height:44px!important;font-size:17px!important;}
-      /* cards wider */
-      .page,.page-wrap{max-width:100%!important;}
-    }
-
+    .d-nav-login{height:38px;padding:0 20px;background:var(--gold);color:#000;font-family:var(--fd);font-size:13px;font-weight:800;border-radius:var(--pill);cursor:pointer;}
+    @media(min-width:768px){.d-header{display:block;}.header{display:none;}.bot-nav{display:none;}.page{padding:32px 40px 60px;}#toast{bottom:20px;}}
   </style>
 </head>
 <body>
 
-<!-- ═══ DESKTOP NAVBAR ═══ -->
-<nav class="d-nav" id="dNav">
+<!-- Desktop Header -->
+<header class="d-header">
   <div class="d-nav-top">
-    <a href="index.html" class="d-nav-logo"><img src="https://res.cloudinary.com/dgelnfkjv/image/upload/v1778969155/file_00000000ecc87246bc708f4b9cbb30d8_xrmwgv.png" alt="Shopbox"/></a>
-    <div class="d-nav-search">
-      <i class="fa-solid fa-magnifying-glass"></i>
-      <input type="text" placeholder="Search for products, brands, categories…"/>
-      <button class="d-nav-search-btn">Search</button>
-    </div>
+    <a href="index.html" class="d-logo"><img src="https://res.cloudinary.com/dgelnfkjv/image/upload/v1778969155/file_00000000ecc87246bc708f4b9cbb30d8_xrmwgv.png" alt="Shopbox"/></a>
     <div class="d-nav-right">
-      <div class="d-nav-icon" onclick="window.location='shopbox-wishlist.html'" title="Wishlist"><i class="fa-regular fa-heart"></i></div>
-      <div class="d-nav-icon" onclick="window.location='shopbox-cart.html'" title="Cart">
-        <i class="fa-solid fa-cart-shopping"></i>
-        <span class="d-nav-cart-badge">0</span>
-      </div>
-      <div id="dNavAuth">
-        <button class="d-nav-login" onclick="window.location='shopbox-login.html'"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login / Sign Up</button>
-      </div>
+      <div id="dAuth"><button class="d-nav-login" onclick="window.location='index.html'"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login / Sign Up</button></div>
     </div>
   </div>
-  <div class="d-nav-links">
-    <div class="d-nav-links-inner">
-      <div class="d-nav-link" onclick="window.location='index.html'"><i class="fa-solid fa-house"></i> Home</div>
-      <div class="d-nav-sep"></div>
-      <div class="d-nav-link" onclick="window.location='shopbox-search.html'"><i class="fa-solid fa-shirt"></i> Fashion</div>
-      <div class="d-nav-sep"></div>
-      <div class="d-nav-link" onclick="window.location='shopbox-search.html'"><i class="fa-solid fa-headphones"></i> Electronics</div>
-      <div class="d-nav-sep"></div>
-      <div class="d-nav-link" onclick="window.location='shopbox-search.html'"><i class="fa-solid fa-spray-can-sparkles"></i> Beauty</div>
-      <div class="d-nav-sep"></div>
-      <div class="d-nav-link" onclick="window.location='shopbox-search.html'"><i class="fa-solid fa-couch"></i> Home & Living</div>
-      <div class="d-nav-sep"></div>
-      <div class="d-nav-link" onclick="window.location='shopbox-search.html'"><i class="fa-solid fa-dumbbell"></i> Fitness</div>
-      <div class="d-nav-sep"></div>
-      <div class="d-nav-link" onclick="window.location='shopbox-search.html'"><i class="fa-solid fa-shoe-prints"></i> Shoes</div>
-      <div class="d-nav-sep"></div>
-      <div class="d-nav-link" onclick="window.location='shopbox-search.html'"><i class="fa-solid fa-bolt"></i> Flash Deals <span class="d-nav-hot">HOT</span></div>
-      <div class="d-nav-sep"></div>
-      <div class="d-nav-link" onclick="window.location='shopbox-seller-agreement.html'"><i class="fa-solid fa-store"></i> Sell on Shopbox</div>
-    </div>
-  </div>
-</nav>
+</header>
+
+<!-- Mobile Header -->
+<header class="header">
+  <a href="shopbox-account.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+  <div class="header-title">Settings</div>
+</header>
 
 <div class="page">
 
-  <!-- ══ HEADER ══ -->
-  <div class="header">
-    <button class="back-btn" onclick="history.length>1?history.back():window.location='index.html'">
-      <i class="fa-solid fa-arrow-left"></i>
-    </button>
-    <span class="header-title">Settings</span>
-    <div class="header-space"></div>
-  </div>
-
-  <!-- ══ PROFILE MINI ══ -->
-  <div class="profile-mini fu d1" onclick="window.location='shopbox-account.html'">
-    <div class="mini-avatar">
-      <!-- 🖼️ IMAGE SLOT <img src="profile.jpg" /> -->
-      <i class="fa-solid fa-user"></i>
-    </div>
-    <div class="mini-info">
-      <div class="mini-name">John Doe</div>
-      <div class="mini-email">johndoe@email.com</div>
-      <div class="mini-edit">
-        <i class="fa-solid fa-pen" style="font-size:10px;"></i> Edit Profile
+  <!-- APPEARANCE -->
+  <div class="sec-label">Appearance</div>
+  <div class="sec-card">
+    <div class="row" style="cursor:default;">
+      <div class="row-icon"><i class="fa-solid fa-moon"></i></div>
+      <div style="flex:1;">
+        <div class="row-label">Dark Mode</div>
+        <div class="row-sub">Switch between dark and light theme</div>
       </div>
-    </div>
-    <i class="fa-solid fa-chevron-right mini-arrow"></i>
-  </div>
-
-  <!-- ══ ACCOUNT ══ -->
-  <div class="settings-section fu d2">
-    <div class="section-label">Account</div>
-    <div class="settings-card">
-
-      <div class="settings-item" onclick="window.location='shopbox-account.html'">
-        <div class="settings-icon" style="background:var(--gold-muted);">
-          <i class="fa-regular fa-user" style="color:var(--gold);"></i>
-        </div>
-        <div class="settings-text">
-          <div class="settings-title">Profile Information</div>
-          <div class="settings-sub">Name, email, phone number</div>
-        </div>
-        <div class="settings-right">
-          <i class="fa-solid fa-chevron-right settings-arrow"></i>
-        </div>
-      </div>
-
-      <div class="settings-item" onclick="window.location='shopbox-settings.html'">
-        <div class="settings-icon" style="background:rgba(99,102,241,0.1);">
-          <i class="fa-solid fa-lock" style="color:#818CF8;"></i>
-        </div>
-        <div class="settings-text">
-          <div class="settings-title">Change Password</div>
-          <div class="settings-sub">Update your password</div>
-        </div>
-        <div class="settings-right">
-          <i class="fa-solid fa-chevron-right settings-arrow"></i>
-        </div>
-      </div>
-
-      <div class="settings-item" onclick="window.location='shopbox-account.html'">
-        <div class="settings-icon" style="background:rgba(34,197,94,0.1);">
-          <i class="fa-solid fa-location-dot" style="color:var(--success);"></i>
-        </div>
-        <div class="settings-text">
-          <div class="settings-title">Manage Addresses</div>
-          <div class="settings-sub">2 saved addresses</div>
-        </div>
-        <div class="settings-right">
-          <span class="settings-value">2</span>
-          <i class="fa-solid fa-chevron-right settings-arrow"></i>
-        </div>
-      </div>
-
-      <div class="settings-item" onclick="window.location='shopbox-account.html'">
-        <div class="settings-icon" style="background:rgba(251,191,36,0.1);">
-          <i class="fa-solid fa-credit-card" style="color:#FBBF24;"></i>
-        </div>
-        <div class="settings-text">
-          <div class="settings-title">Payment Methods</div>
-          <div class="settings-sub">Cards, Paystack, bank accounts</div>
-        </div>
-        <div class="settings-right">
-          <i class="fa-solid fa-chevron-right settings-arrow"></i>
-        </div>
-      </div>
-
+      <label class="toggle">
+        <input type="checkbox" id="darkToggle" checked onchange="toggleDarkMode(this)"/>
+        <span class="toggle-slider"></span>
+      </label>
     </div>
   </div>
 
-  <!-- ══ NOTIFICATIONS ══ -->
-  <div class="settings-section fu d3">
-    <div class="section-label">Notifications</div>
-    <div class="settings-card">
+  <!-- ACCOUNT -->
+  <div class="sec-label">Account</div>
+  <div class="sec-card">
+    <a href="shopbox-account.html" class="row">
+      <div class="row-icon"><i class="fa-regular fa-user"></i></div>
+      <div style="flex:1;"><div class="row-label">Edit Profile</div><div class="row-sub">Name, phone, date of birth</div></div>
+      <i class="fa-solid fa-chevron-right row-arrow"></i>
+    </a>
+    <div class="row" onclick="openChangePw()">
+      <div class="row-icon"><i class="fa-solid fa-lock"></i></div>
+      <div style="flex:1;"><div class="row-label">Change Password</div><div class="row-sub">Update your login password</div></div>
+      <i class="fa-solid fa-chevron-right row-arrow"></i>
+    </div>
+    <a href="shopbox-account.html" class="row">
+      <div class="row-icon"><i class="fa-solid fa-location-dot"></i></div>
+      <div style="flex:1;"><div class="row-label">Delivery Addresses</div><div class="row-sub">Manage saved addresses</div></div>
+      <i class="fa-solid fa-chevron-right row-arrow"></i>
+    </a>
+    <a href="shopbox-account.html" class="row">
+      <div class="row-icon"><i class="fa-solid fa-credit-card"></i></div>
+      <div style="flex:1;"><div class="row-label">Payment Methods</div><div class="row-sub">Manage saved cards</div></div>
+      <i class="fa-solid fa-chevron-right row-arrow"></i>
+    </a>
+  </div>
 
-      <div class="settings-item">
-        <div class="settings-icon" style="background:rgba(99,102,241,0.1);">
-          <i class="fa-regular fa-bell" style="color:#818CF8;"></i>
-        </div>
-        <div class="settings-text">
-          <div class="settings-title">Push Notifications</div>
-          <div class="settings-sub">Orders, deals, updates</div>
-        </div>
-        <div class="toggle on" onclick="toggleSwitch(this,'Push Notifications')">
-          <div class="toggle-knob"></div>
-        </div>
-      </div>
-
-      <div class="settings-item">
-        <div class="settings-icon" style="background:rgba(34,197,94,0.1);">
-          <i class="fa-solid fa-envelope" style="color:var(--success);"></i>
-        </div>
-        <div class="settings-text">
-          <div class="settings-title">Email Notifications</div>
-          <div class="settings-sub">Order updates via email</div>
-        </div>
-        <div class="toggle on" onclick="toggleSwitch(this,'Email Notifications')">
-          <div class="toggle-knob"></div>
-        </div>
-      </div>
-
-      <div class="settings-item">
-        <div class="settings-icon" style="background:rgba(37,211,102,0.1);">
-          <i class="fa-brands fa-whatsapp" style="color:#25D366;"></i>
-        </div>
-        <div class="settings-text">
-          <div class="settings-title">WhatsApp Updates</div>
-          <div class="settings-sub">Order tracking on WhatsApp</div>
-        </div>
-        <div class="toggle" onclick="toggleSwitch(this,'WhatsApp Updates')">
-          <div class="toggle-knob"></div>
-        </div>
-      </div>
-
-      <div class="settings-item">
-        <div class="settings-icon" style="background:rgba(239,68,68,0.1);">
-          <i class="fa-solid fa-bolt" style="color:var(--danger);"></i>
-        </div>
-        <div class="settings-text">
-          <div class="settings-title">Flash Sale Alerts</div>
-          <div class="settings-sub">Be first to know about deals</div>
-        </div>
-        <div class="toggle on" onclick="toggleSwitch(this,'Flash Sale Alerts')">
-          <div class="toggle-knob"></div>
-        </div>
-      </div>
-
-      <div class="settings-item">
-        <div class="settings-icon" style="background:var(--gold-muted);">
-          <i class="fa-solid fa-arrow-trend-down" style="color:var(--gold);"></i>
-        </div>
-        <div class="settings-text">
-          <div class="settings-title">Price Drop Alerts</div>
-          <div class="settings-sub">Wishlist item price changes</div>
-        </div>
-        <div class="toggle on" onclick="toggleSwitch(this,'Price Drop Alerts')">
-          <div class="toggle-knob"></div>
-        </div>
-      </div>
-
+  <!-- NOTIFICATIONS -->
+  <div class="sec-label">Notifications</div>
+  <div class="sec-card">
+    <div class="row" style="cursor:default;">
+      <div class="row-icon"><i class="fa-solid fa-bell"></i></div>
+      <div style="flex:1;"><div class="row-label">Order Updates</div><div class="row-sub">Get notified on order status changes</div></div>
+      <label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label>
+    </div>
+    <div class="row" style="cursor:default;">
+      <div class="row-icon"><i class="fa-brands fa-whatsapp"></i></div>
+      <div style="flex:1;"><div class="row-label">WhatsApp Alerts</div><div class="row-sub">Coming soon</div></div>
+      <label class="toggle"><input type="checkbox" disabled/><span class="toggle-slider"></span></label>
+    </div>
+    <div class="row" style="cursor:default;">
+      <div class="row-icon"><i class="fa-solid fa-envelope"></i></div>
+      <div style="flex:1;"><div class="row-label">Email Notifications</div><div class="row-sub">Receipts and updates to your email</div></div>
+      <label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label>
     </div>
   </div>
 
-  <!-- ══ PREFERENCES ══ -->
-  <div class="settings-section fu d4">
-    <div class="section-label">Preferences</div>
-    <div class="settings-card">
+  <!-- ORDERS -->
+  <div class="sec-label">Orders & Returns</div>
+  <div class="sec-card">
+    <a href="shopbox-tracking.html" class="row">
+      <div class="row-icon"><i class="fa-solid fa-box"></i></div>
+      <div style="flex:1;"><div class="row-label">My Orders</div><div class="row-sub">Track and manage your orders</div></div>
+      <i class="fa-solid fa-chevron-right row-arrow"></i>
+    </a>
+    <a href="shopbox-return-request.html" class="row">
+      <div class="row-icon"><i class="fa-solid fa-rotate-left"></i></div>
+      <div style="flex:1;"><div class="row-label">Return & Refund</div><div class="row-sub">Request a return or refund</div></div>
+      <i class="fa-solid fa-chevron-right row-arrow"></i>
+    </a>
+  </div>
 
-      <div class="settings-item" onclick="openSheet('language')">
-        <div class="settings-icon" style="background:rgba(245,166,35,0.1);">
-          <i class="fa-solid fa-globe" style="color:var(--gold);"></i>
-        </div>
-        <div class="settings-text">
-          <div class="settings-title">Language</div>
-          <div class="settings-sub">App display language</div>
-        </div>
-        <div class="settings-right">
-          <span class="settings-value" id="langValue">English</span>
-          <i class="fa-solid fa-chevron-right settings-arrow"></i>
-        </div>
-      </div>
-
-      <div class="settings-item" onclick="openSheet('currency')">
-        <div class="settings-icon" style="background:rgba(34,197,94,0.1);">
-          <i class="fa-solid fa-naira-sign" style="color:var(--success);"></i>
-        </div>
-        <div class="settings-text">
-          <div class="settings-title">Currency</div>
-          <div class="settings-sub">Display prices in</div>
-        </div>
-        <div class="settings-right">
-          <span class="settings-value" id="currValue">NGN (₦)</span>
-          <i class="fa-solid fa-chevron-right settings-arrow"></i>
-        </div>
-      </div>
-
-      <div class="settings-item">
-        <div class="settings-icon" style="background:rgba(156,163,175,0.1);">
-          <i class="fa-solid fa-moon" style="color:#9CA3AF;"></i>
-        </div>
-        <div class="settings-text">
-          <div class="settings-title">Dark Mode</div>
-          <div class="settings-sub">Always on for Shopbox ✨</div>
-        </div>
-        <div class="toggle on" style="pointer-events:none; opacity:.5;">
-          <div class="toggle-knob"></div>
-        </div>
-      </div>
-
-      <div class="settings-item">
-        <div class="settings-icon" style="background:rgba(99,102,241,0.1);">
-          <i class="fa-solid fa-hand-sparkles" style="color:#818CF8;"></i>
-        </div>
-        <div class="settings-text">
-          <div class="settings-title">Biometric Login</div>
-          <div class="settings-sub">Fingerprint / Face ID</div>
-        </div>
-        <div class="toggle" onclick="toggleSwitch(this,'Biometric Login')">
-          <div class="toggle-knob"></div>
-        </div>
-      </div>
-
+  <!-- SUPPORT -->
+  <div class="sec-label">Support</div>
+  <div class="sec-card">
+    <a href="shopbox-help.html" class="row">
+      <div class="row-icon"><i class="fa-solid fa-headset"></i></div>
+      <div style="flex:1;"><div class="row-label">Help & Support</div><div class="row-sub">FAQs and contact us</div></div>
+      <i class="fa-solid fa-chevron-right row-arrow"></i>
+    </a>
+    <a href="shopbox-buyer-terms.html" class="row">
+      <div class="row-icon"><i class="fa-solid fa-file-contract"></i></div>
+      <div style="flex:1;"><div class="row-label">Terms & Privacy Policy</div><div class="row-sub">Read our terms and conditions</div></div>
+      <i class="fa-solid fa-chevron-right row-arrow"></i>
+    </a>
+    <div class="row" onclick="toast('Version 1.0.0 — Build 2025')">
+      <div class="row-icon"><i class="fa-solid fa-circle-info"></i></div>
+      <div style="flex:1;"><div class="row-label">App Version</div><div class="row-sub">Shopbox v1.0.0</div></div>
     </div>
   </div>
 
-  <!-- ══ PRIVACY & SECURITY ══ -->
-  <div class="settings-section fu d4">
-    <div class="section-label">Privacy & Security</div>
-    <div class="settings-card">
+  <!-- DANGER ZONE -->
+  <div class="sec-label">Danger Zone</div>
+  <button class="danger-btn" onclick="confirmLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out</button>
+  <button class="danger-btn" style="margin-top:8px;background:rgba(239,68,68,.04);font-size:13px;" onclick="confirmDelete()">
+    <i class="fa-solid fa-trash"></i> Delete Account
+  </button>
 
-      <div class="settings-item" onclick="window.location='shopbox-settings.html'">
-        <div class="settings-icon" style="background:rgba(34,197,94,0.1);">
-          <i class="fa-solid fa-shield-halved" style="color:var(--success);"></i>
-        </div>
-        <div class="settings-text">
-          <div class="settings-title">Two-Factor Auth</div>
-          <div class="settings-sub">Extra layer of security</div>
-        </div>
-        <div class="settings-right">
-          <span style="font-size:11px; color:var(--danger); font-weight:600;">OFF</span>
-          <i class="fa-solid fa-chevron-right settings-arrow"></i>
-        </div>
-      </div>
-
-      <div class="settings-item" onclick="showToast('🔑 Active Sessions')">
-        <div class="settings-icon" style="background:rgba(251,191,36,0.1);">
-          <i class="fa-solid fa-mobile-screen" style="color:#FBBF24;"></i>
-        </div>
-        <div class="settings-text">
-          <div class="settings-title">Active Sessions</div>
-          <div class="settings-sub">Manage logged-in devices</div>
-        </div>
-        <div class="settings-right">
-          <span class="settings-value">1 device</span>
-          <i class="fa-solid fa-chevron-right settings-arrow"></i>
-        </div>
-      </div>
-
-      <div class="settings-item" onclick="window.location='shopbox-buyer-terms.html'">
-        <div class="settings-icon" style="background:rgba(99,102,241,0.1);">
-          <i class="fa-solid fa-file-shield" style="color:#818CF8;"></i>
-        </div>
-        <div class="settings-text">
-          <div class="settings-title">Privacy Policy</div>
-          <div class="settings-sub">How we use your data</div>
-        </div>
-        <div class="settings-right">
-          <i class="fa-solid fa-chevron-right settings-arrow"></i>
-        </div>
-      </div>
-
-      <div class="settings-item" onclick="window.location='shopbox-buyer-terms.html'">
-        <div class="settings-icon" style="background:rgba(156,163,175,0.1);">
-          <i class="fa-solid fa-file-lines" style="color:#9CA3AF;"></i>
-        </div>
-        <div class="settings-text">
-          <div class="settings-title">Terms of Service</div>
-          <div class="settings-sub">Read our terms</div>
-        </div>
-        <div class="settings-right">
-          <i class="fa-solid fa-chevron-right settings-arrow"></i>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ══ SUPPORT ══ -->
-  <div class="settings-section fu d5">
-    <div class="section-label">Support</div>
-    <div class="settings-card">
-
-      <div class="settings-item" onclick="window.location='shopbox-buyer-terms.html'">
-        <div class="settings-icon" style="background:rgba(34,197,94,0.1);">
-          <i class="fa-solid fa-headset" style="color:var(--success);"></i>
-        </div>
-        <div class="settings-text">
-          <div class="settings-title">Help & Support</div>
-          <div class="settings-sub">24/7 customer service</div>
-        </div>
-        <div class="settings-right">
-          <i class="fa-solid fa-chevron-right settings-arrow"></i>
-        </div>
-      </div>
-
-      <div class="settings-item" onclick="showToast('⭐ Rating Shopbox…')">
-        <div class="settings-icon" style="background:rgba(245,166,35,0.1);">
-          <i class="fa-solid fa-star" style="color:var(--gold);"></i>
-        </div>
-        <div class="settings-text">
-          <div class="settings-title">Rate Shopbox</div>
-          <div class="settings-sub">Enjoying the app? Let us know!</div>
-        </div>
-        <div class="settings-right">
-          <i class="fa-solid fa-chevron-right settings-arrow"></i>
-        </div>
-      </div>
-
-      <div class="settings-item" onclick="window.location='shopbox-tracking.html'">
-        <div class="settings-icon" style="background:rgba(99,102,241,0.1);">
-          <i class="fa-solid fa-rotate" style="color:#818CF8;"></i>
-        </div>
-        <div class="settings-text">
-          <div class="settings-title">Check for Updates</div>
-          <div class="settings-sub">v1.0.0 — You're up to date ✅</div>
-        </div>
-        <div class="settings-right">
-          <span style="font-size:11px; color:var(--success); font-weight:600;">Latest</span>
-          <i class="fa-solid fa-chevron-right settings-arrow"></i>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ══ DANGER ZONE ══ -->
-  <div class="danger-section fu d6">
-    <div class="section-label" style="color:rgba(239,68,68,0.6);">Danger Zone</div>
-    <div class="danger-card">
-
-      <div class="danger-item" onclick="confirmLogout()">
-        <div class="danger-icon">
-          <i class="fa-solid fa-arrow-right-from-bracket"></i>
-        </div>
-        <div>
-          <div class="danger-title">Log Out</div>
-          <div class="danger-sub">Sign out of your account</div>
-        </div>
-      </div>
-
-      <div class="danger-item" onclick="confirmDelete()">
-        <div class="danger-icon">
-          <i class="fa-solid fa-user-slash"></i>
-        </div>
-        <div>
-          <div class="danger-title">Delete Account</div>
-          <div class="danger-sub">Permanently remove your data</div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- App info -->
-  <div class="app-info fu d6">
-    <div class="app-info-logo">shop<span>box</span></div>
-    <div class="app-info-version">Version 1.0.0 · Made with ❤️ for Nigeria & the world</div>
-  </div>
-
-</div><!-- /page -->
-
-<!-- ══ LANGUAGE SHEET ══ -->
-<div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet()"></div>
-<div class="bottom-sheet" id="bottomSheet">
-  <div class="sheet-handle"></div>
-  <div class="sheet-title" id="sheetTitle">Select Language</div>
-  <div class="sheet-search">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <input type="text" placeholder="Search…" oninput="filterSheet(this.value)" id="sheetSearchInput" />
-  </div>
-  <div id="sheetOptions"></div>
+  <div style="height:20px;"></div>
 </div>
 
-<!-- ══ BOTTOM NAV ══ -->
-<nav class="bottom-nav">
-  <div class="nav-item" onclick="window.location='index.html'"">
-    <div class="nav-icon"><i class="fa-solid fa-house"></i></div>
-    <span class="nav-label">Home</span>
+<!-- Change Password Modal -->
+<div id="pwOv" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:400;" onclick="closePwModal()"></div>
+<div id="pwModal" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#161616;border-radius:24px 24px 0 0;padding:20px 20px 40px;z-index:401;max-width:500px;margin:0 auto;">
+  <div style="width:40px;height:4px;background:rgba(255,255,255,.1);border-radius:99px;margin:0 auto 16px;"></div>
+  <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:4px;">Change Password</div>
+  <div style="font-size:13px;color:#A0A0A0;margin-bottom:16px;">Choose a strong new password</div>
+  <div style="background:#1C1C1C;border:1.5px solid rgba(255,255,255,.07);border-radius:12px;padding:0 14px;height:50px;display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+    <i class="fa-solid fa-lock" style="color:#555;font-size:14px;"></i>
+    <input type="password" id="pwNew" placeholder="New password" style="flex:1;font-size:14px;color:#fff;background:none;border:none;outline:none;font-family:'DM Sans',sans-serif;"/>
   </div>
-  <div class="nav-item" onclick="window.location='shopbox-search.html'"">
-    <div class="nav-icon"><i class="fa-solid fa-table-cells-large"></i></div>
-    <span class="nav-label">Categories</span>
+  <div style="background:#1C1C1C;border:1.5px solid rgba(255,255,255,.07);border-radius:12px;padding:0 14px;height:50px;display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+    <i class="fa-solid fa-lock" style="color:#555;font-size:14px;"></i>
+    <input type="password" id="pwConfirm" placeholder="Confirm password" style="flex:1;font-size:14px;color:#fff;background:none;border:none;outline:none;font-family:'DM Sans',sans-serif;"/>
   </div>
-  <div class="nav-item" onclick="window.location='shopbox-wishlist.html'"">
-    <div class="nav-icon"><i class="fa-regular fa-heart"></i></div>
-    <span class="nav-label">Wishlist</span>
-  </div>
-  <div class="nav-item" onclick="window.location='shopbox-tracking.html'"">
-    <div class="nav-icon"><i class="fa-solid fa-box"></i></div>
-    <span class="nav-label">Orders</span>
-  </div>
-  <div class="nav-item active" onclick="window.location='shopbox-account.html'"">
-    <div class="nav-icon"><i class="fa-regular fa-user"></i></div>
-    <span class="nav-label">Account</span>
-  </div>
+  <button onclick="doChangePw()" style="width:100%;height:50px;background:#F5A623;color:#000;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;border-radius:999px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+    <i class="fa-solid fa-key"></i> Update Password
+  </button>
+</div>
+
+<!-- Mobile Bottom Nav -->
+<nav class="bot-nav">
+  <a href="index.html" class="bn-it"><div class="bn-icon"><i class="fa-solid fa-house"></i></div><span class="bn-lbl">Home</span></a>
+  <a href="shopbox-search.html" class="bn-it"><div class="bn-icon"><i class="fa-solid fa-table-cells-large"></i></div><span class="bn-lbl">Categories</span></a>
+  <a href="shopbox-wishlist.html" class="bn-it"><div class="bn-icon"><i class="fa-regular fa-heart"></i></div><span class="bn-lbl">Wishlist</span></a>
+  <a href="shopbox-tracking.html" class="bn-it"><div class="bn-icon"><i class="fa-solid fa-box"></i></div><span class="bn-lbl">Orders</span></a>
+  <a href="shopbox-account.html" class="bn-it active"><div class="bn-icon"><i class="fa-regular fa-user"></i></div><span class="bn-lbl">Account</span></a>
 </nav>
 
-<!-- Toast -->
 <div id="toast"></div>
 
 <script>
-  /* ══ Toggle switch ══ */
-  function toggleSwitch(el, name) {
-    el.classList.toggle('on');
-    const on = el.classList.contains('on');
-    showToast(`${on ? '✅' : '🔕'} ${name} ${on ? 'enabled' : 'disabled'}`);
-  }
-
-  /* ══ Sheet data ══ */
-  const sheetData = {
-    language: {
-      title: 'Select Language',
-      selected: 'English',
-      valueId: 'langValue',
-      options: [
-        { flag:'🇬🇧', label:'English', value:'English' },
-        { flag:'🇫🇷', label:'French', value:'French' },
-        { flag:'🇳🇬', label:'Pidgin English', value:'Pidgin English' },
-        { flag:'🇸🇦', label:'Arabic', value:'Arabic' },
-        { flag:'🇪🇸', label:'Spanish', value:'Spanish' },
-        { flag:'🇩🇪', label:'German', value:'German' },
-        { flag:'🇵🇹', label:'Portuguese', value:'Portuguese' },
-        { flag:'🇮🇹', label:'Italian', value:'Italian' },
-        { flag:'🇨🇳', label:'Chinese (Simplified)', value:'Chinese' },
-        { flag:'🇯🇵', label:'Japanese', value:'Japanese' },
-      ]
-    },
-    currency: {
-      title: 'Select Currency',
-      selected: 'NGN (₦)',
-      valueId: 'currValue',
-      options: [
-        { flag:'🇳🇬', label:'Nigerian Naira (₦)', value:'NGN (₦)' },
-        { flag:'🇺🇸', label:'US Dollar ($)', value:'USD ($)' },
-        { flag:'🇬🇧', label:'British Pound (£)', value:'GBP (£)' },
-        { flag:'🇪🇺', label:'Euro (€)', value:'EUR (€)' },
-        { flag:'🇬🇭', label:'Ghanaian Cedi (₵)', value:'GHS (₵)' },
-        { flag:'🇰🇪', label:'Kenyan Shilling (KSh)', value:'KES (KSh)' },
-        { flag:'🇿🇦', label:'South African Rand (R)', value:'ZAR (R)' },
-        { flag:'🇦🇪', label:'UAE Dirham (AED)', value:'AED' },
-        { flag:'🇨🇦', label:'Canadian Dollar (CA$)', value:'CAD (CA$)' },
-        { flag:'🇦🇺', label:'Australian Dollar (A$)', value:'AUD (A$)' },
-      ]
-    }
-  };
-
-  let currentSheet = null;
-  let allOptions   = [];
-
-  function openSheet(type) {
-    currentSheet = type;
-    const data   = sheetData[type];
-    document.getElementById('sheetTitle').textContent = data.title;
-    document.getElementById('sheetSearchInput').value = '';
-    allOptions = data.options;
-    renderOptions(allOptions, data.selected);
-    document.getElementById('sheetOverlay').classList.add('open');
-    document.getElementById('bottomSheet').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeSheet() {
-    document.getElementById('sheetOverlay').classList.remove('open');
-    document.getElementById('bottomSheet').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-
-  function renderOptions(opts, selected) {
-    const container = document.getElementById('sheetOptions');
-    container.innerHTML = opts.map(o => `
-      <div class="sheet-option ${o.value === selected ? 'selected' : ''}"
-           onclick="selectOption('${o.value}')">
-        <span class="sheet-option-flag">${o.flag}</span>
-        <span class="sheet-option-text">${o.label}</span>
-        ${o.value === selected ? '<i class="fa-solid fa-check sheet-option-check"></i>' : ''}
-      </div>
-    `).join('');
-  }
-
-  function selectOption(value) {
-    const data = sheetData[currentSheet];
-    data.selected = value;
-    document.getElementById(data.valueId).textContent = value;
-    renderOptions(allOptions, value);
-    setTimeout(() => {
-      closeSheet();
-      showToast(`✅ ${currentSheet === 'language' ? 'Language' : 'Currency'} set to ${value}`);
-    }, 300);
-  }
-
-  function filterSheet(query) {
-    const filtered = allOptions.filter(o =>
-      o.label.toLowerCase().includes(query.toLowerCase())
-    );
-    renderOptions(filtered, sheetData[currentSheet].selected);
-  }
-
-  /* ══ Danger zone ══ */
-  function confirmLogout() {
-    if (confirm('Are you sure you want to log out?')) {
-      window.location='index.html';
-    }
-  }
-  function confirmDelete() {
-    if (confirm('⚠️ This will permanently delete your account and all data. Are you sure?')) {
-      window.location='index.html';
-    }
-  }
-
-  /* ══ Toast ══ */
-  function showToast(msg, dur = 2600) {
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), dur);
-  }
-</script>
-
-<style>
-  #toast {
-    position: fixed; bottom: calc(68px + 12px);
-    left: 50%; transform: translateX(-50%) translateY(20px);
-    background: #1C1C1C; border: 1px solid rgba(245,166,35,0.4);
-    color: #fff; font-size: 13px; font-weight: 500;
-    font-family: 'DM Sans', sans-serif;
-    padding: 10px 22px; border-radius: 999px;
-    opacity: 0; transition: all .3s ease;
-    z-index: 9999; white-space: nowrap; pointer-events: none;
-  }
-  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-</style>
-
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="shared-auth.js"></script>
-<script>
-const {createClient} = supabase;
-const _sbS = createClient(
-  'https://muyyqqgubkfklqczqbgm.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11eXlxcWd1Ymtma2xxY3pxYmdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5MTgyMDksImV4cCI6MjA5NDQ5NDIwOX0.YQs_H8iMPwEr2pSVbGOwOS4S5Q0aQaBwfxnQy1achdk'
-);
-
-async function loadSettingsUser(){
-  const{data:{session}}=await _sbS.auth.getSession();
-  if(session){
-    const u=session.user;
-    const name=u.user_metadata?.full_name||u.email.split('@')[0];
-    const nameEl=document.querySelector('.mini-name');
-    const emailEl=document.querySelector('.mini-email');
-    if(nameEl)nameEl.textContent=name;
-    if(emailEl)emailEl.textContent=u.email;
+// Dark/Light mode
+const darkToggle = document.getElementById('darkToggle');
+const savedMode = localStorage.getItem('shopbox_theme') || 'dark';
+if(savedMode === 'light'){
+  document.body.classList.add('light-mode');
+  darkToggle.checked = false;
+}
+function toggleDarkMode(el){
+  if(el.checked){
+    document.body.classList.remove('light-mode');
+    localStorage.setItem('shopbox_theme','dark');
+    toast('🌙 Dark mode on');
+  } else {
+    document.body.classList.add('light-mode');
+    localStorage.setItem('shopbox_theme','light');
+    toast('☀️ Light mode on');
   }
 }
 
+// Password change
+function openChangePw(){ document.getElementById('pwOv').style.display='block'; document.getElementById('pwModal').style.display='block'; }
+function closePwModal(){ document.getElementById('pwOv').style.display='none'; document.getElementById('pwModal').style.display='none'; }
+async function doChangePw(){
+  const pw = document.getElementById('pwNew').value;
+  const co = document.getElementById('pwConfirm').value;
+  if(!pw || pw.length < 6){ toast('⚠️ Min 6 characters'); return; }
+  if(pw !== co){ toast('⚠️ Passwords do not match'); return; }
+  const {createClient} = supabase;
+  const sb = createClient('https://muyyqqgubkfklqczqbgm.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11eXlxcWd1Ymtma2xxY3pxYmdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5MTgyMDksImV4cCI6MjA5NDQ5NDIwOX0.YQs_H8iMPwEr2pSVbGOwOS4S5Q0aQaBwfxnQy1achdk');
+  const {error} = await sb.auth.updateUser({password:pw});
+  if(error){ toast('❌ ' + error.message); return; }
+  closePwModal();
+  toast('✅ Password updated!');
+}
+
+// Logout
 async function confirmLogout(){
-  if(confirm('Are you sure you want to log out?')){
-    await _sbS.auth.signOut();
-    window.location='index.html';
+  if(confirm('Are you sure you want to log out?')){ await sbLogout(); }
+}
+
+// Delete account
+function confirmDelete(){
+  if(confirm('⚠️ This will permanently delete your account. Are you absolutely sure?')){
+    toast('📧 Account deletion request sent. We will process it within 24 hours.');
   }
 }
 
-async function confirmDelete(){
-  if(confirm('⚠️ This will permanently delete your account. Are you sure?')){
-    showToast('🗑️ Account deletion request submitted');
-  }
-}
-
-loadSettingsUser();
+function toast(msg,dur=2600){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),dur);}
 </script>
-
 </body>
 </html>

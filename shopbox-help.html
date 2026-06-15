@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Help & Support — Shopbox</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="shared-auth.js"></script>
+  <style>
+    :root{--gold:#F5A623;--gold-muted:rgba(245,166,35,.12);--gold-glow:rgba(245,166,35,.28);--bg:#0D0D0D;--card:#161616;--card2:#1C1C1C;--border:rgba(255,255,255,.07);--border-g:rgba(245,166,35,.32);--txt:#fff;--txt2:#A0A0A0;--muted:#555;--fd:'Syne',sans-serif;--fb:'DM Sans',sans-serif;--r12:12px;--r16:16px;--pill:999px;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:var(--fb);background:var(--bg);color:var(--txt);min-height:100dvh;}
+    a{text-decoration:none;color:inherit;}
+    button{cursor:pointer;border:none;background:none;font-family:inherit;color:inherit;}
+    .header{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;height:56px;gap:12px;}
+    .back-btn{width:38px;height:38px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--txt2);}
+    .header-title{font-family:var(--fd);font-size:16px;font-weight:700;}
+    .page{padding:16px 16px 90px;max-width:600px;margin:0 auto;}
+
+    /* Contact buttons */
+    .contact-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
+    .contact-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 16px;border-radius:var(--r16);border:1.5px solid var(--border);cursor:pointer;transition:all .2s;text-decoration:none;}
+    .contact-btn:hover{border-color:var(--border-g);background:var(--gold-muted);}
+    .contact-btn i{font-size:28px;}
+    .contact-btn-label{font-family:var(--fd);font-size:13px;font-weight:700;}
+    .contact-btn-sub{font-size:11px;color:var(--txt2);text-align:center;}
+    .wa-btn{border-color:rgba(37,211,102,.3);background:rgba(37,211,102,.05);}
+    .wa-btn i{color:#25D366;}
+    .email-btn i{color:var(--gold);}
+
+    /* FAQ */
+    .faq-title{font-family:var(--fd);font-size:16px;font-weight:700;margin-bottom:14px;}
+    .faq-item{background:var(--card);border:1px solid var(--border);border-radius:var(--r12);overflow:hidden;margin-bottom:8px;}
+    .faq-q{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-weight:500;font-size:14px;}
+    .faq-q i{color:var(--gold);font-size:12px;transition:transform .3s;}
+    .faq-a{display:none;padding:0 16px 14px;font-size:13px;color:var(--txt2);line-height:1.6;border-top:1px solid var(--border);}
+    .faq-item.open .faq-q i{transform:rotate(180deg);}
+    .faq-item.open .faq-a{display:block;}
+
+    .bot-nav{position:fixed;bottom:0;left:0;right:0;height:68px;background:rgba(18,18,18,.97);border-top:1px solid var(--border);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:space-around;z-index:100;}
+    .bn-it{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;padding:8px 4px 4px;text-decoration:none;}
+    .bn-icon{font-size:20px;color:var(--muted);}
+    .bn-lbl{font-family:var(--fd);font-size:10px;font-weight:600;color:var(--muted);}
+
+    .d-header{display:none;position:sticky;top:0;z-index:200;background:rgba(13,13,13,.97);border-bottom:1px solid var(--border);}
+    .d-nav-top{display:flex;align-items:center;gap:20px;padding:0 40px;height:68px;}
+    .d-logo img{height:38px;}
+    .d-nav-right{display:flex;align-items:center;gap:10px;margin-left:auto;}
+    .d-nav-login{height:38px;padding:0 20px;background:var(--gold);color:#000;font-family:var(--fd);font-size:13px;font-weight:800;border-radius:var(--pill);cursor:pointer;}
+    @media(min-width:768px){.d-header{display:block;}.header{display:none;}.bot-nav{display:none;}.page{padding:32px 40px 60px;}}
+  </style>
+</head>
+<body>
+
+<header class="d-header">
+  <div class="d-nav-top">
+    <a href="index.html" class="d-logo"><img src="https://res.cloudinary.com/dgelnfkjv/image/upload/v1778969155/file_00000000ecc87246bc708f4b9cbb30d8_xrmwgv.png" alt="Shopbox"/></a>
+    <div class="d-nav-right">
+      <div id="dAuth"><button class="d-nav-login" onclick="window.location='index.html'"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login / Sign Up</button></div>
+    </div>
+  </div>
+</header>
+
+<header class="header">
+  <a href="shopbox-settings.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+  <div class="header-title">Help & Support</div>
+</header>
+
+<div class="page">
+
+  <!-- Contact us -->
+  <div style="text-align:center;padding:24px 0 20px;">
+    <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:6px;">How can we help? 👋</div>
+    <div style="font-size:14px;color:#A0A0A0;">We typically respond within 24 hours</div>
+  </div>
+
+  <div class="contact-row">
+    <a href="https://wa.me/2348000000000" target="_blank" class="contact-btn wa-btn">
+      <i class="fa-brands fa-whatsapp"></i>
+      <div class="contact-btn-label">WhatsApp</div>
+      <div class="contact-btn-sub">Chat with us directly</div>
+    </a>
+    <a href="mailto:support@shopbox.com.ng" class="contact-btn email-btn">
+      <i class="fa-solid fa-envelope"></i>
+      <div class="contact-btn-label">Email Us</div>
+      <div class="contact-btn-sub">support@shopbox.com.ng</div>
+    </a>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq-title">Frequently Asked Questions</div>
+
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">How do I track my order? <i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-a">Go to <strong>Orders</strong> in the bottom navigation or your account page. Click on any order to see its live tracking status and delivery timeline.</div>
+  </div>
+
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">What is your return policy? <i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-a">We offer a <strong>7-day return policy</strong> from the date of delivery. Items must be in their original condition and packaging. Go to Returns in your account to request a return.</div>
+  </div>
+
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">How long does delivery take? <i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-a"><strong>Local sellers:</strong> 1–3 business days within Lagos, 3–7 days for other states.<br/><strong>International (CJDropshipping):</strong> 7–21 business days depending on location.</div>
+  </div>
+
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">Is my payment secure? <i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-a">Yes. All payments are processed securely through <strong>Paystack</strong>, which is PCI-DSS compliant. We never store your card details.</div>
+  </div>
+
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">How do I become a seller? <i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-a">Go to <strong>Sell on Shopbox</strong> from the menu. Fill out the seller registration form. After review, our team will contact you via WhatsApp for verification. Once approved, you can start uploading products.</div>
+  </div>
+
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">When do sellers get paid? <i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-a">Seller payouts are processed <strong>every Friday</strong>. Funds are held for 7 days after confirmed delivery before being released to ensure buyer satisfaction.</div>
+  </div>
+
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">What items are prohibited on Shopbox? <i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-a">Prohibited items include: alcohol, drugs/medications, weapons, counterfeit goods, tobacco, adult content, and homemade bleaching products. Full list in our Terms & Conditions.</div>
+  </div>
+
+</div>
+
+<nav class="bot-nav">
+  <a href="index.html" class="bn-it"><div class="bn-icon"><i class="fa-solid fa-house"></i></div><span class="bn-lbl">Home</span></a>
+  <a href="shopbox-search.html" class="bn-it"><div class="bn-icon"><i class="fa-solid fa-table-cells-large"></i></div><span class="bn-lbl">Categories</span></a>
+  <a href="shopbox-wishlist.html" class="bn-it"><div class="bn-icon"><i class="fa-solid fa-heart"></i></div><span class="bn-lbl">Wishlist</span></a>
+  <a href="shopbox-tracking.html" class="bn-it"><div class="bn-icon"><i class="fa-solid fa-box"></i></div><span class="bn-lbl">Orders</span></a>
+  <a href="shopbox-account.html" class="bn-it"><div class="bn-icon"><i class="fa-regular fa-user"></i></div><span class="bn-lbl">Account</span></a>
+</nav>
+
+<script>
+function toggleFaq(el){ el.classList.toggle('open'); }
+</script>
+</body>
+</html>
